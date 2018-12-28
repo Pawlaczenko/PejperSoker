@@ -1,8 +1,8 @@
-var div = document.querySelector('.cont');
+function printAndy(){
+    console.log("Andrzej");
+}
 
-function printMe(){
-    var i = 10;
-    console.log(i);
-};
-
-function printAndy()
+function printMe()
+{
+    console.log("Bartek");
+}
