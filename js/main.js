@@ -4,5 +4,5 @@ function printAndy(){
 
 function printMe()
 {
-    console.log("Bartek");
+    console.log("Bartek Pawlak");
 }
