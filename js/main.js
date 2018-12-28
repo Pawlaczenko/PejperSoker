@@ -1,15 +1,8 @@
-var div = document.querySelector('.cont');
-
-function printMe(){
-    var i = 10;
-    div.innerHTML=i;
-}
-function echo(str){
-    console.log(str);
+function printAndy(){
+    console.log("A");
 }
 
-echo("Siema");
-function nothing()
+function printMe()
 {
-    //nothing
+    console.log("B");
 }
