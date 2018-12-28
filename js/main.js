@@ -1,5 +1,5 @@
 function printAndy(){
-    console.log("A");
+    console.log("Andrzej");
 }
 
 function printMe()
