@@ -9,3 +9,7 @@ function echo(str){
 }
 
 echo("Siema");
+function nothing()
+{
+    //nothing
+}
