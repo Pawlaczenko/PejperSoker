@@ -1,5 +1,4 @@
-function echo(str){
-    console.log(str);
+function nothing()
+{
+    //nothing
 }
-
-echo("Siema");
