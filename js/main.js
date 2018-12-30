@@ -31,12 +31,27 @@ function Point(x,y){
         [0,0,0]
     ];
 
+    this.addTable =
+    [
+        [[-1,-1],[0,-1],[1,-1]],
+        [[-1,0],[0,0],[1,0]],
+        [[-1,1],[0,1],[1,1]]
+    ];
+
     this.draw=function(){
         ctx.beginPath();
             ctx.arc((this.x+1)*scale,this.y*scale,10,0,2*Math.PI,false);
             ctx.fill();
         ctx.closePath();
     }
+}
+
+function drawLine(x1,y1,x2,y2){
+    ctx.beginPath();
+        ctx.moveTo((x1+1)*scale,y1*scale);
+        ctx.lineTo((x2+1)*scale,y2*scale);
+        ctx.stroke();
+    ctx.closePath();
 }
 
 function setup(){
@@ -68,6 +83,23 @@ function setup(){
     pointsArray[((squaresY - 2) / 2) + 1][squaresX].moveTable = [[0, 1, 2], [0, 2, 1], [0, 0, 0]];
     pointsArray[((squaresY - 2) / 2) + 2][squaresX].moveTable = [[0, 0, 0], [0, 2, 0], [0, 0, 0]];
     pointsArray[((squaresY - 2) / 2) + 3][squaresX].moveTable = [[0, 0, 0], [0, 2, 1], [0, 1, 2]];
+
+    for (let i = 0; i <= squaresY; i++) {
+        for (let j = 0; j <= squaresX; j++) {
+            for(let k=0;k<3;k++){
+                for(let l=0;l<3;l++){
+                    if(pointsArray[i][j].moveTable[k][l]!=2){
+                        if(pointsArray[i][j].moveTable[k][l]){
+                            ctx.lineWidth=10;
+                            drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i][j + pointsArray[i][j].addTable[k][l][0]].x, pointsArray[i + pointsArray[i][j].addTable[k][l][1]][j].y);
+                        } else {
+
+                        }
+                    }
+                }
+            }
+        }
+    }
 
 }
 
