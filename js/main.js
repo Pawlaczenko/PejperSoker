@@ -77,13 +77,13 @@ function setup(){
     pointsArray[squaresY][0].moveTable = [[2, 1, 0], [2, 2, 1], [2, 2, 2]];
 
     ///BRAMKI///
-    pointsArray[((squaresY - 2) / 2) + 1][0].moveTable = [[2, 1, 0], [1, 2, 0], [0, 0, 0]];
-    pointsArray[((squaresY - 2) / 2) + 2][0].moveTable = [[0, 0, 0], [0, 2, 0], [0, 0, 0]];
-    pointsArray[((squaresY - 2) / 2) + 3][0].moveTable = [[0, 0, 0], [1, 2, 0], [2, 1, 0]];
-    pointsArray[((squaresY - 2) / 2) + 1][squaresX].moveTable = [[0, 1, 2], [0, 2, 1], [0, 0, 0]];
-    pointsArray[((squaresY - 2) / 2) + 2][squaresX].moveTable = [[0, 0, 0], [0, 2, 0], [0, 0, 0]];
-    pointsArray[((squaresY - 2) / 2) + 3][squaresX].moveTable = [[0, 0, 0], [0, 2, 1], [0, 1, 2]];
-    console.log(pointsArray);
+    // pointsArray[((squaresY - 2) / 2) + 1][0].moveTable = [[2, 1, 0], [1, 2, 0], [0, 0, 0]];
+    // pointsArray[((squaresY - 2) / 2) + 2][0].moveTable = [[0, 0, 0], [0, 2, 0], [0, 0, 0]];
+    // pointsArray[((squaresY - 2) / 2) + 3][0].moveTable = [[0, 0, 0], [1, 2, 0], [2, 1, 0]];
+    // pointsArray[((squaresY - 2) / 2) + 1][squaresX].moveTable = [[0, 1, 2], [0, 2, 1], [0, 0, 0]];
+    // pointsArray[((squaresY - 2) / 2) + 2][squaresX].moveTable = [[0, 0, 0], [0, 2, 0], [0, 0, 0]];
+    // pointsArray[((squaresY - 2) / 2) + 3][squaresX].moveTable = [[0, 0, 0], [0, 2, 1], [0, 1, 2]];
+    // console.log(pointsArray);
 
 
     for (let i = 0; i <= squaresY; i++) {
