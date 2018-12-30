@@ -70,14 +70,13 @@ function setup(){
     pointsArray[squaresY][0].moveTable = [[2, 1, 0], [2, 2, 1], [2, 2, 2]];
 
     ///BRAMKI///
-    pointsArray[((squaresY - 2) / 2) + 1][0].moveTable = [[2, 1, 0], [1, 2, 0], [0, 0, 0]];
-    pointsArray[((squaresY - 2) / 2) + 2][0].moveTable = [[0, 0, 0], [0, 2, 0], [0, 0, 0]];
-    pointsArray[((squaresY - 2) / 2) + 3][0].moveTable = [[0, 0, 0], [1, 2, 0], [2, 1, 0]];
-    pointsArray[((squaresY - 2) / 2) + 1][squaresX].moveTable = [[0, 1, 2], [0, 2, 1], [0, 0, 0]];
-    pointsArray[((squaresY - 2) / 2) + 2][squaresX].moveTable = [[0, 0, 0], [0, 2, 0], [0, 0, 0]];
-    pointsArray[((squaresY - 2) / 2) + 3][squaresX].moveTable = [[0, 0, 0], [0, 2, 1], [0, 1, 2]];
+    pointsArray[((squaresY - 2) / 2)][0].moveTable = [[2, 1, 0], [1, 2, 0], [0, 0, 0]];
+    pointsArray[((squaresY - 2) / 2) + 1][0].moveTable = [[0, 0, 0], [0, 2, 0], [0, 0, 0]];
+    pointsArray[((squaresY - 2) / 2) + 2][0].moveTable = [[0, 0, 0], [1, 2, 0], [2, 1, 0]];
+    pointsArray[((squaresY - 2) / 2)][squaresX].moveTable = [[0, 1, 2], [0, 2, 1], [0, 0, 0]];
+    pointsArray[((squaresY - 2) / 2) + 1][squaresX].moveTable = [[0, 0, 0], [0, 2, 0], [0, 0, 0]];
+    pointsArray[((squaresY - 2) / 2) + 2][squaresX].moveTable = [[0, 0, 0], [0, 2, 1], [0, 1, 2]];
     console.log(pointsArray);
-
 
     for (let i = 0; i <= squaresY; i++) {
         for (let j = 0; j <= squaresX; j++) {
@@ -88,11 +87,12 @@ function setup(){
                 if (pointsArray[i][j].moveTable[2][1] == 1) {
                     ctx.lineWidth = 20;
                     drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i + 1][j].x, pointsArray[i + 1][j].y);
-                    log(pointsArray[i][j]);
+                    // log(pointsArray[i][j]);
                 }
                 if (pointsArray[i][j].moveTable[2][1] == 2) {
                     break;
                 }
+                
                 // drawLine(pointsArray[i][j].x,pointsArray[i][j].y,pointsArray[i][j+1].x,pointsArray[i][j+1].y);
                         
                     // if(i != squaresY && j != squaresX)
@@ -102,8 +102,26 @@ function setup(){
                     // }
         }
     }
-
-
+    for (let i = 0; i <= squaresY; i++) {
+        for (let j = 0; j <= squaresX; j++) {
+            if(j != squaresX)
+            {
+                if (pointsArray[i][j].moveTable[1][2] == 0) {
+                    ctx.lineWidth = 5;
+                    drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i][j + 1].x, pointsArray[i][j + 1].y);
+                }
+                if (pointsArray[i][j].moveTable[1][2] == 1) {
+                    ctx.lineWidth = 20;
+                    drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i][j + 1].x, pointsArray[i][j + 1].y);
+                    // log(pointsArray[i][j]);
+                }
+                if (pointsArray[i][j].moveTable[1][2] == 2) {
+                    break;
+                }
+            }
+            
+        }
+    }
 }
 
 setup();
