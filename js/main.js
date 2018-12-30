@@ -31,13 +31,6 @@ function Point(x,y){
         [0,0,0]
     ];
 
-    this.addTable =
-    [
-        [[-1,-1],[0,-1],[1,-1]],
-        [[-1,0],[0,0],[1,0]],
-        [[-1,1],[0,1],[1,1]]
-    ];
-
     this.draw=function(){
         ctx.beginPath();
             ctx.arc((this.x+1)*scale,this.y*scale,10,0,2*Math.PI,false);
@@ -88,18 +81,25 @@ function setup(){
 
     for (let i = 0; i <= squaresY; i++) {
         for (let j = 0; j <= squaresX; j++) {
-            for(let k=0;k<3;k++){
-                for(let l=0;l<3;l++){
-                    if(pointsArray[i][j].moveTable[k][l]!=2){
-                        if(pointsArray[i][j].moveTable[k][l]){
-                            ctx.lineWidth=10;
-                            drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i][j + pointsArray[i][j].addTable[k][l][0]].x, pointsArray[i + pointsArray[i][j].addTable[k][l][1]][j].y);
-                        } else {
-
-                        }
-                    }
+                if (pointsArray[i][j].moveTable[2][1] == 0) {
+                    ctx.lineWidth = 5;
+                    drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i + 1][j].x, pointsArray[i + 1][j].y);
                 }
-            }
+                if (pointsArray[i][j].moveTable[2][1] == 1) {
+                    ctx.lineWidth = 20;
+                    drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i + 1][j].x, pointsArray[i + 1][j].y);
+                    log(pointsArray[i][j]);
+                }
+                if (pointsArray[i][j].moveTable[2][1] == 2) {
+                    break;
+                }
+                // drawLine(pointsArray[i][j].x,pointsArray[i][j].y,pointsArray[i][j+1].x,pointsArray[i][j+1].y);
+                        
+                    // if(i != squaresY && j != squaresX)
+                    // {
+                        
+                    //     drawLine(pointsArray[i][j].x,pointsArray[i][j].y,pointsArray[i][j+1].x,pointsArray[i][j+1].y);
+                    // }
         }
     }
 
