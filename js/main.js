@@ -83,7 +83,7 @@ function setup(){
     pointsArray[((squaresY - 2) / 2) + 1][squaresX].moveTable = [[0, 1, 2], [0, 2, 1], [0, 0, 0]];
     pointsArray[((squaresY - 2) / 2) + 2][squaresX].moveTable = [[0, 0, 0], [0, 2, 0], [0, 0, 0]];
     pointsArray[((squaresY - 2) / 2) + 3][squaresX].moveTable = [[0, 0, 0], [0, 2, 1], [0, 1, 2]];
-
+    
     for (let i = 0; i <= squaresY; i++) {
         for (let j = 0; j <= squaresX; j++) {
             for(let k=0;k<3;k++){
