@@ -79,28 +79,28 @@ function setup() {
     pointsArray[side + 2][squaresX].moveTable = [[0, 0, 0], [0, 2, 1], [0, 1, 2]];
 
     ///RYSOWANIE PLANSZY///
-    for (let i = 0; i <= squaresY; i++) {
-        for (let j = 0; j <= squaresX; j++) {
-            if (pointsArray[i][j].moveTable[2][1] == 0) {
-                ctx.lineWidth = 5;
-                drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i + 1][j].x, pointsArray[i + 1][j].y);
-            }
-            if (pointsArray[i][j].moveTable[2][1] == 1) {
-                ctx.lineWidth = 20;
-                drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i + 1][j].x, pointsArray[i + 1][j].y);
-            }
-            if (j != squaresX) {
-                if (pointsArray[i][j].moveTable[1][2] == 0) {
-                    ctx.lineWidth = 5;
-                    drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i][j + 1].x, pointsArray[i][j + 1].y);
-                }
-                if (pointsArray[i][j].moveTable[1][2] == 1) {
-                    ctx.lineWidth = 20;
-                    drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i][j + 1].x, pointsArray[i][j + 1].y);
-                }
-            }
-        }
-    }
+    // for (let i = 0; i <= squaresY; i++) {
+    //     for (let j = 0; j <= squaresX; j++) {
+    //         if (pointsArray[i][j].moveTable[2][1] == 0) {
+    //             ctx.lineWidth = 5;
+    //             drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i + 1][j].x, pointsArray[i + 1][j].y);
+    //         }
+    //         if (pointsArray[i][j].moveTable[2][1] == 1) {
+    //             ctx.lineWidth = 20;
+    //             drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i + 1][j].x, pointsArray[i + 1][j].y);
+    //         }
+    //         if (j != squaresX) {
+    //             if (pointsArray[i][j].moveTable[1][2] == 0) {
+    //                 ctx.lineWidth = 5;
+    //                 drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i][j + 1].x, pointsArray[i][j + 1].y);
+    //             }
+    //             if (pointsArray[i][j].moveTable[1][2] == 1) {
+    //                 ctx.lineWidth = 20;
+    //                 drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i][j + 1].x, pointsArray[i][j + 1].y);
+    //             }
+    //         }
+    //     }
+    // }
     ///PUNKTY BRAMEK///
     gatewayArray[0][0] = new Point(0, side);
     gatewayArray[0][1] = new Point(0, (side) + 1);
@@ -110,31 +110,23 @@ function setup() {
     gatewayArray[1][2] = new Point(squaresX + 2, (side) + 2);
 log(gatewayArray);
     // ///RYSOWANIE BRAMEK///
-    // for (let i = 0; i <= 1; i++) {
-    //     for (let j = 0; j <= 2; j++) {
-    //         if(j == 1)
-    //         {
-    //             ctx.lineWidth = 5;
-    //         }
-    //         else
-    //         {
-    //             ctx.lineWidth = 20;
-    //         }
-    //         drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i + 1][j].x, pointsArray[i + 1][j].y);
-    //         drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i][j + 1].x, pointsArray[i][j + 1].y);
+    for (let i = 0; i <= 1; i++) {
+        for (let j = 0; j <= 2; j++) {
+            if(j == 1 && i==0)
+            {
+                ctx.lineWidth = 5;
+            }
+            else
+            {
+                ctx.lineWidth = 20;
+            }
+            drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i + 1][j].x, pointsArray[i + 1][j].y);
+            drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i][j + 1].x, pointsArray[i][j + 1].y);
 
-    //     }
-    // }
-    // ctx.lineWidth = 5;
-    // drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i + 1][j].x, pointsArray[i + 1][j].y);
+        }
+    }
+    
 
-    // ctx.lineWidth = 20;
-    // drawLine(pointsArray[0][0].x, pointsArray[i][j].y, pointsArray[i + 1][j].x, pointsArray[i + 1][j].y);
-    // for(let i = 0; i < 2; i++)
-    //     for(let j = 0; j < 3; j++)
-    //     {
-    //         gatewayArray[i][j].draw();            
-    //     }    
 
 
 }
