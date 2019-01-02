@@ -72,12 +72,13 @@ function setup(){
     pointsArray[squaresY][0].moveTable = [[2, 1, 0], [2, 2, 1], [2, 2, 2]];
 
     ///BRAMKI///
-    pointsArray[((squaresY - 2) / 2)][0].moveTable = [[2, 1, 0], [1, 2, 0], [0, 0, 0]];
-    pointsArray[((squaresY - 2) / 2) + 1][0].moveTable = [[0, 0, 0], [0, 2, 0], [0, 0, 0]];
-    pointsArray[((squaresY - 2) / 2) + 2][0].moveTable = [[0, 0, 0], [1, 2, 0], [2, 1, 0]];
-    pointsArray[((squaresY - 2) / 2)][squaresX].moveTable = [[0, 1, 2], [0, 2, 1], [0, 0, 0]];
-    pointsArray[((squaresY - 2) / 2) + 1][squaresX].moveTable = [[0, 0, 0], [0, 2, 0], [0, 0, 0]];
-    pointsArray[((squaresY - 2) / 2) + 2][squaresX].moveTable = [[0, 0, 0], [0, 2, 1], [0, 1, 2]];
+    var side = ((squaresY - 2) / 2); //odleglosc_rogu_planszy_do_bramki
+    pointsArray[side][0].moveTable = [[2, 1, 0], [1, 2, 0], [0, 0, 0]];
+    pointsArray[side + 1][0].moveTable = [[0, 0, 0], [0, 2, 0], [0, 0, 0]];
+    pointsArray[side + 2][0].moveTable = [[0, 0, 0], [1, 2, 0], [2, 1, 0]];
+    pointsArray[side][squaresX].moveTable = [[0, 1, 2], [0, 2, 1], [0, 0, 0]];
+    pointsArray[side + 1][squaresX].moveTable = [[0, 0, 0], [0, 2, 0], [0, 0, 0]];
+    pointsArray[side + 2][squaresX].moveTable = [[0, 0, 0], [0, 2, 1], [0, 1, 2]];
 
     ///RYSOWANIE PLANSZY///
     for (let i = 0; i <= squaresY; i++) {
@@ -104,12 +105,12 @@ function setup(){
     }
 
     ///PUNKTY BRAMEK///
-    gatewayArray[0][0] = new Point(((squaresY - 2) / 2,0));
-    gatewayArray[1][0] = new Point(((squaresY - 2) / 2)+1, 0);
-    gatewayArray[2][0] = new Point(((squaresY - 2) / 2)+2, 0);
-    gatewayArray[0][1] = new Point(((squaresY - 2) / 2), squaresX);
-    gatewayArray[1][1] = new Point(((squaresY - 2) / 2)+1, squaresX);
-    gatewayArray[2][1] = new Point(((squaresY - 2) / 2)+2, squaresX);
+    gatewayArray[0][0] = new Point(side,0);
+    gatewayArray[1][0] = new Point(side+1, 0);
+    gatewayArray[2][0] = new Point(side+2, 0);
+    gatewayArray[0][1] = new Point(side, squaresX);
+    gatewayArray[1][1] = new Point(side+1, squaresX);
+    gatewayArray[2][1] = new Point(side+2, squaresX);
     log(gatewayArray);
     ///RYSOWANIE BRAMEK///
     
