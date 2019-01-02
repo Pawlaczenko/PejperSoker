@@ -3,20 +3,26 @@ let squaresY = 8;
 let pointsArray = create2dArray(8, 10);
 let gatewayArray = create2dArray(1, 2);
 let canvas = document.createElement("canvas");
+let divBoard = document.getElementById("board");;
+let boardWidth = divBoard.offsetWidth ;
+let boardHeight = divBoard.offsetHeight;
 let ctx = canvas.getContext('2d');
-let scale = 140;
+let scale = 147;
+let canvasWidthResolution = 1800;
+let canvasHeightResolution = 1200;
+let borderWidth = 20 / 2;
+let borderWidth2 = 5/2;
 
 function Board(div_id) {
-    this.div = document.getElementById(div_id);
-    this.canvasWidthResolution = 1800;
-    this.canvasHeightResolution = 1200;
+    
+    
     this.squaresX = squaresX;
     this.squaresY = squaresY;
 
     this.draw = function () {
-        this.div.appendChild(canvas);
-        canvas.width = this.canvasWidthResolution;
-        canvas.height = this.canvasHeightResolution;
+        divBoard.appendChild(canvas);
+        canvas.width = canvasWidthResolution;
+        canvas.height = canvasHeightResolution;
     }
 }
 
@@ -59,7 +65,7 @@ function drawGateway(x1, y1, x2, y2) {
 function setup() {
     var myboard = new Board("board");
     myboard.draw();
-
+// WYPELNIANIE TABLICY SPECJALNYMI PKT
     for (let i = 0; i <= squaresY; i++) {
         for (let j = 0; j <= squaresX; j++) {
             pointsArray[i][j] = new Point(j, i);
@@ -152,7 +158,67 @@ function setup() {
     });
 
 }
+   setup();
 
+   //ADD EVENT LISENER
+for (let i = 0; i <= squaresY; i++) {
+    for (let j = 0; j <= squaresX; j++) {
+        
+
+    }
+}
+
+//-------------------------------------------------------------
+function getMousePos(canvas, evt) {
+    var rect = canvas.getBoundingClientRect();
+    return {
+        x: evt.clientX - rect.left,
+        y: evt.clientY - rect.top
+    };
+}
+
+
+console.log(pointsArray);
+
+canvas.addEventListener('mousemove', function (evt) {
+    var mousePos = getMousePos(canvas, evt);
+    //var message = 'Mouse position: ' + mousePos.x*przelicznik_do_pobiernia_myszki_x + ',' + mousePos.y*przelicznik_do_pobiernia_myszki_y;
+    var przelicznik_na_x = canvasWidthResolution/boardWidth  ;
+    var przelicznik_na_y = canvasHeightResolution/boardHeight  ;
+    var cord_X = mousePos.x * przelicznik_na_x;
+    var cord_Y = mousePos.y * przelicznik_na_y;
+
+    // add event lisner na slupki
+
+    console.log(cord_X);
+    console.log(cord_Y);
+    // console.log(przelicznik_na_x);
+    console.log("--");
+    log(pointsArray[0][0].x * scale + scale)
+    log(pointsArray[0][0].y * scale)
+    
+    
+    if ((pointsArray[1][0].x * scale + scale <= cord_X + 15 && pointsArray[1][0].y * scale <= cord_Y+15)
+        && (pointsArray[1][0].x * scale + scale >= cord_X - 15 && pointsArray[1][0].y * scale >= cord_Y-15))
+        {
+        ctx.beginPath();
+        ctx.fillStyle = "blue";
+        //ctx.fillRect(pointsArray[1][0].x * scale + scale - 15, pointsArray[1][0].y * scale - 15, 30, 30);
+        ctx.arc(pointsArray[1][0].x * scale + scale + 10 , pointsArray[1][0].y * scale + 10,15,0,Math.PI*2,false);
+        ctx.fill();
+        ctx.closePath();
+            log("!!!!");
+        }
+    
+
+    // add event lisner na slupki
+
+
+}, false);
+
+<<<<<<< HEAD
 
 
 setup();
+=======
+>>>>>>> MatrasBranch
