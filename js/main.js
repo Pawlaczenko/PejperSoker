@@ -3,20 +3,26 @@ let squaresY = 8;
 let pointsArray = create2dArray(8, 10);
 let gatewayArray = create2dArray(1, 2);
 let canvas = document.createElement("canvas");
+let divBoard = document.getElementById("board");;
+let boardWidth = divBoard.offsetWidth ;
+let boardHeight = divBoard.offsetHeight;
 let ctx = canvas.getContext('2d');
-let scale = 140;
+let scale = 147;
+let canvasWidthResolution = 1800;
+let canvasHeightResolution = 1200;
+let borderWidth = 20 / 2;
+let borderWidth2 = 5/2;
 
 function Board(div_id) {
-    this.div = document.getElementById(div_id);
-    this.canvasWidthResolution = 1800;
-    this.canvasHeightResolution = 1200;
+    
+    
     this.squaresX = squaresX;
     this.squaresY = squaresY;
 
     this.draw = function () {
-        this.div.appendChild(canvas);
-        canvas.width = this.canvasWidthResolution;
-        canvas.height = this.canvasHeightResolution;
+        divBoard.appendChild(canvas);
+        canvas.width = canvasWidthResolution;
+        canvas.height = canvasHeightResolution;
     }
 }
 
@@ -41,8 +47,17 @@ function Point(x, y) {
 function drawLine(x1, y1, x2, y2) {
     ctx.lineCap = "round";
     ctx.beginPath();
-    ctx.moveTo((x1 + 1) * scale, y1 * scale + 10);// to plus 10 to ustawnia marginsow
-    ctx.lineTo((x2 + 1) * scale, y2 * scale + 10);
+    ctx.moveTo((x1 + 1) * scale + 10, y1 * scale + 10);// to plus 10 to ustawnia marginsow
+    ctx.lineTo((x2 + 1) * scale + 10, y2 * scale + 10);
+    ctx.stroke();
+    ctx.closePath();
+}
+
+function drawGateway(x1, y1, x2, y2) {
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo((x1) * scale + 10, y1 * scale + 10);// to plus 10 to ustawnia marginsow
+    ctx.lineTo((x2) * scale + 10, y2 * scale + 10);
     ctx.stroke();
     ctx.closePath();
 }
@@ -50,7 +65,7 @@ function drawLine(x1, y1, x2, y2) {
 function setup() {
     var myboard = new Board("board");
     myboard.draw();
-
+// WYPELNIANIE TABLICY SPECJALNYMI PKT
     for (let i = 0; i <= squaresY; i++) {
         for (let j = 0; j <= squaresX; j++) {
             pointsArray[i][j] = new Point(j, i);
@@ -58,8 +73,6 @@ function setup() {
             if (j == 0) pointsArray[i][j].moveTable = [[2, 1, 0], [2, 2, 0], [2, 1, 0]];
             if (i == squaresY) pointsArray[i][j].moveTable = [[0, 0, 0], [1, 2, 1], [2, 2, 2]];
             if (j == squaresX) pointsArray[i][j].moveTable = [[0, 1, 2], [0, 2, 2], [0, 1, 2]];
-
-            // pointsArray[i][j].draw();
         }
     }
 
@@ -79,28 +92,28 @@ function setup() {
     pointsArray[side + 2][squaresX].moveTable = [[0, 0, 0], [0, 2, 1], [0, 1, 2]];
 
     ///RYSOWANIE PLANSZY///
-    // for (let i = 0; i <= squaresY; i++) {
-    //     for (let j = 0; j <= squaresX; j++) {
-    //         if (pointsArray[i][j].moveTable[2][1] == 0) {
-    //             ctx.lineWidth = 5;
-    //             drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i + 1][j].x, pointsArray[i + 1][j].y);
-    //         }
-    //         if (pointsArray[i][j].moveTable[2][1] == 1) {
-    //             ctx.lineWidth = 20;
-    //             drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i + 1][j].x, pointsArray[i + 1][j].y);
-    //         }
-    //         if (j != squaresX) {
-    //             if (pointsArray[i][j].moveTable[1][2] == 0) {
-    //                 ctx.lineWidth = 5;
-    //                 drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i][j + 1].x, pointsArray[i][j + 1].y);
-    //             }
-    //             if (pointsArray[i][j].moveTable[1][2] == 1) {
-    //                 ctx.lineWidth = 20;
-    //                 drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i][j + 1].x, pointsArray[i][j + 1].y);
-    //             }
-    //         }
-    //     }
-    // }
+    for (let i = 0; i <= squaresY; i++) {
+        for (let j = 0; j <= squaresX; j++) {
+            if (pointsArray[i][j].moveTable[2][1] == 0) {
+                ctx.lineWidth = 5;
+                drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i + 1][j].x, pointsArray[i + 1][j].y);
+            }
+            if (pointsArray[i][j].moveTable[2][1] == 1) {
+                ctx.lineWidth = 20;
+                drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i + 1][j].x, pointsArray[i + 1][j].y);
+            }
+            if (j != squaresX) {
+                if (pointsArray[i][j].moveTable[1][2] == 0) {
+                    ctx.lineWidth = 5;
+                    drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i][j + 1].x, pointsArray[i][j + 1].y);
+                }
+                if (pointsArray[i][j].moveTable[1][2] == 1) {
+                    ctx.lineWidth = 20;
+                    drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i][j + 1].x, pointsArray[i][j + 1].y);
+                }
+            }
+        }
+    }
     ///PUNKTY BRAMEK///
     gatewayArray[0][0] = new Point(0, side);
     gatewayArray[0][1] = new Point(0, (side) + 1);
@@ -108,35 +121,84 @@ function setup() {
     gatewayArray[1][0] = new Point(squaresX + 2, side);
     gatewayArray[1][1] = new Point(squaresX + 2, (side) + 1);
     gatewayArray[1][2] = new Point(squaresX + 2, (side) + 2);
-log(gatewayArray);
+
     // ///RYSOWANIE BRAMEK///
-    // for (let i = 0; i <= 1; i++) {
-    //     for (let j = 0; j <= 2; j++) {
-    //         if(j == 1)
-    //         {
-    //             ctx.lineWidth = 5;
-    //         }
-    //         else
-    //         {
-    //             ctx.lineWidth = 20;
-    //         }
-    //         drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i + 1][j].x, pointsArray[i + 1][j].y);
-    //         drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i][j + 1].x, pointsArray[i][j + 1].y);
+    for (let i = 0; i <= 1; i++) {
+        for (let j = 0; j <= 2; j++) {
+            ctx.lineWidth = 20;
+            if (j < 2)
+                drawGateway(gatewayArray[i][j].x, gatewayArray[i][j].y, gatewayArray[i][j + 1].x, gatewayArray[i][j + 1].y);
+            if (j == 0 || j == 2) {
+                if (i == 1)
+                    drawGateway(gatewayArray[i][j].x, gatewayArray[i][j].y, gatewayArray[i][j].x - 1, gatewayArray[i][j].y);
+                else
+                    drawGateway(gatewayArray[i][j].x, gatewayArray[i][j].y, gatewayArray[i][j].x + 1, gatewayArray[i][j].y);
+            }
+            else {
+                ctx.lineWidth = 5;
+                if (i == 1)
+                    drawGateway(gatewayArray[i][j].x, gatewayArray[i][j].y, gatewayArray[i][j].x - 1, gatewayArray[i][j].y);
+                else
+                    drawGateway(gatewayArray[i][j].x, gatewayArray[i][j].y, gatewayArray[i][j].x + 1, gatewayArray[i][j].y);
+            }
+        }
+    }
+}
+   setup();
 
-    //     }
-    // }
-    // ctx.lineWidth = 5;
-    // drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i + 1][j].x, pointsArray[i + 1][j].y);
+   //ADD EVENT LISENER
+for (let i = 0; i <= squaresY; i++) {
+    for (let j = 0; j <= squaresX; j++) {
+        
 
-    // ctx.lineWidth = 20;
-    // drawLine(pointsArray[0][0].x, pointsArray[i][j].y, pointsArray[i + 1][j].x, pointsArray[i + 1][j].y);
-    // for(let i = 0; i < 2; i++)
-    //     for(let j = 0; j < 3; j++)
-    //     {
-    //         gatewayArray[i][j].draw();            
-    //     }    
-
-
+    }
 }
 
-setup();
+//-------------------------------------------------------------
+function getMousePos(canvas, evt) {
+    var rect = canvas.getBoundingClientRect();
+    return {
+        x: evt.clientX - rect.left,
+        y: evt.clientY - rect.top
+    };
+}
+
+
+console.log(pointsArray);
+
+canvas.addEventListener('mousemove', function (evt) {
+    var mousePos = getMousePos(canvas, evt);
+    //var message = 'Mouse position: ' + mousePos.x*przelicznik_do_pobiernia_myszki_x + ',' + mousePos.y*przelicznik_do_pobiernia_myszki_y;
+    var przelicznik_na_x = canvasWidthResolution/boardWidth  ;
+    var przelicznik_na_y = canvasHeightResolution/boardHeight  ;
+    var cord_X = mousePos.x * przelicznik_na_x;
+    var cord_Y = mousePos.y * przelicznik_na_y;
+
+    // add event lisner na slupki
+
+    console.log(cord_X);
+    console.log(cord_Y);
+    // console.log(przelicznik_na_x);
+    console.log("--");
+    log(pointsArray[0][0].x * scale + scale)
+    log(pointsArray[0][0].y * scale)
+    
+    
+    if ((pointsArray[1][0].x * scale + scale <= cord_X + 15 && pointsArray[1][0].y * scale <= cord_Y+15)
+        && (pointsArray[1][0].x * scale + scale >= cord_X - 15 && pointsArray[1][0].y * scale >= cord_Y-15))
+        {
+        ctx.beginPath();
+        ctx.fillStyle = "blue";
+        //ctx.fillRect(pointsArray[1][0].x * scale + scale - 15, pointsArray[1][0].y * scale - 15, 30, 30);
+        ctx.arc(pointsArray[1][0].x * scale + scale + 10 , pointsArray[1][0].y * scale + 10,15,0,Math.PI*2,false);
+        ctx.fill();
+        ctx.closePath();
+            log("!!!!");
+        }
+    
+
+    // add event lisner na slupki
+
+
+}, false);
+
