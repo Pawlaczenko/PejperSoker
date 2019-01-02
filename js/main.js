@@ -41,8 +41,17 @@ function Point(x, y) {
 function drawLine(x1, y1, x2, y2) {
     ctx.lineCap = "round";
     ctx.beginPath();
-    ctx.moveTo((x1 + 1) * scale, y1 * scale + 10);// to plus 10 to ustawnia marginsow
-    ctx.lineTo((x2 + 1) * scale, y2 * scale + 10);
+    ctx.moveTo((x1 + 1) * scale+10, y1 * scale + 10);// to plus 10 to ustawnia marginsow
+    ctx.lineTo((x2 + 1) * scale+10, y2 * scale + 10);
+    ctx.stroke();
+    ctx.closePath();
+}
+
+function drawGateway(x1, y1, x2, y2) {
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo((x1) * scale+10, y1 * scale + 10);// to plus 10 to ustawnia marginsow
+    ctx.lineTo((x2) * scale+10, y2 * scale + 10);
     ctx.stroke();
     ctx.closePath();
 }
@@ -58,8 +67,6 @@ function setup() {
             if (j == 0) pointsArray[i][j].moveTable = [[2, 1, 0], [2, 2, 0], [2, 1, 0]];
             if (i == squaresY) pointsArray[i][j].moveTable = [[0, 0, 0], [1, 2, 1], [2, 2, 2]];
             if (j == squaresX) pointsArray[i][j].moveTable = [[0, 1, 2], [0, 2, 2], [0, 1, 2]];
-
-            // pointsArray[i][j].draw();
         }
     }
 
@@ -108,35 +115,28 @@ function setup() {
     gatewayArray[1][0] = new Point(squaresX + 2, side);
     gatewayArray[1][1] = new Point(squaresX + 2, (side) + 1);
     gatewayArray[1][2] = new Point(squaresX + 2, (side) + 2);
-log(gatewayArray);
+
     // ///RYSOWANIE BRAMEK///
-    // for (let i = 0; i <= 1; i++) {
-    //     for (let j = 0; j <= 2; j++) {
-    //         if(j == 1)
-    //         {
-    //             ctx.lineWidth = 5;
-    //         }
-    //         else
-    //         {
-    //             ctx.lineWidth = 20;
-    //         }
-    //         drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i + 1][j].x, pointsArray[i + 1][j].y);
-    //         drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i][j + 1].x, pointsArray[i][j + 1].y);
-
-    //     }
-    // }
-    // ctx.lineWidth = 5;
-    // drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i + 1][j].x, pointsArray[i + 1][j].y);
-
-    // ctx.lineWidth = 20;
-    // drawLine(pointsArray[0][0].x, pointsArray[i][j].y, pointsArray[i + 1][j].x, pointsArray[i + 1][j].y);
-    // for(let i = 0; i < 2; i++)
-    //     for(let j = 0; j < 3; j++)
-    //     {
-    //         gatewayArray[i][j].draw();            
-    //     }    
-
-
+    for (let i = 0; i <= 1; i++) {
+        for (let j = 0; j <= 2; j++) {
+            ctx.lineWidth = 20;
+            if (j < 2)
+                drawGateway(gatewayArray[i][j].x, gatewayArray[i][j].y, gatewayArray[i][j + 1].x, gatewayArray[i][j + 1].y);
+            if (j == 0 || j == 2) {
+                if (i == 1)
+                    drawGateway(gatewayArray[i][j].x, gatewayArray[i][j].y, gatewayArray[i][j].x - 1, gatewayArray[i][j].y);
+                else
+                    drawGateway(gatewayArray[i][j].x, gatewayArray[i][j].y, gatewayArray[i][j].x + 1, gatewayArray[i][j].y);
+            }
+            else {
+                ctx.lineWidth = 5;
+                if (i == 1)
+                    drawGateway(gatewayArray[i][j].x, gatewayArray[i][j].y, gatewayArray[i][j].x - 1, gatewayArray[i][j].y);
+                else
+                    drawGateway(gatewayArray[i][j].x, gatewayArray[i][j].y, gatewayArray[i][j].x + 1, gatewayArray[i][j].y);
+            }
+        }
+    }
 }
 
 setup();
