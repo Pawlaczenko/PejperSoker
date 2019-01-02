@@ -31,12 +31,12 @@ function Point(x,y){
         [0,0,0]
     ];
 
-    this.draw=function(){
-        ctx.beginPath();
-            ctx.arc((this.x+1)*scale,this.y*scale,10,0,2*Math.PI,false);
-            ctx.fill();
-        ctx.closePath();
-    }
+    // this.draw=function(){
+    //     ctx.beginPath();
+    //         ctx.arc((this.x+1)*scale,this.y*scale,10,0,2*Math.PI,false);
+    //         ctx.fill();
+    //     ctx.closePath();
+    // }
 }
 
 function drawLine(x1,y1,x2,y2){
@@ -59,7 +59,7 @@ function setup(){
             if (i == squaresY) pointsArray[i][j].moveTable = [[0, 0, 0], [1, 2, 1], [2, 2, 2]];
             if (j == squaresX) pointsArray[i][j].moveTable = [[0, 1, 2], [0, 2, 2], [0, 1, 2]];
 
-            pointsArray[i][j].draw();
+            // pointsArray[i][j].draw();
         }
     }
 
