@@ -108,34 +108,6 @@ function setup() {
     gatewayArray[1][0] = new Point(squaresX + 2, side);
     gatewayArray[1][1] = new Point(squaresX + 2, (side) + 1);
     gatewayArray[1][2] = new Point(squaresX + 2, (side) + 2);
-<<<<<<< HEAD
-    log(gatewayArray);
-    gatewayArray[0][0].moveTable[0][0] = 2;
-    gatewayArray[0][0].moveTable[0][1] = 2;
-    gatewayArray[0][0].moveTable[0][2] = 1;
-    
-
-    log(gatewayArray);
-
-    // ///RYSOWANIE BRAMEK///
-    for (let i = 0; i <= 1; i++) {
-        for (let j = 0; j <= 2; j++) {
-            if(j == 1 && i==0)
-            {
-                ctx.lineWidth = 5;
-            }
-            else
-            {
-                ctx.lineWidth = 20;
-            }
-            drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i + 1][j].x, pointsArray[i + 1][j].y);
-            drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i][j + 1].x, pointsArray[i][j + 1].y);
-
-        }
-    }
-    
-
-=======
 log(gatewayArray);
     // ///RYSOWANIE BRAMEK///
     // for (let i = 0; i <= 1; i++) {
@@ -163,7 +135,6 @@ log(gatewayArray);
     //     {
     //         gatewayArray[i][j].draw();            
     //     }    
->>>>>>> parent of fe6c0f4... Merge branch 'NawalaniecBranch' into MatrasBranch
 
 
 }
