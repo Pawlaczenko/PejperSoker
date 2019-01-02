@@ -1,9 +1,10 @@
 let squaresX = 10;
 let squaresY = 8;
 let pointsArray = create2dArray(8,10);
+let gatewayArray = create2dArray(2, 1);
 let canvas = document.createElement("canvas");
 let ctx = canvas.getContext('2d');
-let scale = 150;
+let scale = 140;
 
 function Board(div_id) 
 {
@@ -40,9 +41,10 @@ function Point(x,y){
 }
 
 function drawLine(x1,y1,x2,y2){
+    ctx.lineCap = "round";
     ctx.beginPath();
-        ctx.moveTo((x1+1)*scale,y1*scale);
-        ctx.lineTo((x2+1)*scale,y2*scale);
+        ctx.moveTo((x1+1)*scale,y1*scale+10);// to plus 10 to ustawnia marginsow
+        ctx.lineTo((x2+1)*scale,y2*scale+10);
         ctx.stroke();
     ctx.closePath();
 }
@@ -76,7 +78,6 @@ function setup(){
     pointsArray[((squaresY - 2) / 2)][squaresX].moveTable = [[0, 1, 2], [0, 2, 1], [0, 0, 0]];
     pointsArray[((squaresY - 2) / 2) + 1][squaresX].moveTable = [[0, 0, 0], [0, 2, 0], [0, 0, 0]];
     pointsArray[((squaresY - 2) / 2) + 2][squaresX].moveTable = [[0, 0, 0], [0, 2, 1], [0, 1, 2]];
-    console.log(pointsArray);
 
     ///RYSOWANIE PLANSZY///
     for (let i = 0; i <= squaresY; i++) {
@@ -101,6 +102,18 @@ function setup(){
             }
         }
     }
+
+    ///PUNKTY BRAMEK///
+    gatewayArray[0][0] = new Point(((squaresY - 2) / 2,0));
+    gatewayArray[1][0] = new Point(((squaresY - 2) / 2)+1, 0);
+    gatewayArray[2][0] = new Point(((squaresY - 2) / 2)+2, 0);
+    gatewayArray[0][1] = new Point(((squaresY - 2) / 2), squaresX);
+    gatewayArray[1][1] = new Point(((squaresY - 2) / 2)+1, squaresX);
+    gatewayArray[2][1] = new Point(((squaresY - 2) / 2)+2, squaresX);
+    log(gatewayArray);
+    ///RYSOWANIE BRAMEK///
+    
+    
 
     
 }
