@@ -166,9 +166,10 @@ function setup() {
     ctx.arc(pointsArray[middleHeight][middleWidth].x * scale + scale + wallWidth / 2, pointsArray[middleHeight][middleWidth].y * scale + wallWidth / 2, 15, 0, Math.PI * 2, false);
     ctx.fill();
     ctx.closePath();
+    
 }
 setup();
-
+let myImgData = ctx.getImageData(0, 0, canvasWidthResolution, canvasHeightResolution);
 //-------------------------------------------------------------
 function getMousePos(canvas, evt) {
     var rect = canvas.getBoundingClientRect();
@@ -195,9 +196,7 @@ canvas.addEventListener('mousemove', function (evt) {
             if ((pointsArray[i][j].x * scale + scale + wallWidth / 2 <= cord_X + 15 && pointsArray[i][j].y * scale + wallWidth / 2 <= cord_Y + 15)
                 && (pointsArray[i][j].x * scale + scale + wallWidth / 2 >= cord_X - 15 && pointsArray[i][j].y * scale + wallWidth / 2 >= cord_Y - 15)) {
                 ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
-                drawField();
-                drawGateway();
-                drawFieldState()
+                ctx.putImageData(myImgData, 0, 0);
                 ctx.beginPath();
                 ctx.fillStyle = "blue";
                 //ctx.fillRect(pointsArray[1][j].x * scale + scale - 15, pointsArray[1][j].y * scale - 15, 30, 30);
@@ -213,9 +212,7 @@ canvas.addEventListener('mousemove', function (evt) {
             if ((gatewayArray[i][j].x * scale + wallWidth / 2 <= cord_X + 15 && gatewayArray[i][j].y * scale + wallWidth / 2 <= cord_Y + 15)
                 && (gatewayArray[i][j].x * scale + wallWidth / 2 >= cord_X - 15 && gatewayArray[i][j].y * scale + wallWidth / 2 >= cord_Y - 15)) {
                 ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
-                drawField();
-                drawGateway();
-                drawFieldState()
+                ctx.putImageData(myImgData, 0, 0);
                 ctx.beginPath();
                 ctx.fillStyle = "blue";
                 //ctx.fillRect(gatewayArray[1][j].x * scale + scale - 15, gatewayArray[1][j].y * scale - 15, 30, 30);
