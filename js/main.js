@@ -41,8 +41,8 @@ function Point(x, y) {
 function drawLine(x1, y1, x2, y2) {
     ctx.lineCap = "round";
     ctx.beginPath();
-    ctx.moveTo((x1 + 1) * scale+10, y1 * scale + 10);// to plus 10 to ustawnia marginsow
-    ctx.lineTo((x2 + 1) * scale+10, y2 * scale + 10);
+    ctx.moveTo((x1 + 1) * scale + 10, y1 * scale + 10);// to plus 10 to ustawnia marginsow
+    ctx.lineTo((x2 + 1) * scale + 10, y2 * scale + 10);
     ctx.stroke();
     ctx.closePath();
 }
@@ -50,8 +50,8 @@ function drawLine(x1, y1, x2, y2) {
 function drawGateway(x1, y1, x2, y2) {
     ctx.lineCap = "round";
     ctx.beginPath();
-    ctx.moveTo((x1) * scale+10, y1 * scale + 10);// to plus 10 to ustawnia marginsow
-    ctx.lineTo((x2) * scale+10, y2 * scale + 10);
+    ctx.moveTo((x1) * scale + 10, y1 * scale + 10);// to plus 10 to ustawnia marginsow
+    ctx.lineTo((x2) * scale + 10, y2 * scale + 10);
     ctx.stroke();
     ctx.closePath();
 }
@@ -137,6 +137,22 @@ function setup() {
             }
         }
     }
+    canvas.addEventListener("mousemove", function (e) {
+        let rect = canvas.getBoundingClientRect();
+        log(e.clientX - rect.left + 5 +'---'+pointsArray[0][0].x+scale)
+        log(e.clientY - Math.floor(rect.top) + 5 +'!!!'+pointsArray[0][0].y)
+        for (let i = 0; i < pointsArray.length; i++) {
+            for (let j = 0; j < pointsArray[i].length; j++) {
+                if ((e.clientX - rect.left + 5 >= pointsArray[i][j].x && e.clientY - Math.floor(rect.top) + 5 >= pointsArray[i][j].y)
+                    && (e.clientX - rect.left - 5 <= pointsArray[i][j].x && e.clientY - Math.floor(rect.top) - 5 <= pointsArray[i][j].y)) {
+                    log("!!!!");
+                }
+            }
+        }
+    });
+
 }
+
+
 
 setup();
