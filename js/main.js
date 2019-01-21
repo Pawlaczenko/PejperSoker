@@ -9,11 +9,13 @@ let boardHeight = divBoard.offsetHeight;
 let ctx = canvas.getContext('2d');
 let scale = 147;
 let canvasWidthResolution = 1800;
-let canvasHeightResolution = 1200;
+let canvasHeightResolution = 1210;
 let wallWidth = 20;
 let fieldWidth = 5;
 let middleWidth = Math.ceil(squaresX / 2);
 let middleHeight = Math.ceil(squaresY / 2);
+let marginXY = 15;
+let curPoint;
 
 function Board(div_id) {
 
@@ -42,8 +44,8 @@ function Point(x, y) {
 function drawLine(x1, y1, x2, y2) {
     ctx.lineCap = "round";
     ctx.beginPath();
-    ctx.moveTo((x1 + 1) * scale + 10, y1 * scale + 10);// to plus 10 to ustawnia marginsow
-    ctx.lineTo((x2 + 1) * scale + 10, y2 * scale + 10);
+    ctx.moveTo((x1 + 1) * scale + marginXY, y1 * scale + marginXY);// to plus marginXY to ustawnia marginsow
+    ctx.lineTo((x2 + 1) * scale + marginXY, y2 * scale + marginXY);
     ctx.stroke();
     ctx.closePath();
 }
@@ -51,8 +53,8 @@ function drawLine(x1, y1, x2, y2) {
 function drawGate(x1, y1, x2, y2) {
     ctx.lineCap = "round";
     ctx.beginPath();
-    ctx.moveTo((x1) * scale + 10, y1 * scale + 10);// to plus 10 to ustawnia marginsow
-    ctx.lineTo((x2) * scale + 10, y2 * scale + 10);
+    ctx.moveTo((x1) * scale + marginXY, y1 * scale + marginXY);// to plus marginXY to ustawnia marginsow
+    ctx.lineTo((x2) * scale + marginXY, y2 * scale + marginXY);
     ctx.stroke();
     ctx.closePath();
 }
@@ -163,10 +165,12 @@ function setup() {
 
     ctx.fillStyle = "black";
     ctx.beginPath();
-    ctx.arc(pointsArray[middleHeight][middleWidth].x * scale + scale + wallWidth / 2, pointsArray[middleHeight][middleWidth].y * scale + wallWidth / 2, 15, 0, Math.PI * 2, false);
+    ctx.arc(pointsArray[middleHeight][middleWidth].x * scale + scale + wallWidth / 2 + marginXY/3, pointsArray[middleHeight][middleWidth].y * scale + wallWidth / 2 + marginXY/3, 15, 0, Math.PI * 2, false);
     ctx.fill();
     ctx.closePath();
-    
+    curPoint = new Point (pointsArray[middleHeight][middleWidth].x, pointsArray[middleHeight][middleWidth].y);
+    curPoint.x = curPoint.x * scale + scale + wallWidth / 2 + marginXY/3;
+    curPoint.y = curPoint.y * scale + wallWidth / 2 + marginXY/3;
 }
 setup();
 let myImgData = ctx.getImageData(0, 0, canvasWidthResolution, canvasHeightResolution);
@@ -180,7 +184,6 @@ function getMousePos(canvas, evt) {
 }
 
 
-console.log(pointsArray);
 
 canvas.addEventListener('mousemove', function (evt) {
     var mousePos = getMousePos(canvas, evt);
@@ -193,32 +196,81 @@ canvas.addEventListener('mousemove', function (evt) {
     ///PUNKTY MAPY///
     for (let i = 0; i < pointsArray.length; i++)
         for (let j = 0; j < pointsArray[i].length; j++)
-            if ((pointsArray[i][j].x * scale + scale + wallWidth / 2 <= cord_X + 15 && pointsArray[i][j].y * scale + wallWidth / 2 <= cord_Y + 15)
-                && (pointsArray[i][j].x * scale + scale + wallWidth / 2 >= cord_X - 15 && pointsArray[i][j].y * scale + wallWidth / 2 >= cord_Y - 15)) {
+            if ((pointsArray[i][j].x * scale + scale + wallWidth  / 2 <= cord_X + scale/2 && pointsArray[i][j].y * scale + wallWidth / 2 <= cord_Y + scale/2)
+                && (pointsArray[i][j].x * scale + scale + wallWidth / 2 >= cord_X - scale/2 && pointsArray[i][j].y * scale + wallWidth / 2 >= cord_Y - scale/2)) 
+                if((i >= middleHeight-1 && i <= middleHeight + 1) && (j >= middleWidth-1 && j <= middleWidth + 1)) {
                 ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
                 ctx.putImageData(myImgData, 0, 0);
                 ctx.beginPath();
                 ctx.fillStyle = "blue";
-                //ctx.fillRect(pointsArray[1][j].x * scale + scale - 15, pointsArray[1][j].y * scale - 15, 30, 30);
-                ctx.arc(pointsArray[i][j].x * scale + scale + wallWidth / 2, pointsArray[i][j].y * scale + wallWidth / 2, 15, 0, Math.PI * 2, false);
+                ctx.arc(pointsArray[i][j].x * scale + scale + wallWidth / 2 + marginXY/3, pointsArray[i][j].y * scale + wallWidth / 2 + marginXY/3, 15, 0, Math.PI * 2, false);
                 ctx.fill();
                 ctx.closePath();
-                log("!!!!");
+
             }
 
     ///PUNKTY BRAMEK///
     for (let i = 0; i < gatewayArray.length; i++)
         for (let j = 0; j < gatewayArray[i].length; j++)
-            if ((gatewayArray[i][j].x * scale + wallWidth / 2 <= cord_X + 15 && gatewayArray[i][j].y * scale + wallWidth / 2 <= cord_Y + 15)
-                && (gatewayArray[i][j].x * scale + wallWidth / 2 >= cord_X - 15 && gatewayArray[i][j].y * scale + wallWidth / 2 >= cord_Y - 15)) {
+            if ((gatewayArray[i][j].x * scale + wallWidth / 2 <= cord_X + scale/2 && gatewayArray[i][j].y * scale + wallWidth / 2 <= cord_Y + scale/2)
+                && (gatewayArray[i][j].x * scale + wallWidth / 2 >= cord_X - scale/2 && gatewayArray[i][j].y * scale + wallWidth / 2 >= cord_Y - scale/2)) 
+                if(((curPoint.x + scale == gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY/3) || (curPoint.x - scale == gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY/3))
+                        && ((curPoint.y - scale*2 < gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY/3) && (curPoint.y + scale*2 > gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY/3))) {
                 ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
                 ctx.putImageData(myImgData, 0, 0);
                 ctx.beginPath();
                 ctx.fillStyle = "blue";
-                //ctx.fillRect(gatewayArray[1][j].x * scale + scale - 15, gatewayArray[1][j].y * scale - 15, 30, 30);
-                ctx.arc(gatewayArray[i][j].x * scale + wallWidth / 2, gatewayArray[i][j].y * scale + wallWidth / 2, 15, 0, Math.PI * 2, false);
+                ctx.arc(gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY/3, gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY/3, 15, 0, Math.PI * 2, false);
                 ctx.fill();
                 ctx.closePath();
-                log("!!!!");
             }
+}, false);
+
+canvas.addEventListener('click', function (evt) {
+    var mousePos = getMousePos(canvas, evt);
+    //var message = 'Mouse position: ' + mousePos.x*przelicznik_do_pobiernia_myszki_x + ',' + mousePos.y*przelicznik_do_pobiernia_myszki_y;
+    var przelicznik_na_x = canvasWidthResolution / boardWidth;
+    var przelicznik_na_y = canvasHeightResolution / boardHeight;
+    var cord_X = mousePos.x * przelicznik_na_x;
+    var cord_Y = mousePos.y * przelicznik_na_y;
+
+    ///PUNKTY MAPY///
+    for (let i = 0; i < pointsArray.length; i++)
+        for (let j = 0; j < pointsArray[i].length; j++)
+            if ((pointsArray[i][j].x * scale + scale + wallWidth  / 2 <= cord_X + scale/2 && pointsArray[i][j].y * scale + wallWidth / 2 <= cord_Y + scale/2)
+                && (pointsArray[i][j].x * scale + scale + wallWidth / 2 >= cord_X - scale/2 && pointsArray[i][j].y * scale + wallWidth / 2 >= cord_Y - scale/2))
+                if((i >= middleHeight-1 && i <= middleHeight + 1) && (j >= middleWidth-1 && j <= middleWidth + 1)) {
+                ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
+                ctx.putImageData(myImgData, 0, 0);
+                ctx.beginPath();
+                ctx.moveTo(curPoint.x, curPoint.y);
+                ctx.lineTo(pointsArray[i][j].x * scale + scale + wallWidth / 2 + marginXY/3, pointsArray[i][j].y * scale + wallWidth / 2 + marginXY/3)
+                ctx.stroke();
+                ctx.closePath();
+                myImgData = ctx.getImageData(0, 0, canvasWidthResolution, canvasHeightResolution);
+                curPoint.x = pointsArray[i][j].x * scale + scale + wallWidth / 2 + marginXY/3;
+                curPoint.y = pointsArray[i][j].y * scale + wallWidth / 2 + marginXY/3;
+                middleHeight = i;
+                middleWidth = j;
+            }
+
+    ///PUNKTY BRAMEK///
+    for (let i = 0; i < gatewayArray.length; i++)
+        for (let j = 0; j < gatewayArray[i].length; j++)
+            if ((gatewayArray[i][j].x * scale + wallWidth / 2 <= cord_X + scale/2 && gatewayArray[i][j].y * scale + wallWidth / 2 <= cord_Y + scale/2)
+                && (gatewayArray[i][j].x * scale + wallWidth / 2 >= cord_X - scale/2 && gatewayArray[i][j].y * scale + wallWidth / 2 >= cord_Y - scale/2))
+                    if(((curPoint.x + scale == gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY/3) || (curPoint.x - scale == gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY/3))
+                        && ((curPoint.y - scale*2 < gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY/3) && (curPoint.y + scale*2 > gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY/3))) {
+                        ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
+                        ctx.putImageData(myImgData, 0, 0);
+                        ctx.beginPath();
+                        ctx.moveTo(curPoint.x, curPoint.y);
+                        ctx.lineTo(gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY/3, gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY/3);
+                        ctx.stroke();
+                        ctx.closePath();
+                        myImgData = ctx.getImageData(0, 0, canvasWidthResolution, canvasHeightResolution);
+                        curPoint.x = gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY/3;
+                        curPoint.y = gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY/3;
+                }
+                
 }, false);
