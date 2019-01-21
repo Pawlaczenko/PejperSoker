@@ -10,3 +10,4 @@ function create2dArray(row,column){
     }
     return tab;
 }
+
