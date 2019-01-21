@@ -17,6 +17,8 @@ let middleHeight = Math.ceil(squaresY / 2);
 let marginXY = 15;
 let curPoint;
 let myImgData;
+let posX;
+let posY;
 
 function Board(div_id) {
 
@@ -162,9 +164,12 @@ function setup() {
     ctx.arc(pointsArray[middleHeight][middleWidth].x * scale + scale + wallWidth / 2 + marginXY / 3, pointsArray[middleHeight][middleWidth].y * scale + wallWidth / 2 + marginXY / 3, 15, 0, Math.PI * 2, false);
     ctx.fill();
     ctx.closePath();
-    curPoint = new Point(pointsArray[middleHeight][middleWidth].x, pointsArray[middleHeight][middleWidth].y);
-    curPoint.x = curPoint.x * scale + scale + wallWidth / 2 + marginXY / 3;
-    curPoint.y = curPoint.y * scale + wallWidth / 2 + marginXY / 3;
+    curPoint = pointsArray[middleHeight][middleWidth];
+    posX = curPoint.x * scale + scale + wallWidth / 2 + marginXY / 3;
+    posY = curPoint.y * scale + wallWidth / 2 + marginXY / 3;
+    // curPoint = new Point(pointsArray[middleHeight][middleWidth].x, pointsArray[middleHeight][middleWidth].y);
+    // curPoint.x = curPoint.x * scale + scale + wallWidth / 2 + marginXY / 3;
+    // curPoint.y = curPoint.y * scale + wallWidth / 2 + marginXY / 3;
 }
 setup();
 
@@ -182,7 +187,7 @@ function loadBoardState() {
     ctx.putImageData(myImgData, 0, 0);
     ctx.fillStyle = "black";
     ctx.beginPath();
-    ctx.arc(curPoint.x, curPoint.y, 15, 0, Math.PI * 2, false);
+    ctx.arc(posX, posY, 15, 0, Math.PI * 2, false);
     ctx.fill();
     ctx.closePath();
 }
@@ -191,23 +196,23 @@ function saveBoardState(i,j,bol) {
     if(bol)
     {
         myImgData = ctx.getImageData(0, 0, canvasWidthResolution, canvasHeightResolution);
-        curPoint.x = pointsArray[i][j].x * scale + scale + wallWidth / 2 + marginXY / 3;
-        curPoint.y = pointsArray[i][j].y * scale + wallWidth / 2 + marginXY / 3;
+        curPoint = pointsArray[i][j];
+        posX = curPoint.x * scale + scale + wallWidth / 2 + marginXY / 3;
+        posY = curPoint.y * scale + wallWidth / 2 + marginXY / 3;
         middleHeight = i;
         middleWidth = j;
     }
     else
     {
         myImgData = ctx.getImageData(0, 0, canvasWidthResolution, canvasHeightResolution);
-        curPoint.x = gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY/3;
-        curPoint.y = gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY/3;
+        curPoint = gatewayArray[i][j];
+        posX = (curPoint.x-1) * scale + scale + wallWidth / 2 + marginXY / 3;
+        posY = curPoint.y * scale + wallWidth / 2 + marginXY / 3;
     }
-    
 }
 
 canvas.addEventListener('mousemove', function (evt) {
     var mousePos = getMousePos(canvas, evt);
-    //var message = 'Mouse position: ' + mousePos.x*przelicznik_do_pobiernia_myszki_x + ',' + mousePos.y*przelicznik_do_pobiernia_myszki_y;
     var przelicznik_na_x = canvasWidthResolution / boardWidth;
     var przelicznik_na_y = canvasHeightResolution / boardHeight;
     var cord_X = mousePos.x * przelicznik_na_x;
@@ -232,8 +237,8 @@ canvas.addEventListener('mousemove', function (evt) {
         for (let j = 0; j < gatewayArray[i].length; j++)
             if ((gatewayArray[i][j].x * scale + wallWidth / 2 <= cord_X + scale / 2 && gatewayArray[i][j].y * scale + wallWidth / 2 <= cord_Y + scale / 2)
                 && (gatewayArray[i][j].x * scale + wallWidth / 2 >= cord_X - scale / 2 && gatewayArray[i][j].y * scale + wallWidth / 2 >= cord_Y - scale / 2))
-                if (((curPoint.x + scale == gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3) || (curPoint.x - scale == gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3))
-                    && ((curPoint.y - scale * 2 < gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3) && (curPoint.y + scale * 2 > gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3))) {
+                if (((posX + scale == gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3) || (posX - scale == gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3))
+                    && ((posY - scale * 2 < gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3) && (posY + scale * 2 > gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3))) {
                     loadBoardState();
                     ctx.beginPath();
                     ctx.fillStyle = "blue";
@@ -245,7 +250,6 @@ canvas.addEventListener('mousemove', function (evt) {
 
 canvas.addEventListener('click', function (evt) {
     var mousePos = getMousePos(canvas, evt);
-    //var message = 'Mouse position: ' + mousePos.x*przelicznik_do_pobiernia_myszki_x + ',' + mousePos.y*przelicznik_do_pobiernia_myszki_y;
     var przelicznik_na_x = canvasWidthResolution / boardWidth;
     var przelicznik_na_y = canvasHeightResolution / boardHeight;
     var cord_X = mousePos.x * przelicznik_na_x;
@@ -256,28 +260,29 @@ canvas.addEventListener('click', function (evt) {
         for (let j = 0; j < pointsArray[i].length; j++)
             if ((pointsArray[i][j].x * scale + scale + wallWidth / 2 <= cord_X + scale / 2 && pointsArray[i][j].y * scale + wallWidth / 2 <= cord_Y + scale / 2)
                 && (pointsArray[i][j].x * scale + scale + wallWidth / 2 >= cord_X - scale / 2 && pointsArray[i][j].y * scale + wallWidth / 2 >= cord_Y - scale / 2))
-                if ((i >= middleHeight - 1 && i <= middleHeight + 1) && (j >= middleWidth - 1 && j <= middleWidth + 1)) {
-                    ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
-                    ctx.putImageData(myImgData, 0, 0);
-                    ctx.beginPath();
-                    ctx.moveTo(curPoint.x, curPoint.y);
-                    ctx.lineTo(pointsArray[i][j].x * scale + scale + wallWidth / 2 + marginXY / 3, pointsArray[i][j].y * scale + wallWidth / 2 + marginXY / 3)
-                    ctx.stroke();
-                    ctx.closePath();
-                    saveBoardState(i,j,true);
-                }
+                if ((i >= middleHeight - 1 && i <= middleHeight + 1) && (j >= middleWidth - 1 && j <= middleWidth + 1)) 
+                     {
+                        ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
+                        ctx.putImageData(myImgData, 0, 0);
+                        ctx.beginPath();
+                        ctx.moveTo(posX, posY);
+                        ctx.lineTo(pointsArray[i][j].x * scale + scale + wallWidth / 2 + marginXY / 3, pointsArray[i][j].y * scale + wallWidth / 2 + marginXY / 3)
+                        ctx.stroke();
+                        ctx.closePath();
+                        saveBoardState(i,j,true);
+                    }
 
     ///PUNKTY BRAMEK///
     for (let i = 0; i < gatewayArray.length; i++)
         for (let j = 0; j < gatewayArray[i].length; j++)
             if ((gatewayArray[i][j].x * scale + wallWidth / 2 <= cord_X + scale / 2 && gatewayArray[i][j].y * scale + wallWidth / 2 <= cord_Y + scale / 2)
                 && (gatewayArray[i][j].x * scale + wallWidth / 2 >= cord_X - scale / 2 && gatewayArray[i][j].y * scale + wallWidth / 2 >= cord_Y - scale / 2))
-                if (((curPoint.x + scale == gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3) || (curPoint.x - scale == gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3))
-                    && ((curPoint.y - scale * 2 < gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3) && (curPoint.y + scale * 2 > gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3))) {
+                if (((posX + scale == gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3) || (posX - scale == gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3))
+                    && ((posY - scale * 2 < gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3) && (posY + scale * 2 > gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3))) {
                     ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
                     ctx.putImageData(myImgData, 0, 0);
                     ctx.beginPath();
-                    ctx.moveTo(curPoint.x, curPoint.y);
+                    ctx.moveTo(posX, posY);
                     ctx.lineTo(gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3, gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3);
                     ctx.stroke();
                     ctx.closePath();
