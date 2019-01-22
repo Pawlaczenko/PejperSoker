@@ -20,6 +20,7 @@ let curPoint;
 let myImgData;
 let posX;
 let posY;
+let color = 'blue';
 
 function Board(div_id) {
 
@@ -43,6 +44,7 @@ function Point(x, y) {
             [0, 2, 0],
             [0, 0, 0]
         ];
+    this.wall = false;
 }
 
 function drawLine(x1, y1, x2, y2) {
@@ -116,27 +118,53 @@ function pointsApply() {
     for (let i = 0; i <= squaresY; i++) {
         for (let j = 0; j <= squaresX; j++) {
             pointsArray[i][j] = new Point(j, i);
-            if (i == 0) pointsArray[i][j].moveTable = [[2, 2, 2], [1, 2, 1], [0, 0, 0]];
-            if (j == 0) pointsArray[i][j].moveTable = [[2, 1, 0], [2, 2, 0], [2, 1, 0]];
-            if (i == squaresY) pointsArray[i][j].moveTable = [[0, 0, 0], [1, 2, 1], [2, 2, 2]];
-            if (j == squaresX) pointsArray[i][j].moveTable = [[0, 1, 2], [0, 2, 2], [0, 1, 2]];
+            if (i == 0) 
+            {
+                pointsArray[i][j].moveTable = [[2, 2, 2], [1, 2, 1], [0, 0, 0]];
+                pointsArray[i][j].wall = true;
+            }
+            if (j == 0) 
+            {
+                pointsArray[i][j].moveTable = [[2, 1, 0], [2, 2, 0], [2, 1, 0]];
+                pointsArray[i][j].wall = true;
+            }
+            if (i == squaresY) 
+            {
+                pointsArray[i][j].moveTable = [[0, 0, 0], [1, 2, 1], [2, 2, 2]];
+                pointsArray[i][j].wall = true;
+            }
+            if (j == squaresX) 
+            {
+                pointsArray[i][j].moveTable = [[0, 1, 2], [0, 2, 2], [0, 1, 2]];
+                pointsArray[i][j].wall = true;
+            }
         }
     }
 
     ///ROGI///
     pointsArray[0][0].moveTable = [[2, 2, 2], [2, 2, 1], [2, 1, 0]];
+    pointsArray[0][0].wall = true;
     pointsArray[0][squaresX].moveTable = [[2, 2, 2], [1, 2, 2], [0, 1, 2]];
+    pointsArray[0][squaresX].wall = true;
     pointsArray[squaresY][squaresX].moveTable = [[0, 1, 2], [1, 2, 2], [2, 2, 2]];
+    pointsArray[squaresY][squaresX].wall = true;
     pointsArray[squaresY][0].moveTable = [[2, 1, 0], [2, 2, 1], [2, 2, 2]];
+    pointsArray[squaresY][0].wall = true;
 
     ///BRAMKI///
     var side = ((squaresY - 2) / 2); //odleglosc_rogu_planszy_do_bramki
     pointsArray[side][0].moveTable = [[2, 1, 0], [1, 2, 0], [0, 0, 0]];
+    pointsArray[side][0].wall = true;
     pointsArray[side + 1][0].moveTable = [[0, 0, 0], [0, 2, 0], [0, 0, 0]];
+    pointsArray[side + 1][0].wall = false;
     pointsArray[side + 2][0].moveTable = [[0, 0, 0], [1, 2, 0], [2, 1, 0]];
+    pointsArray[side + 2][0].wall = true;
     pointsArray[side][squaresX].moveTable = [[0, 1, 2], [0, 2, 1], [0, 0, 0]];
+    pointsArray[side][squaresX].wall = true;
     pointsArray[side + 1][squaresX].moveTable = [[0, 0, 0], [0, 2, 0], [0, 0, 0]];
+    pointsArray[side + 1][squaresX].wall = false;
     pointsArray[side + 2][squaresX].moveTable = [[0, 0, 0], [0, 2, 1], [0, 1, 2]];
+    pointsArray[side + 2][squaresX].wall = true;
 
     ///PUNKTY BRAMEK///
     gatewayArray[0][0] = new Point(0, side);
@@ -165,6 +193,7 @@ function setup() {
     ctx.arc(pointsArray[middleHeight][middleWidth].x * scale + scale + wallWidth / 2 + marginXY / 3, pointsArray[middleHeight][middleWidth].y * scale + wallWidth / 2 + marginXY / 3, 15, 0, Math.PI * 2, false);
     ctx.fill();
     ctx.closePath();
+    pointsArray[middleHeight][middleWidth].wall = true;
     curPoint = pointsArray[middleHeight][middleWidth];
     posX = curPoint.x * scale + scale + wallWidth / 2 + marginXY / 3;
     posY = curPoint.y * scale + wallWidth / 2 + marginXY / 3;
@@ -209,7 +238,20 @@ function saveBoardState(i, j, bol) {
     }
 }
 
-canvas.addEventListener('mousemove', function (evt) {
+function changePlayer() {
+    if(color == 'blue')
+        color = 'red';
+    else color = 'blue';
+}
+
+function endGame(i) {
+    log("Player "+i+" WIN");
+    canvas.removeEventListener('mousemove', mouseMoveEvent);
+    canvas.removeEventListener('click', clickEvent);
+}
+
+function mouseMoveEvent(evt)
+{
     var mousePos = getMousePos(canvas, evt);
     var przelicznik_na_x = canvasWidthResolution / boardWidth;
     var przelicznik_na_y = canvasHeightResolution / boardHeight;
@@ -225,7 +267,7 @@ canvas.addEventListener('mousemove', function (evt) {
                     if (curPoint.moveTable[i - middleHeight + 1][j - middleWidth + 1] == 0) {
                         loadBoardState();
                         ctx.beginPath();
-                        ctx.fillStyle = "blue";
+                        ctx.fillStyle = color;
                         ctx.arc(pointsArray[i][j].x * scale + scale + wallWidth / 2 + marginXY / 3, pointsArray[i][j].y * scale + wallWidth / 2 + marginXY / 3, 15, 0, Math.PI * 2, false);
                         ctx.fill();
                         ctx.closePath();
@@ -244,15 +286,15 @@ canvas.addEventListener('mousemove', function (evt) {
                     if ((curPoint.moveTable[j + 1 - (middleHeight - 3)][value] == 0)) {
                         loadBoardState();
                         ctx.beginPath();
-                        ctx.fillStyle = "blue";
+                        ctx.fillStyle = color;
                         ctx.arc(gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3, gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3, 15, 0, Math.PI * 2, false);
                         ctx.fill();
                         ctx.closePath();
                     }
                 }
-}, false);
+}
 
-canvas.addEventListener('click', function (evt) {
+function clickEvent(evt) {
     var mousePos = getMousePos(canvas, evt);
     var przelicznik_na_x = canvasWidthResolution / boardWidth;
     var przelicznik_na_y = canvasHeightResolution / boardHeight;
@@ -275,6 +317,9 @@ canvas.addEventListener('click', function (evt) {
                         ctx.closePath();
                         saveBoardState(i, j, true);
                         loadBoardState();
+                        if(!pointsArray[i][j].wall)
+                            changePlayer();
+                        pointsArray[i][j].wall = true;
                     }
     ///PUNKTY BRAMEK///
     for (let i = 0; i < gatewayArray.length; i++)
@@ -296,7 +341,11 @@ canvas.addEventListener('click', function (evt) {
                         ctx.closePath();
                         saveBoardState(i, j, false);
                         loadBoardState();
+                        endGame(i+1);
                     }
                 }
+}
 
-}, false);
+canvas.addEventListener('mousemove', mouseMoveEvent, false);
+
+canvas.addEventListener('click', clickEvent , false);
