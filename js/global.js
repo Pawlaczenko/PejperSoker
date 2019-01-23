@@ -1,6 +1,21 @@
-function log(x) {
+function logs() {
+
     if (true)
-        console.log(x);
+    {
+        let arg = '';
+        for (var i=0; i<arguments.length; i++) arg += arguments[i]+'--';
+        console.log(arg);
+    }
+        
+}
+
+function log(arg) {
+
+    if (true)
+    {
+        console.log(arg);
+    }
+        
 }
 
 function create2dArray(row,column){
@@ -10,3 +25,4 @@ function create2dArray(row,column){
     }
     return tab;
 }
+
