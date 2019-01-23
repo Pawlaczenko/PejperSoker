@@ -118,23 +118,19 @@ function pointsApply() {
     for (let i = 0; i <= squaresY; i++) {
         for (let j = 0; j <= squaresX; j++) {
             pointsArray[i][j] = new Point(j, i);
-            if (i == 0) 
-            {
+            if (i == 0) {
                 pointsArray[i][j].moveTable = [[2, 2, 2], [1, 2, 1], [0, 0, 0]];
                 pointsArray[i][j].wall = true;
             }
-            if (j == 0) 
-            {
+            if (j == 0) {
                 pointsArray[i][j].moveTable = [[2, 1, 0], [2, 2, 0], [2, 1, 0]];
                 pointsArray[i][j].wall = true;
             }
-            if (i == squaresY) 
-            {
+            if (i == squaresY) {
                 pointsArray[i][j].moveTable = [[0, 0, 0], [1, 2, 1], [2, 2, 2]];
                 pointsArray[i][j].wall = true;
             }
-            if (j == squaresX) 
-            {
+            if (j == squaresX) {
                 pointsArray[i][j].moveTable = [[0, 1, 2], [0, 2, 2], [0, 1, 2]];
                 pointsArray[i][j].wall = true;
             }
@@ -239,19 +235,18 @@ function saveBoardState(i, j, bol) {
 }
 
 function changePlayer() {
-    if(color == 'blue')
+    if (color == 'blue')
         color = 'red';
     else color = 'blue';
 }
 
 function endGame(i) {
-    log("Player "+i+" WIN");
+    log("Player " + i + " WIN");
     canvas.removeEventListener('mousemove', mouseMoveEvent);
     canvas.removeEventListener('click', clickEvent);
 }
 
-function mouseMoveEvent(evt)
-{
+function mouseMoveEvent(evt) {
     var mousePos = getMousePos(canvas, evt);
     var przelicznik_na_x = canvasWidthResolution / boardWidth;
     var przelicznik_na_y = canvasHeightResolution / boardHeight;
@@ -317,7 +312,7 @@ function clickEvent(evt) {
                         ctx.closePath();
                         saveBoardState(i, j, true);
                         loadBoardState();
-                        if(!pointsArray[i][j].wall)
+                        if (!pointsArray[i][j].wall)
                             changePlayer();
                         pointsArray[i][j].wall = true;
                     }
@@ -341,11 +336,11 @@ function clickEvent(evt) {
                         ctx.closePath();
                         saveBoardState(i, j, false);
                         loadBoardState();
-                        endGame(i+1);
+                        endGame(i + 1);
                     }
                 }
 }
 
 canvas.addEventListener('mousemove', mouseMoveEvent, false);
 
-canvas.addEventListener('click', clickEvent , false);
+canvas.addEventListener('click', clickEvent, false);
