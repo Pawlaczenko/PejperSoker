@@ -56,7 +56,7 @@ function drawGate(x1, y1, x2, y2) {
     ctx.stroke();
     ctx.closePath();
 }
-
+// cos dodalem
 function drawField() {
     for (let i = 0; i <= squaresY; i++) {
         for (let j = 0; j <= squaresX; j++) {
