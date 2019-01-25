@@ -419,6 +419,7 @@ function clickEvent(evt) {
                     if (curPoint.moveTable[i - middleHeight + 1][j - middleWidth + 1] == 0) {
                         ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
                         ctx.putImageData(myImgData, 0, 0);
+                        ctx.strokeStyle = "blue";
                         ctx.beginPath();
                         ctx.moveTo(posX, posY);
                         ctx.lineTo(pointsArray[i][j].x * scale + scale + wallWidth / 2 + marginXY / 3, pointsArray[i][j].y * scale + wallWidth / 2 + marginXY / 3)
@@ -444,6 +445,7 @@ function clickEvent(evt) {
                     if ((curPoint.moveTable[j + 1 - (middleHeight - 3)][value] == 0)) {
                         ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
                         ctx.putImageData(myImgData, 0, 0);
+                        ctx.strokeStyle = "blue";
                         ctx.beginPath();
                         ctx.moveTo(posX, posY);
                         ctx.lineTo(gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3, gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3);
@@ -462,6 +464,7 @@ function clickEvent(evt) {
         botTry(newGhost, tmpPoint)
         log(bestGhost);
         for (i = 0; i < bestGhost.pointsTab.length; i++) {
+            ctx.strokeStyle = "red";
             ctx.beginPath();
             ctx.moveTo(posX, posY);
             ctx.lineTo(bestGhost.pointsTab[i].x * scale + scale + wallWidth / 2 + marginXY / 3, bestGhost.pointsTab[i].y * scale + wallWidth / 2 + marginXY / 3)
