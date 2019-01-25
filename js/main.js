@@ -298,8 +298,10 @@ function botTry(nowGhost, tmpPoint) {
                 if (j == - 1)
                     break;
                 if (j == pointsArray[i].length) {
-                    log("Bramka");
-                    break;
+                    nowGhost.pointsTab.push(new Point(gatewayArray[1][1].x - 1, gatewayArray[1][1].y))
+                    nowGhost.gateDistance = 0;
+                    bestGhost = JSON.parse(JSON.stringify(nowGhost));
+                    return;
                 }
                 nowGhost.pointsTab.push(new Point(pointsArray[i][j].x, pointsArray[i][j].y))
                 nowGhost.gateDistance = Math.abs(gatePoint.y - pointsArray[i][j].y) + (gatePoint.x - pointsArray[i][j].x);
@@ -317,43 +319,43 @@ function botTry(nowGhost, tmpPoint) {
                 pointsArray[i][j].ghostWall = false;
                 pointsArray[tmpPoint.y][tmpPoint.x].ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 0;
                 pointsArray[i][j].ghostTable[2 - (i - tmpPoint.y + 1)][2 - (j - tmpPoint.x + 1)] = 0;
+                nowGhost.pointsTab.pop();
+
             }
 
 
-            // for (let i = tmpPoint.y - 1; i <= tmpPoint.y + 1; i++)
-            // for (let j = tmpPoint.x - 1; j <= tmpPoint.x + 1; j++)
-            //     if (tmpPoint.ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] == 0) {
-            //         if (j == - 1)
-            //             break;
-            //         if (j == pointsArray[i].length) {
-            //             log("Bramka");
-            //             break;
-            //         }
-            //         nowGhost.pointsTab.push(new Point(pointsArray[i][j].x, pointsArray[i][j].y))
-            //         nowGhost.gateDistance = Math.abs(gatePoint.y - pointsArray[i][j].y) + (gatePoint.x - pointsArray[i][j].x);
-            //         pointsArray[i][j].ghostWall = true;
-            //         pointsArray[tmpPoint.y][tmpPoint.x].ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 1;
-            //         pointsArray[i][j].ghostTable[2 - (i - tmpPoint.y + 1)][2 - (j - tmpPoint.x + 1)] = 1;
-            //         if (pointsArray[i][j].wall) {
-            //             let newPoint = JSON.parse(JSON.stringify(pointsArray[i][j]));
-            //             let newGhost = JSON.parse(JSON.stringify(nowGhost));
-            //             botTry(newGhost, newPoint)
-            //         }
-            //         else
-            //             if (nowGhost.gateDistance < bestGhost.gateDistance)
-            //                 bestGhost = JSON.parse(JSON.stringify(nowGhost));
-            //         pointsArray[i][j].ghostWall = false;
-            //         pointsArray[tmpPoint.y][tmpPoint.x].ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 0;
-            //         pointsArray[i][j].ghostTable[2 - (i - tmpPoint.y + 1)][2 - (j - tmpPoint.x + 1)] = 0;
-            //     }
+    // for (let i = tmpPoint.y - 1; i <= tmpPoint.y + 1; i++)
+    // for (let j = tmpPoint.x - 1; j <= tmpPoint.x + 1; j++)
+    //     if (tmpPoint.ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] == 0) {
+    //         if (j == - 1)
+    //             break;
+    //         if (j == pointsArray[i].length) {
+    //             log("Bramka");
+    //             break;
+    //         }
+    //         nowGhost.pointsTab.push(new Point(pointsArray[i][j].x, pointsArray[i][j].y))
+    //         nowGhost.gateDistance = Math.abs(gatePoint.y - pointsArray[i][j].y) + (gatePoint.x - pointsArray[i][j].x);
+    //         pointsArray[i][j].ghostWall = true;
+    //         pointsArray[tmpPoint.y][tmpPoint.x].ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 1;
+    //         pointsArray[i][j].ghostTable[2 - (i - tmpPoint.y + 1)][2 - (j - tmpPoint.x + 1)] = 1;
+    //         if (pointsArray[i][j].wall) {
+    //             let newPoint = JSON.parse(JSON.stringify(pointsArray[i][j]));
+    //             let newGhost = JSON.parse(JSON.stringify(nowGhost));
+    //             botTry(newGhost, newPoint)
+    //         }
+    //         else
+    //             if (nowGhost.gateDistance < bestGhost.gateDistance)
+    //                 bestGhost = JSON.parse(JSON.stringify(nowGhost));
+    //         pointsArray[i][j].ghostWall = false;
+    //         pointsArray[tmpPoint.y][tmpPoint.x].ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 0;
+    //         pointsArray[i][j].ghostTable[2 - (i - tmpPoint.y + 1)][2 - (j - tmpPoint.x + 1)] = 0;
+    //     }
 
     // ctx.beginPath();
     // ctx.moveTo(posX, posY);
     // ctx.lineTo(pointsArray[i][j].x * scale + scale + wallWidth / 2 + marginXY / 3, pointsArray[i][j].y * scale + wallWidth / 2 + marginXY / 3)
     // ctx.stroke();
     // ctx.closePath();
-    // if (pointsArray[i][j].wall)
-    //     botTry();
 
 }
 
@@ -454,11 +456,23 @@ function clickEvent(evt) {
                     }
                 }
 
-    if ((!playerTurn || playerTurn) && !wallmove) {
+    if (!wallmove) {
         let newGhost = new ghostMoves();
         tmpPoint = JSON.parse(JSON.stringify(curPoint));
         botTry(newGhost, tmpPoint)
-        //Dalszy KOD
+        log(bestGhost);
+        for (i = 0; i < bestGhost.pointsTab.length; i++) {
+            ctx.beginPath();
+            ctx.moveTo(posX, posY);
+            ctx.lineTo(bestGhost.pointsTab[i].x * scale + scale + wallWidth / 2 + marginXY / 3, bestGhost.pointsTab[i].y * scale + wallWidth / 2 + marginXY / 3)
+            ctx.stroke();
+            ctx.closePath();
+            saveBoardState(bestGhost.pointsTab[i].y, bestGhost.pointsTab[i].x, true);
+            loadBoardState();
+            pointsArray[bestGhost.pointsTab[i].y][bestGhost.pointsTab[i].x].wall = true;
+            pointsArray[bestGhost.pointsTab[i].y][bestGhost.pointsTab[i].x].ghostWall = true;
+        }
+        bestGhost.gateDistance = 100;
     }
 }
 
