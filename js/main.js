@@ -24,6 +24,8 @@ let color = 'blue';
 let playerTurn = true;
 let gatePoint;
 let bestGhost;
+let startDrawGhost;
+let counter = 0;
 
 function Board(div_id) {
     this.squaresX = squaresX;
@@ -291,6 +293,27 @@ function endGame(i) {
     canvas.removeEventListener('click', clickEvent);
 }
 
+function ghostDraw(i) {
+    ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
+    ctx.putImageData(myImgData, 0, 0);
+    ctx.strokeStyle = "red";
+    ctx.beginPath();
+    ctx.moveTo(posX, posY);
+    ctx.lineTo(bestGhost.pointsTab[counter].x * scale + scale + wallWidth / 2 + marginXY / 3, bestGhost.pointsTab[counter].y * scale + wallWidth / 2 + marginXY / 3)
+    ctx.stroke();
+    ctx.closePath();
+    saveBoardState(bestGhost.pointsTab[counter].y, bestGhost.pointsTab[counter].x, true);
+    loadBoardState();
+    pointsArray[bestGhost.pointsTab[counter].y][bestGhost.pointsTab[counter].x].wall = true;
+    pointsArray[bestGhost.pointsTab[counter].y][bestGhost.pointsTab[counter].x].ghostWall = true;
+    counter++;
+    if (counter == bestGhost.pointsTab.length) {
+        counter = 0;
+        clearInterval(startDrawGhost);
+    }
+
+}
+
 function botTry(nowGhost, tmpPoint) {
     for (let i = tmpPoint.y - 1; i <= tmpPoint.y + 1; i++)
         for (let j = tmpPoint.x - 1; j <= tmpPoint.x + 1; j++)
@@ -463,18 +486,7 @@ function clickEvent(evt) {
         tmpPoint = JSON.parse(JSON.stringify(curPoint));
         botTry(newGhost, tmpPoint)
         log(bestGhost);
-        for (i = 0; i < bestGhost.pointsTab.length; i++) {
-            ctx.strokeStyle = "red";
-            ctx.beginPath();
-            ctx.moveTo(posX, posY);
-            ctx.lineTo(bestGhost.pointsTab[i].x * scale + scale + wallWidth / 2 + marginXY / 3, bestGhost.pointsTab[i].y * scale + wallWidth / 2 + marginXY / 3)
-            ctx.stroke();
-            ctx.closePath();
-            saveBoardState(bestGhost.pointsTab[i].y, bestGhost.pointsTab[i].x, true);
-            loadBoardState();
-            pointsArray[bestGhost.pointsTab[i].y][bestGhost.pointsTab[i].x].wall = true;
-            pointsArray[bestGhost.pointsTab[i].y][bestGhost.pointsTab[i].x].ghostWall = true;
-        }
+        startDrawGhost = setInterval(function () { ghostDraw(); }, 400);
         bestGhost.gateDistance = 100;
     }
 }
