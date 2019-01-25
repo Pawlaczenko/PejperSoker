@@ -21,10 +21,11 @@ let myImgData;
 let posX;
 let posY;
 let color = 'blue';
+let playerTurn = true;
+let gatePoint;
+let bestGhost;
 
 function Board(div_id) {
-
-
     this.squaresX = squaresX;
     this.squaresY = squaresY;
 
@@ -44,7 +45,19 @@ function Point(x, y) {
             [0, 2, 0],
             [0, 0, 0]
         ];
+    this.ghostTable =
+        [
+            [0, 0, 0],
+            [0, 2, 0],
+            [0, 0, 0]
+        ];
     this.wall = false;
+    this.ghostWall = false;
+}
+
+function ghostMoves() {
+    this.pointsTab = [];
+    this.gateDistance = 100;
 }
 
 function drawLine(x1, y1, x2, y2) {
@@ -120,18 +133,22 @@ function pointsApply() {
             pointsArray[i][j] = new Point(j, i);
             if (i == 0) {
                 pointsArray[i][j].moveTable = [[2, 2, 2], [1, 2, 1], [0, 0, 0]];
+                pointsArray[i][j].ghostTable = [[2, 2, 2], [1, 2, 1], [0, 0, 0]];
                 pointsArray[i][j].wall = true;
             }
             if (j == 0) {
                 pointsArray[i][j].moveTable = [[2, 1, 0], [2, 2, 0], [2, 1, 0]];
+                pointsArray[i][j].ghostTable = [[2, 1, 0], [2, 2, 0], [2, 1, 0]];
                 pointsArray[i][j].wall = true;
             }
             if (i == squaresY) {
                 pointsArray[i][j].moveTable = [[0, 0, 0], [1, 2, 1], [2, 2, 2]];
+                pointsArray[i][j].ghostTable = [[0, 0, 0], [1, 2, 1], [2, 2, 2]];
                 pointsArray[i][j].wall = true;
             }
             if (j == squaresX) {
                 pointsArray[i][j].moveTable = [[0, 1, 2], [0, 2, 2], [0, 1, 2]];
+                pointsArray[i][j].ghostTable = [[0, 1, 2], [0, 2, 2], [0, 1, 2]];
                 pointsArray[i][j].wall = true;
             }
         }
@@ -139,28 +156,44 @@ function pointsApply() {
 
     ///ROGI///
     pointsArray[0][0].moveTable = [[2, 2, 2], [2, 2, 1], [2, 1, 0]];
+    pointsArray[0][0].ghostTable = [[2, 2, 2], [2, 2, 1], [2, 1, 0]];
     pointsArray[0][0].wall = true;
     pointsArray[0][squaresX].moveTable = [[2, 2, 2], [1, 2, 2], [0, 1, 2]];
+    pointsArray[0][squaresX].ghostTable = [[2, 2, 2], [1, 2, 2], [0, 1, 2]];
     pointsArray[0][squaresX].wall = true;
     pointsArray[squaresY][squaresX].moveTable = [[0, 1, 2], [1, 2, 2], [2, 2, 2]];
+    pointsArray[squaresY][squaresX].ghostTable = [[0, 1, 2], [1, 2, 2], [2, 2, 2]];
     pointsArray[squaresY][squaresX].wall = true;
     pointsArray[squaresY][0].moveTable = [[2, 1, 0], [2, 2, 1], [2, 2, 2]];
+    pointsArray[squaresY][0].ghostTable = [[2, 1, 0], [2, 2, 1], [2, 2, 2]];
     pointsArray[squaresY][0].wall = true;
 
     ///BRAMKI///
     var side = ((squaresY - 2) / 2); //odleglosc_rogu_planszy_do_bramki
     pointsArray[side][0].moveTable = [[2, 1, 0], [1, 2, 0], [0, 0, 0]];
+    pointsArray[side][0].ghostTable = [[2, 1, 0], [1, 2, 0], [0, 0, 0]];
     pointsArray[side][0].wall = true;
     pointsArray[side + 1][0].moveTable = [[0, 0, 0], [0, 2, 0], [0, 0, 0]];
+    pointsArray[side + 1][0].ghostTable = [[0, 0, 0], [0, 2, 0], [0, 0, 0]];
     pointsArray[side + 1][0].wall = false;
     pointsArray[side + 2][0].moveTable = [[0, 0, 0], [1, 2, 0], [2, 1, 0]];
+    pointsArray[side + 2][0].ghostTable = [[0, 0, 0], [1, 2, 0], [2, 1, 0]];
     pointsArray[side + 2][0].wall = true;
     pointsArray[side][squaresX].moveTable = [[0, 1, 2], [0, 2, 1], [0, 0, 0]];
+    pointsArray[side][squaresX].ghostTable = [[0, 1, 2], [0, 2, 1], [0, 0, 0]];
     pointsArray[side][squaresX].wall = true;
     pointsArray[side + 1][squaresX].moveTable = [[0, 0, 0], [0, 2, 0], [0, 0, 0]];
+    pointsArray[side + 1][squaresX].ghostTable = [[0, 0, 0], [0, 2, 0], [0, 0, 0]];
     pointsArray[side + 1][squaresX].wall = false;
     pointsArray[side + 2][squaresX].moveTable = [[0, 0, 0], [0, 2, 1], [0, 1, 2]];
+    pointsArray[side + 2][squaresX].ghostTable = [[0, 0, 0], [0, 2, 1], [0, 1, 2]];
     pointsArray[side + 2][squaresX].wall = true;
+
+    for (let i = 0; i <= squaresY; i++) {
+        for (let j = 0; j <= squaresX; j++) {
+            pointsArray[i][j].ghostWall = pointsArray[i][j].wall;
+        }
+    }
 
     ///PUNKTY BRAMEK///
     gatewayArray[0][0] = new Point(0, side);
@@ -174,6 +207,9 @@ function pointsApply() {
 function setup() {
     var myboard = new Board("board");
     myboard.draw();
+
+    bestGhost = new ghostMoves();
+    gatePoint = new Point(squaresX + 1, squaresY / 2);
 
     ///NAKŁADANIE PUNKTÓW///
     pointsApply();
@@ -190,9 +226,11 @@ function setup() {
     ctx.fill();
     ctx.closePath();
     pointsArray[middleHeight][middleWidth].wall = true;
+    pointsArray[middleHeight][middleWidth].ghostWall = true;
     curPoint = pointsArray[middleHeight][middleWidth];
     posX = curPoint.x * scale + scale + wallWidth / 2 + marginXY / 3;
     posY = curPoint.y * scale + wallWidth / 2 + marginXY / 3;
+    bestGhost = new ghostMoves();
 }
 setup();
 
@@ -219,7 +257,9 @@ function saveBoardState(i, j, bol) {
     if (bol) {
         myImgData = ctx.getImageData(0, 0, canvasWidthResolution, canvasHeightResolution);
         curPoint.moveTable[i - middleHeight + 1][j - middleWidth + 1] = 1;
+        curPoint.ghostTable[i - middleHeight + 1][j - middleWidth + 1] = 1;
         pointsArray[i][j].moveTable[2 - (i - middleHeight + 1)][2 - (j - middleWidth + 1)] = 1;
+        pointsArray[i][j].ghostTable[2 - (i - middleHeight + 1)][2 - (j - middleWidth + 1)] = 1;
         curPoint = pointsArray[i][j];
         posX = curPoint.x * scale + scale + wallWidth / 2 + marginXY / 3;
         posY = curPoint.y * scale + wallWidth / 2 + marginXY / 3;
@@ -235,15 +275,86 @@ function saveBoardState(i, j, bol) {
 }
 
 function changePlayer() {
-    if (color == 'blue')
+    if (color == 'blue') {
         color = 'red';
-    else color = 'blue';
+        playerTurn = false;
+    }
+    else {
+        color = 'blue';
+        playerTurn = true;
+    }
 }
 
 function endGame(i) {
     log("Player " + i + " WIN");
     canvas.removeEventListener('mousemove', mouseMoveEvent);
     canvas.removeEventListener('click', clickEvent);
+}
+
+function botTry(nowGhost, tmpPoint) {
+    for (let i = tmpPoint.y - 1; i <= tmpPoint.y + 1; i++)
+        for (let j = tmpPoint.x - 1; j <= tmpPoint.x + 1; j++)
+            if (tmpPoint.ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] == 0) {
+                if (j == - 1)
+                    break;
+                if (j == pointsArray[i].length) {
+                    log("Bramka");
+                    break;
+                }
+                nowGhost.pointsTab.push(new Point(pointsArray[i][j].x, pointsArray[i][j].y))
+                nowGhost.gateDistance = Math.abs(gatePoint.y - pointsArray[i][j].y) + (gatePoint.x - pointsArray[i][j].x);
+                pointsArray[i][j].ghostWall = true;
+                pointsArray[tmpPoint.y][tmpPoint.x].ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 1;
+                pointsArray[i][j].ghostTable[2 - (i - tmpPoint.y + 1)][2 - (j - tmpPoint.x + 1)] = 1;
+                if (pointsArray[i][j].wall) {
+                    let newPoint = JSON.parse(JSON.stringify(pointsArray[i][j]));
+                    let newGhost = JSON.parse(JSON.stringify(nowGhost));
+                    botTry(newGhost, newPoint)
+                }
+                else
+                    if (nowGhost.gateDistance < bestGhost.gateDistance)
+                        bestGhost = JSON.parse(JSON.stringify(nowGhost));
+                pointsArray[i][j].ghostWall = false;
+                pointsArray[tmpPoint.y][tmpPoint.x].ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 0;
+                pointsArray[i][j].ghostTable[2 - (i - tmpPoint.y + 1)][2 - (j - tmpPoint.x + 1)] = 0;
+            }
+
+
+            // for (let i = tmpPoint.y - 1; i <= tmpPoint.y + 1; i++)
+            // for (let j = tmpPoint.x - 1; j <= tmpPoint.x + 1; j++)
+            //     if (tmpPoint.ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] == 0) {
+            //         if (j == - 1)
+            //             break;
+            //         if (j == pointsArray[i].length) {
+            //             log("Bramka");
+            //             break;
+            //         }
+            //         nowGhost.pointsTab.push(new Point(pointsArray[i][j].x, pointsArray[i][j].y))
+            //         nowGhost.gateDistance = Math.abs(gatePoint.y - pointsArray[i][j].y) + (gatePoint.x - pointsArray[i][j].x);
+            //         pointsArray[i][j].ghostWall = true;
+            //         pointsArray[tmpPoint.y][tmpPoint.x].ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 1;
+            //         pointsArray[i][j].ghostTable[2 - (i - tmpPoint.y + 1)][2 - (j - tmpPoint.x + 1)] = 1;
+            //         if (pointsArray[i][j].wall) {
+            //             let newPoint = JSON.parse(JSON.stringify(pointsArray[i][j]));
+            //             let newGhost = JSON.parse(JSON.stringify(nowGhost));
+            //             botTry(newGhost, newPoint)
+            //         }
+            //         else
+            //             if (nowGhost.gateDistance < bestGhost.gateDistance)
+            //                 bestGhost = JSON.parse(JSON.stringify(nowGhost));
+            //         pointsArray[i][j].ghostWall = false;
+            //         pointsArray[tmpPoint.y][tmpPoint.x].ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 0;
+            //         pointsArray[i][j].ghostTable[2 - (i - tmpPoint.y + 1)][2 - (j - tmpPoint.x + 1)] = 0;
+            //     }
+
+    // ctx.beginPath();
+    // ctx.moveTo(posX, posY);
+    // ctx.lineTo(pointsArray[i][j].x * scale + scale + wallWidth / 2 + marginXY / 3, pointsArray[i][j].y * scale + wallWidth / 2 + marginXY / 3)
+    // ctx.stroke();
+    // ctx.closePath();
+    // if (pointsArray[i][j].wall)
+    //     botTry();
+
 }
 
 function mouseMoveEvent(evt) {
@@ -295,6 +406,7 @@ function clickEvent(evt) {
     var przelicznik_na_y = canvasHeightResolution / boardHeight;
     var cord_X = mousePos.x * przelicznik_na_x;
     var cord_Y = mousePos.y * przelicznik_na_y;
+    let wallmove = false;
 
     ///PUNKTY MAPY///
     for (let i = 0; i < pointsArray.length; i++)
@@ -312,9 +424,10 @@ function clickEvent(evt) {
                         ctx.closePath();
                         saveBoardState(i, j, true);
                         loadBoardState();
-                        if (!pointsArray[i][j].wall)
-                            changePlayer();
+                        if (pointsArray[i][j].wall)
+                            wallmove = true;
                         pointsArray[i][j].wall = true;
+                        pointsArray[i][j].ghostWall = true;
                     }
     ///PUNKTY BRAMEK///
     for (let i = 0; i < gatewayArray.length; i++)
@@ -337,8 +450,16 @@ function clickEvent(evt) {
                         saveBoardState(i, j, false);
                         loadBoardState();
                         endGame(i + 1);
+                        return;
                     }
                 }
+
+    if ((!playerTurn || playerTurn) && !wallmove) {
+        let newGhost = new ghostMoves();
+        tmpPoint = JSON.parse(JSON.stringify(curPoint));
+        botTry(newGhost, tmpPoint)
+        //Dalszy KOD
+    }
 }
 
 canvas.addEventListener('mousemove', mouseMoveEvent, false);
