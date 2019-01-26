@@ -327,7 +327,7 @@ function botTry(nowGhost, tmpPoint) {
                     return;
                 }
                 nowGhost.pointsTab.push(new Point(pointsArray[i][j].x, pointsArray[i][j].y))
-                nowGhost.gateDistance = Math.abs(gatePoint.y - pointsArray[i][j].y) + (gatePoint.x - pointsArray[i][j].x);
+                nowGhost.gateDistance = Math.abs(gatePoint.y - pointsArray[i][j].y-1) + (gatePoint.x - pointsArray[i][j].x);
                 pointsArray[i][j].ghostWall = true;
                 pointsArray[tmpPoint.y][tmpPoint.x].ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 1;
                 pointsArray[i][j].ghostTable[2 - (i - tmpPoint.y + 1)][2 - (j - tmpPoint.x + 1)] = 1;
@@ -438,23 +438,36 @@ function clickEvent(evt) {
         for (let j = 0; j < pointsArray[i].length; j++)
             if ((pointsArray[i][j].x * scale + scale + wallWidth / 2 <= cord_X + scale / 2 && pointsArray[i][j].y * scale + wallWidth / 2 <= cord_Y + scale / 2)
                 && (pointsArray[i][j].x * scale + scale + wallWidth / 2 >= cord_X - scale / 2 && pointsArray[i][j].y * scale + wallWidth / 2 >= cord_Y - scale / 2))
-                if ((i >= middleHeight - 1 && i <= middleHeight + 1) && (j >= middleWidth - 1 && j <= middleWidth + 1))
-                    if (curPoint.moveTable[i - middleHeight + 1][j - middleWidth + 1] == 0) {
-                        ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
-                        ctx.putImageData(myImgData, 0, 0);
-                        ctx.strokeStyle = "blue";
-                        ctx.beginPath();
-                        ctx.moveTo(posX, posY);
-                        ctx.lineTo(pointsArray[i][j].x * scale + scale + wallWidth / 2 + marginXY / 3, pointsArray[i][j].y * scale + wallWidth / 2 + marginXY / 3)
-                        ctx.stroke();
-                        ctx.closePath();
-                        saveBoardState(i, j, true);
-                        loadBoardState();
-                        if (pointsArray[i][j].wall)
-                            wallmove = true;
-                        pointsArray[i][j].wall = true;
-                        pointsArray[i][j].ghostWall = true;
+                {
+                    if ((i >= middleHeight - 1 && i <= middleHeight + 1) && (j >= middleWidth - 1 && j <= middleWidth + 1))
+                    {
+                        if (curPoint.moveTable[i - middleHeight + 1][j - middleWidth + 1] == 0) {
+                            ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
+                            ctx.putImageData(myImgData, 0, 0);
+                            ctx.strokeStyle = "blue";
+                            ctx.beginPath();
+                            ctx.moveTo(posX, posY);
+                            ctx.lineTo(pointsArray[i][j].x * scale + scale + wallWidth / 2 + marginXY / 3, pointsArray[i][j].y * scale + wallWidth / 2 + marginXY / 3)
+                            ctx.stroke();
+                            ctx.closePath();
+                            saveBoardState(i, j, true);
+                            loadBoardState();
+                            if (pointsArray[i][j].wall)
+                                wallmove = true;
+                            pointsArray[i][j].wall = true;
+                            pointsArray[i][j].ghostWall = true;
+                        }
+                        if (!wallmove) {
+                            let newGhost = new ghostMoves();
+                            tmpPoint = JSON.parse(JSON.stringify(curPoint));
+                            botTry(newGhost, tmpPoint)
+                            log(bestGhost);
+                            startDrawGhost = setInterval(function () { ghostDraw(); }, 400);
+                            bestGhost.gateDistance = 100;
+                        }
                     }
+                }
+
     ///PUNKTY BRAMEK///
     for (let i = 0; i < gatewayArray.length; i++)
         for (let j = 0; j < gatewayArray[i].length; j++)
@@ -481,14 +494,7 @@ function clickEvent(evt) {
                     }
                 }
 
-    if (!wallmove) {
-        let newGhost = new ghostMoves();
-        tmpPoint = JSON.parse(JSON.stringify(curPoint));
-        botTry(newGhost, tmpPoint)
-        log(bestGhost);
-        startDrawGhost = setInterval(function () { ghostDraw(); }, 400);
-        bestGhost.gateDistance = 100;
-    }
+
 }
 
 canvas.addEventListener('mousemove', mouseMoveEvent, false);
