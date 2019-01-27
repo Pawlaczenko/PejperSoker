@@ -22,7 +22,7 @@ let posX;
 let posY;
 let color = 'blue';
 let playerTurn = true;
-let gatePoint;
+let enemyGatePoint;
 let bestGhost;
 let startDrawGhost;
 let counter = 0;
@@ -59,7 +59,8 @@ function Point(x, y) {
 
 function ghostMoves() {
     this.pointsTab = [];
-    this.gateDistance = 100;
+    this.enemyGateX = 100;
+    this.enemyGateY = 100;
 }
 
 function drawLine(x1, y1, x2, y2) {
@@ -211,7 +212,7 @@ function setup() {
     myboard.draw();
 
     bestGhost = new ghostMoves();
-    gatePoint = new Point(squaresX + 1, squaresY / 2);
+    enemyGatePoint = new Point(squaresX + 1, squaresY / 2);
 
     ///NAKŁADANIE PUNKTÓW///
     pointsApply();
@@ -232,7 +233,6 @@ function setup() {
     curPoint = pointsArray[middleHeight][middleWidth];
     posX = curPoint.x * scale + scale + wallWidth / 2 + marginXY / 3;
     posY = curPoint.y * scale + wallWidth / 2 + marginXY / 3;
-    bestGhost = new ghostMoves();
 }
 setup();
 
@@ -322,12 +322,13 @@ function botTry(nowGhost, tmpPoint) {
                     break;
                 if (j == pointsArray[i].length) {
                     nowGhost.pointsTab.push(new Point(gatewayArray[1][1].x - 1, gatewayArray[1][1].y))
-                    nowGhost.gateDistance = 0;
+                    nowGhost.enemyGateX = 0;
                     bestGhost = JSON.parse(JSON.stringify(nowGhost));
                     return;
                 }
                 nowGhost.pointsTab.push(new Point(pointsArray[i][j].x, pointsArray[i][j].y))
-                nowGhost.gateDistance = Math.abs(gatePoint.y - pointsArray[i][j].y-1) + (gatePoint.x - pointsArray[i][j].x);
+                nowGhost.enemyGateX = (enemyGatePoint.x - pointsArray[i][j].x);
+                nowGhost.enemyGateY = Math.abs(enemyGatePoint.y - pointsArray[i][j].y);
                 pointsArray[i][j].ghostWall = true;
                 pointsArray[tmpPoint.y][tmpPoint.x].ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 1;
                 pointsArray[i][j].ghostTable[2 - (i - tmpPoint.y + 1)][2 - (j - tmpPoint.x + 1)] = 1;
@@ -337,8 +338,16 @@ function botTry(nowGhost, tmpPoint) {
                     botTry(newGhost, newPoint)
                 }
                 else
-                    if (nowGhost.gateDistance < bestGhost.gateDistance)
+                    if (nowGhost.enemyGateX < bestGhost.enemyGateX) //nowGhost.enemyGateDistance < bestGhost.enemyGateDistance
+                    {
                         bestGhost = JSON.parse(JSON.stringify(nowGhost));
+                    }
+                    else
+                    {
+                        if(nowGhost.enemyGateX == bestGhost.enemyGateX)
+                            if(nowGhost.enemyGateY < bestGhost.enemyGateY)
+                                bestGhost = JSON.parse(JSON.stringify(nowGhost));
+                    }
                 pointsArray[i][j].ghostWall = false;
                 pointsArray[tmpPoint.y][tmpPoint.x].ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 0;
                 pointsArray[i][j].ghostTable[2 - (i - tmpPoint.y + 1)][2 - (j - tmpPoint.x + 1)] = 0;
@@ -463,7 +472,8 @@ function clickEvent(evt) {
                             botTry(newGhost, tmpPoint)
                             log(bestGhost);
                             startDrawGhost = setInterval(function () { ghostDraw(); }, 400);
-                            bestGhost.gateDistance = 100;
+                            bestGhost.enemyGateX = 100;
+                            bestGhost.enemyGateY = 100;
                         }
                     }
                 }
