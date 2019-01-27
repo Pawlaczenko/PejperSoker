@@ -327,7 +327,7 @@ function botTry(nowGhost, tmpPoint) {
                     return;
                 }
                 nowGhost.pointsTab.push(new Point(pointsArray[i][j].x, pointsArray[i][j].y))
-                nowGhost.gateDistance = Math.abs(gatePoint.y - pointsArray[i][j].y) + (gatePoint.x - pointsArray[i][j].x);
+                nowGhost.gateDistance = Math.abs(gatePoint.y - pointsArray[i][j].y-1) + (gatePoint.x - pointsArray[i][j].x);
                 pointsArray[i][j].ghostWall = true;
                 pointsArray[tmpPoint.y][tmpPoint.x].ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 1;
                 pointsArray[i][j].ghostTable[2 - (i - tmpPoint.y + 1)][2 - (j - tmpPoint.x + 1)] = 1;
@@ -486,7 +486,7 @@ function clickEvent(evt) {
         tmpPoint = JSON.parse(JSON.stringify(curPoint));
         botTry(newGhost, tmpPoint)
         log(bestGhost);
-        startDrawGhost = setInterval(function () { ghostDraw(); }, 400);
+        startDrawGhost = setInterval(function () { ghostDraw(); }, 800);
         bestGhost.gateDistance = 100;
     }
 }
