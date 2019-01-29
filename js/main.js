@@ -309,6 +309,7 @@ function ghostDraw(i) {
     counter++;
     if (counter == bestGhost.pointsTab.length) {
         counter = 0;
+        changePlayer();
         clearInterval(startDrawGhost);
     }
 
@@ -443,7 +444,9 @@ function clickEvent(evt) {
     let wallmove = false;
 
     ///PUNKTY MAPY///
-    for (let i = 0; i < pointsArray.length; i++)
+    if(playerTurn)
+    {
+        for (let i = 0; i < pointsArray.length; i++)
         for (let j = 0; j < pointsArray[i].length; j++)
             if ((pointsArray[i][j].x * scale + scale + wallWidth / 2 <= cord_X + scale / 2 && pointsArray[i][j].y * scale + wallWidth / 2 <= cord_Y + scale / 2)
                 && (pointsArray[i][j].x * scale + scale + wallWidth / 2 >= cord_X - scale / 2 && pointsArray[i][j].y * scale + wallWidth / 2 >= cord_Y - scale / 2))
@@ -465,15 +468,17 @@ function clickEvent(evt) {
                                 wallmove = true;
                             pointsArray[i][j].wall = true;
                             pointsArray[i][j].ghostWall = true;
-                        }
-                        if (!wallmove) {
-                            let newGhost = new ghostMoves();
-                            tmpPoint = JSON.parse(JSON.stringify(curPoint));
-                            botTry(newGhost, tmpPoint)
-                            log(bestGhost);
-                            startDrawGhost = setInterval(function () { ghostDraw(); }, 400);
-                            bestGhost.enemyGateX = 100;
-                            bestGhost.enemyGateY = 100;
+                            changePlayer();
+
+                            if (!wallmove) {
+                                let newGhost = new ghostMoves();
+                                tmpPoint = JSON.parse(JSON.stringify(curPoint));
+                                botTry(newGhost, tmpPoint)
+                                log(bestGhost);
+                                startDrawGhost = setInterval(function () { ghostDraw(); }, 400);
+                                bestGhost.enemyGateX = 100;
+                                bestGhost.enemyGateY = 100;
+                            }
                         }
                     }
                 }
@@ -503,8 +508,7 @@ function clickEvent(evt) {
                         return;
                     }
                 }
-
-
+    }
 }
 
 canvas.addEventListener('mousemove', mouseMoveEvent, false);
