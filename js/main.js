@@ -468,9 +468,9 @@ function clickEvent(evt) {
                                 wallmove = true;
                             pointsArray[i][j].wall = true;
                             pointsArray[i][j].ghostWall = true;
-                            changePlayer();
 
                             if (!wallmove) {
+                                changePlayer();
                                 let newGhost = new ghostMoves();
                                 tmpPoint = JSON.parse(JSON.stringify(curPoint));
                                 botTry(newGhost, tmpPoint)
