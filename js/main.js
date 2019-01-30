@@ -315,6 +315,7 @@ function ghostDraw(i) {
     counter++;
     if (counter == bestGhost.pointsTab.length) {
         counter = 0;
+        changePlayer();
         clearInterval(startDrawGhost);
     }
 
@@ -324,17 +325,15 @@ function playerCheckTurn(nowGhost, tmpPoint) {
     for (let i = tmpPoint.y - 1; i <= tmpPoint.y + 1; i++)
         for (let j = tmpPoint.x - 1; j <= tmpPoint.x + 1; j++)
             if (tmpPoint.ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] == 0) {
-                if (j == -1)
-                {
+                if (j == -1) {
                     nowGhost.enemyGateX = pointsArray[i].length;
                     bestPlayer = JSON.parse(JSON.stringify(nowGhost));
                     winFlag = true;
                     return;
                 }
-                if(j == pointsArray[i].length)
+                if (j == pointsArray[i].length)
                     break;
                 nowGhost.enemyGateX = (enemyGatePoint.x - pointsArray[i][j].x);
-                // nowGhost.awayGateX = nowGhost.enemyGateX;
                 nowGhost.enemyGateY = Math.abs(enemyGatePoint.y - pointsArray[i][j].y);
                 pointsArray[i][j].ghostWall = true;
                 pointsArray[tmpPoint.y][tmpPoint.x].ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 1;
@@ -343,7 +342,7 @@ function playerCheckTurn(nowGhost, tmpPoint) {
                     let newPoint = JSON.parse(JSON.stringify(pointsArray[i][j]));
                     let newGhost = JSON.parse(JSON.stringify(nowGhost));
                     playerCheckTurn(newGhost, newPoint)
-                    if(winFlag == true)
+                    if (winFlag == true)
                         return;
                 }
                 else
@@ -351,10 +350,9 @@ function playerCheckTurn(nowGhost, tmpPoint) {
                     {
                         bestPlayer = JSON.parse(JSON.stringify(nowGhost));
                     }
-                    else
-                    {
-                        if(nowGhost.enemyGateX == bestPlayer.enemyGateX)
-                            if(nowGhost.enemyGateY < bestPlayer.enemyGateY)
+                    else {
+                        if (nowGhost.enemyGateX == bestPlayer.enemyGateX)
+                            if (nowGhost.enemyGateY < bestPlayer.enemyGateY)
                                 bestPlayer = JSON.parse(JSON.stringify(nowGhost));
                     }
                 pointsArray[i][j].ghostWall = false;
@@ -377,7 +375,8 @@ function botTry(nowGhost, tmpPoint) {
                     return;
                 }
                 nowGhost.pointsTab.push(new Point(pointsArray[i][j].x, pointsArray[i][j].y))
-                nowGhost.gateDistance = Math.abs(gatePoint.y - pointsArray[i][j].y-1) + (gatePoint.x - pointsArray[i][j].x);
+                nowGhost.enemyGateX = (enemyGatePoint.x - pointsArray[i][j].x);
+                nowGhost.enemyGateY = Math.abs(enemyGatePoint.y - pointsArray[i][j].y);
                 pointsArray[i][j].ghostWall = true;
                 pointsArray[tmpPoint.y][tmpPoint.x].ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 1;
                 pointsArray[i][j].ghostTable[2 - (i - tmpPoint.y + 1)][2 - (j - tmpPoint.x + 1)] = 1;
@@ -385,29 +384,28 @@ function botTry(nowGhost, tmpPoint) {
                 let newGhost = JSON.parse(JSON.stringify(nowGhost));
                 if (pointsArray[i][j].wall) {
                     botTry(newGhost, newPoint)
-                    if(winFlag == true)
+                    if (winFlag == true)
                         return;
                 }
-                else
-                {
+                else {
                     playerCheckTurn(newGhost, newPoint);
                     winFlag = false;
-                    if (nowGhost.enemyGateX  < bestGhost.enemyGateX) //nowGhost.enemyGateDistance < bestGhost.enemyGateDistance
+                    if (nowGhost.enemyGateX < bestGhost.enemyGateX) //nowGhost.enemyGateDistance < bestGhost.enemyGateDistance
                     {
-                        if(bestPlayer.enemyGateX <= bestGhost.awayGateX)
+                        if (bestPlayer.enemyGateX <= bestGhost.awayGateX) {
                             bestGhost = JSON.parse(JSON.stringify(nowGhost));
                             bestGhost.awayGateX = bestPlayer.enemyGateX;
+                        }
+
                     }
-                    else
-                    {
-                        if(nowGhost.enemyGateX == bestGhost.enemyGateX)
-                            if(bestPlayer.enemyGateX < bestGhost.awayGateX)
-                            {
+                    else {
+                        if (nowGhost.enemyGateX == bestGhost.enemyGateX)
+                            if (bestPlayer.enemyGateX < bestGhost.awayGateX) {
                                 bestGhost = JSON.parse(JSON.stringify(nowGhost));
                                 bestGhost.awayGateX = bestPlayer.enemyGateX;
                             }
                             else
-                                if(nowGhost.enemyGateY < bestGhost.enemyGateY)
+                                if (nowGhost.enemyGateY < bestGhost.enemyGateY)
                                     bestGhost = JSON.parse(JSON.stringify(nowGhost));
                     }
                     bestPlayer.enemyGateX = 0;
@@ -506,13 +504,12 @@ function clickEvent(evt) {
     let wallmove = false;
 
     ///PUNKTY MAPY///
-    for (let i = 0; i < pointsArray.length; i++)
-        for (let j = 0; j < pointsArray[i].length; j++)
-            if ((pointsArray[i][j].x * scale + scale + wallWidth / 2 <= cord_X + scale / 2 && pointsArray[i][j].y * scale + wallWidth / 2 <= cord_Y + scale / 2)
-                && (pointsArray[i][j].x * scale + scale + wallWidth / 2 >= cord_X - scale / 2 && pointsArray[i][j].y * scale + wallWidth / 2 >= cord_Y - scale / 2))
-                {
-                    if ((i >= middleHeight - 1 && i <= middleHeight + 1) && (j >= middleWidth - 1 && j <= middleWidth + 1))
-                    {
+    if (playerTurn) {
+        for (let i = 0; i < pointsArray.length; i++)
+            for (let j = 0; j < pointsArray[i].length; j++)
+                if ((pointsArray[i][j].x * scale + scale + wallWidth / 2 <= cord_X + scale / 2 && pointsArray[i][j].y * scale + wallWidth / 2 <= cord_Y + scale / 2)
+                    && (pointsArray[i][j].x * scale + scale + wallWidth / 2 >= cord_X - scale / 2 && pointsArray[i][j].y * scale + wallWidth / 2 >= cord_Y - scale / 2)) {
+                    if ((i >= middleHeight - 1 && i <= middleHeight + 1) && (j >= middleWidth - 1 && j <= middleWidth + 1)) {
                         if (curPoint.moveTable[i - middleHeight + 1][j - middleWidth + 1] == 0) {
                             ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
                             ctx.putImageData(myImgData, 0, 0);
@@ -528,20 +525,23 @@ function clickEvent(evt) {
                                 wallmove = true;
                             pointsArray[i][j].wall = true;
                             pointsArray[i][j].ghostWall = true;
-                        }
-                        if (!wallmove) {
-                            let newGhost = new ghostMoves();
-                            tmpPoint = JSON.parse(JSON.stringify(curPoint));
-                            botTry(newGhost, tmpPoint)
-                            log(bestGhost);
-                            startDrawGhost = setInterval(function () { ghostDraw(); }, 400);
-                            bestGhost.enemyGateX = 100;
-                            bestGhost.enemyGateY = 100;
-                            bestGhost.awayGateX = 100;
-                            winFlag = false;
+
+                            if (!wallmove) {
+                                changePlayer();
+                                let newGhost = new ghostMoves();
+                                tmpPoint = JSON.parse(JSON.stringify(curPoint));
+                                botTry(newGhost, tmpPoint)
+                                log(bestGhost);
+                                startDrawGhost = setInterval(function () { ghostDraw(); }, 400);
+                                bestGhost.enemyGateX = 100;
+                                bestGhost.enemyGateY = 100;
+                                bestGhost.awayGateX = 100;
+                                winFlag = false;
+                            }
                         }
                     }
                 }
+    }
 
     ///PUNKTY BRAMEK///
     for (let i = 0; i < gatewayArray.length; i++)
