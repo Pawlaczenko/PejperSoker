@@ -20,7 +20,9 @@ let curPoint;
 let myImgData;
 let posX;
 let posY;
-let color = 'blue';
+let PlayerColor = '#B1F8F2';
+let BotColor = '#edf40c';
+let CurrentColor = PlayerColor;
 let playerTurn = true;
 let enemyGatePoint;
 let bestGhost;
@@ -36,6 +38,10 @@ function Board(div_id) {
         divBoard.appendChild(canvas);
         canvas.width = canvasWidthResolution;
         canvas.height = canvasHeightResolution;
+        ctx.fillStyle="#248232";
+        ctx.fillRect(scale+marginXY,marginXY,scale*squaresX,scale*squaresY);
+        ctx.fillRect(marginXY, (scale * (middleHeight-1))+marginXY ,scale,scale*2);
+        ctx.fillRect(scale * (squaresX+1)+marginXY, (scale * (middleHeight-1))+marginXY ,scale,scale*2);
     }
 }
 
@@ -222,9 +228,9 @@ function setup() {
     ///RYSOWANIE BRAMEK///
     drawGateway();
 
-    myImgData = ctx.getImageData(0, 0, canvasWidthResolution, canvasHeightResolution);
+    drawBall();
 
-    drawBall(pointsArray[middleHeight][middleWidth].x * scale + scale + wallWidth / 2 + marginXY / 3-32, pointsArray[middleHeight][middleWidth].y * scale + wallWidth / 2 + marginXY / 3 - 32)
+    myImgData = ctx.getImageData(0, 0, canvasWidthResolution, canvasHeightResolution);
     
     pointsArray[middleHeight][middleWidth].wall = true;
     pointsArray[middleHeight][middleWidth].ghostWall = true;
@@ -247,7 +253,7 @@ function loadBoardState() {
     ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
     ctx.putImageData(myImgData, 0, 0);
     //ctx.fillStyle = "black";
-    drawBall(posX-32,posY-32);
+    drawBall();
     //ctx.arc(posX, posY, 15, 0, Math.PI * 2, false);
 
 }
@@ -274,13 +280,11 @@ function saveBoardState(i, j, bol) {
 }
 
 function changePlayer() {
-    if (color == 'blue') {
-        color = 'red';
-        playerTurn = false;
-    }
-    else {
-        color = 'blue';
-        playerTurn = true;
+    playerTurn = !playerTurn;
+    if(playerTurn){
+        CurrentColor = PlayerColor;
+    } else {
+        CurrentColor = BotColor;
     }
 }
 
@@ -294,7 +298,7 @@ function ghostDraw(i) {
     ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
     ctx.putImageData(myImgData, 0, 0);
     
-    ctx.strokeStyle = "red";
+    ctx.strokeStyle = CurrentColor;
     ctx.beginPath();
         ctx.moveTo(posX, posY);
         ctx.lineTo(bestGhost.pointsTab[counter].x * scale + scale + wallWidth / 2 + marginXY / 3, bestGhost.pointsTab[counter].y * scale + wallWidth / 2 + marginXY / 3)
@@ -362,45 +366,53 @@ function mouseMoveEvent(evt) {
     var cord_X = mousePos.x * przelicznik_na_x;
     var cord_Y = mousePos.y * przelicznik_na_y;
 
-    ///PUNKTY MAPY///
-    for (let i = 0; i < pointsArray.length; i++){
-        for (let j = 0; j < pointsArray[i].length; j++){
-            if ((pointsArray[i][j].x * scale + scale + wallWidth / 2 <= cord_X + scale / 2 && pointsArray[i][j].y * scale + wallWidth / 2 <= cord_Y + scale / 2)
-            && (pointsArray[i][j].x * scale + scale + wallWidth / 2 >= cord_X - scale / 2 && pointsArray[i][j].y * scale + wallWidth / 2 >= cord_Y - scale / 2)){
-                if ((i >= middleHeight - 1 && i <= middleHeight + 1) && (j >= middleWidth - 1 && j <= middleWidth + 1)){
-                    if (curPoint.moveTable[i - middleHeight + 1][j - middleWidth + 1] == 0) {
-                        loadBoardState();
-                        ctx.beginPath();
-                            drawBall(pointsArray[i][j].x * scale + scale + wallWidth / 2 + marginXY / 3 -32, pointsArray[i][j].y * scale + wallWidth / 2 + marginXY / 3 -32);
-                        ctx.closePath();
-                    }
-                }   
-            }       
+    if(playerTurn){
+            ///PUNKTY MAPY///
+        for (let i = 0; i < pointsArray.length; i++){
+            for (let j = 0; j < pointsArray[i].length; j++){
+                if ((pointsArray[i][j].x * scale + scale + wallWidth / 2 <= cord_X + scale / 2 && pointsArray[i][j].y * scale + wallWidth / 2 <= cord_Y + scale / 2)
+                && (pointsArray[i][j].x * scale + scale + wallWidth / 2 >= cord_X - scale / 2 && pointsArray[i][j].y * scale + wallWidth / 2 >= cord_Y - scale / 2)){
+                    if ((i >= middleHeight - 1 && i <= middleHeight + 1) && (j >= middleWidth - 1 && j <= middleWidth + 1)){
+                        if (curPoint.moveTable[i - middleHeight + 1][j - middleWidth + 1] == 0) {
+                            loadBoardState();
+                            ctx.beginPath();
+                                ctx.fillStyle = CurrentColor;
+                                ctx.arc(pointsArray[i][j].x * scale + scale + wallWidth / 2 + marginXY / 3, pointsArray[i][j].y * scale + wallWidth / 2 + marginXY / 3, 15, 0, Math.PI * 2, false);
+                                ctx.fill();
+                            ctx.closePath();
+                        }
+                    }   
+                }       
+            }
         }
-    }
 
-    ///PUNKTY BRAMEK///
-    for (let i = 0; i < gatewayArray.length; i++){
-        for (let j = 0; j < gatewayArray[i].length; j++){
-            if ((gatewayArray[i][j].x * scale + wallWidth / 2 <= cord_X + scale / 2 && gatewayArray[i][j].y * scale + wallWidth / 2 <= cord_Y + scale / 2)
-            && (gatewayArray[i][j].x * scale + wallWidth / 2 >= cord_X - scale / 2 && gatewayArray[i][j].y * scale + wallWidth / 2 >= cord_Y - scale / 2)){
-                if (((posX + scale == gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3) || (posX - scale == gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3))
-                && ((posY - scale * 2 < gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3) && (posY + scale * 2 > gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3))) {
-                    let value;
-                    if (middleWidth == 10) value = 2;
-                    else value = 0;
-                    if ((curPoint.moveTable[j + 1 - (middleHeight - 3)][value] == 0)) {
-                        loadBoardState();
-                        ctx.beginPath();
-                            drawBall(gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3-32, gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3-32);                            
-                        ctx.closePath();
+        ///PUNKTY BRAMEK///
+        for (let i = 0; i < gatewayArray.length; i++){
+            for (let j = 0; j < gatewayArray[i].length; j++){
+                if ((gatewayArray[i][j].x * scale + wallWidth / 2 <= cord_X + scale / 2 && gatewayArray[i][j].y * scale + wallWidth / 2 <= cord_Y + scale / 2)
+                && (gatewayArray[i][j].x * scale + wallWidth / 2 >= cord_X - scale / 2 && gatewayArray[i][j].y * scale + wallWidth / 2 >= cord_Y - scale / 2)){
+                    if (((posX + scale == gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3) || (posX - scale == gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3))
+                    && ((posY - scale * 2 < gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3) && (posY + scale * 2 > gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3))) {
+                        let value;
+                        if (middleWidth == 10) value = 2;
+                        else value = 0;
+                        if ((curPoint.moveTable[j + 1 - (middleHeight - 3)][value] == 0)) {
+                            loadBoardState();
+                            ctx.beginPath();
+                                ctx.fillStyle = CurrentColor;
+                                ctx.arc(gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3, gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3, 15, 0, Math.PI * 2, false);
+                                ctx.fill();
+                            ctx.closePath();
+                        }
                     }
                 }
+                    
             }
                 
         }
-            
     }
+
+    
         
 }
 
@@ -423,7 +435,7 @@ function clickEvent(evt) {
                         if (curPoint.moveTable[i - middleHeight + 1][j - middleWidth + 1] == 0) {
                             ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
                             ctx.putImageData(myImgData, 0, 0);
-                            ctx.strokeStyle = "blue";
+                            ctx.strokeStyle = CurrentColor;
                             ctx.beginPath();
                                 ctx.moveTo(posX, posY);
                                 ctx.lineTo(pointsArray[i][j].x * scale + scale + wallWidth / 2 + marginXY / 3, pointsArray[i][j].y * scale + wallWidth / 2 + marginXY / 3)
@@ -467,7 +479,7 @@ function clickEvent(evt) {
                             if ((curPoint.moveTable[j + 1 - (middleHeight - 3)][value] == 0)) {
                                 ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
                                 ctx.putImageData(myImgData, 0, 0);
-                                ctx.strokeStyle = "blue";
+                                ctx.strokeStyle = CurrentColor;
                                 ctx.beginPath();
                                     ctx.moveTo(posX, posY);
                                     ctx.lineTo(gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3, gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3);
@@ -488,9 +500,9 @@ function clickEvent(evt) {
     }
 }
 
-function drawBall(x,y){
+function drawBall(){
     ballImage.addEventListener('load', function(){
-        ctx.drawImage(ballImage,x,y);
+        ctx.drawImage(ballImage,posX-32,posY-32);
     });
     ballImage.src = 'graphic/ball.png';
 }
