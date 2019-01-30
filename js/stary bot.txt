@@ -1,0 +1,34 @@
+
+
+    // for (let i = tmpPoint.y - 1; i <= tmpPoint.y + 1; i++)
+    // for (let j = tmpPoint.x - 1; j <= tmpPoint.x + 1; j++)
+    //     if (tmpPoint.ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] == 0) {
+    //         if (j == - 1)
+    //             break;
+    //         if (j == pointsArray[i].length) {
+    //             log("Bramka");
+    //             break;
+    //         }
+    //         nowGhost.pointsTab.push(new Point(pointsArray[i][j].x, pointsArray[i][j].y))
+    //         nowGhost.gateDistance = Math.abs(gatePoint.y - pointsArray[i][j].y) + (gatePoint.x - pointsArray[i][j].x);
+    //         pointsArray[i][j].ghostWall = true;
+    //         pointsArray[tmpPoint.y][tmpPoint.x].ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 1;
+    //         pointsArray[i][j].ghostTable[2 - (i - tmpPoint.y + 1)][2 - (j - tmpPoint.x + 1)] = 1;
+    //         if (pointsArray[i][j].wall) {
+    //             let newPoint = JSON.parse(JSON.stringify(pointsArray[i][j]));
+    //             let newGhost = JSON.parse(JSON.stringify(nowGhost));
+    //             botTry(newGhost, newPoint)
+    //         }
+    //         else
+    //             if (nowGhost.gateDistance < bestGhost.gateDistance)
+    //                 bestGhost = JSON.parse(JSON.stringify(nowGhost));
+    //         pointsArray[i][j].ghostWall = false;
+    //         pointsArray[tmpPoint.y][tmpPoint.x].ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 0;
+    //         pointsArray[i][j].ghostTable[2 - (i - tmpPoint.y + 1)][2 - (j - tmpPoint.x + 1)] = 0;
+    //     }
+
+    // ctx.beginPath();
+    // ctx.moveTo(posX, posY);
+    // ctx.lineTo(pointsArray[i][j].x * scale + scale + wallWidth / 2 + marginXY / 3, pointsArray[i][j].y * scale + wallWidth / 2 + marginXY / 3)
+    // ctx.stroke();
+    // ctx.closePath();
