@@ -26,6 +26,7 @@ let enemyGatePoint;
 let bestGhost;
 let startDrawGhost;
 let counter = 0;
+let ballImage = new Image();
 
 function Board(div_id) {
     this.squaresX = squaresX;
@@ -223,11 +224,8 @@ function setup() {
 
     myImgData = ctx.getImageData(0, 0, canvasWidthResolution, canvasHeightResolution);
 
-    ctx.fillStyle = "black";
-    ctx.beginPath();
-    ctx.arc(pointsArray[middleHeight][middleWidth].x * scale + scale + wallWidth / 2 + marginXY / 3, pointsArray[middleHeight][middleWidth].y * scale + wallWidth / 2 + marginXY / 3, 15, 0, Math.PI * 2, false);
-    ctx.fill();
-    ctx.closePath();
+    drawBall(pointsArray[middleHeight][middleWidth].x * scale + scale + wallWidth / 2 + marginXY / 3-32, pointsArray[middleHeight][middleWidth].y * scale + wallWidth / 2 + marginXY / 3 - 32)
+    
     pointsArray[middleHeight][middleWidth].wall = true;
     pointsArray[middleHeight][middleWidth].ghostWall = true;
     curPoint = pointsArray[middleHeight][middleWidth];
@@ -248,11 +246,10 @@ function getMousePos(canvas, evt) {
 function loadBoardState() {
     ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
     ctx.putImageData(myImgData, 0, 0);
-    ctx.fillStyle = "black";
-    ctx.beginPath();
-    ctx.arc(posX, posY, 15, 0, Math.PI * 2, false);
-    ctx.fill();
-    ctx.closePath();
+    //ctx.fillStyle = "black";
+    drawBall(posX-32,posY-32);
+    //ctx.arc(posX, posY, 15, 0, Math.PI * 2, false);
+
 }
 
 function saveBoardState(i, j, bol) {
@@ -296,12 +293,14 @@ function endGame(i) {
 function ghostDraw(i) {
     ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
     ctx.putImageData(myImgData, 0, 0);
+    
     ctx.strokeStyle = "red";
     ctx.beginPath();
-    ctx.moveTo(posX, posY);
-    ctx.lineTo(bestGhost.pointsTab[counter].x * scale + scale + wallWidth / 2 + marginXY / 3, bestGhost.pointsTab[counter].y * scale + wallWidth / 2 + marginXY / 3)
-    ctx.stroke();
+        ctx.moveTo(posX, posY);
+        ctx.lineTo(bestGhost.pointsTab[counter].x * scale + scale + wallWidth / 2 + marginXY / 3, bestGhost.pointsTab[counter].y * scale + wallWidth / 2 + marginXY / 3)
+        ctx.stroke();
     ctx.closePath();
+    
     saveBoardState(bestGhost.pointsTab[counter].y, bestGhost.pointsTab[counter].x, true);
     loadBoardState();
     pointsArray[bestGhost.pointsTab[counter].y][bestGhost.pointsTab[counter].x].wall = true;
@@ -353,43 +352,7 @@ function botTry(nowGhost, tmpPoint) {
                 pointsArray[tmpPoint.y][tmpPoint.x].ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 0;
                 pointsArray[i][j].ghostTable[2 - (i - tmpPoint.y + 1)][2 - (j - tmpPoint.x + 1)] = 0;
                 nowGhost.pointsTab.pop();
-
             }
-
-
-    // for (let i = tmpPoint.y - 1; i <= tmpPoint.y + 1; i++)
-    // for (let j = tmpPoint.x - 1; j <= tmpPoint.x + 1; j++)
-    //     if (tmpPoint.ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] == 0) {
-    //         if (j == - 1)
-    //             break;
-    //         if (j == pointsArray[i].length) {
-    //             log("Bramka");
-    //             break;
-    //         }
-    //         nowGhost.pointsTab.push(new Point(pointsArray[i][j].x, pointsArray[i][j].y))
-    //         nowGhost.gateDistance = Math.abs(gatePoint.y - pointsArray[i][j].y) + (gatePoint.x - pointsArray[i][j].x);
-    //         pointsArray[i][j].ghostWall = true;
-    //         pointsArray[tmpPoint.y][tmpPoint.x].ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 1;
-    //         pointsArray[i][j].ghostTable[2 - (i - tmpPoint.y + 1)][2 - (j - tmpPoint.x + 1)] = 1;
-    //         if (pointsArray[i][j].wall) {
-    //             let newPoint = JSON.parse(JSON.stringify(pointsArray[i][j]));
-    //             let newGhost = JSON.parse(JSON.stringify(nowGhost));
-    //             botTry(newGhost, newPoint)
-    //         }
-    //         else
-    //             if (nowGhost.gateDistance < bestGhost.gateDistance)
-    //                 bestGhost = JSON.parse(JSON.stringify(nowGhost));
-    //         pointsArray[i][j].ghostWall = false;
-    //         pointsArray[tmpPoint.y][tmpPoint.x].ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 0;
-    //         pointsArray[i][j].ghostTable[2 - (i - tmpPoint.y + 1)][2 - (j - tmpPoint.x + 1)] = 0;
-    //     }
-
-    // ctx.beginPath();
-    // ctx.moveTo(posX, posY);
-    // ctx.lineTo(pointsArray[i][j].x * scale + scale + wallWidth / 2 + marginXY / 3, pointsArray[i][j].y * scale + wallWidth / 2 + marginXY / 3)
-    // ctx.stroke();
-    // ctx.closePath();
-
 }
 
 function mouseMoveEvent(evt) {
@@ -400,39 +363,45 @@ function mouseMoveEvent(evt) {
     var cord_Y = mousePos.y * przelicznik_na_y;
 
     ///PUNKTY MAPY///
-    for (let i = 0; i < pointsArray.length; i++)
-        for (let j = 0; j < pointsArray[i].length; j++)
+    for (let i = 0; i < pointsArray.length; i++){
+        for (let j = 0; j < pointsArray[i].length; j++){
             if ((pointsArray[i][j].x * scale + scale + wallWidth / 2 <= cord_X + scale / 2 && pointsArray[i][j].y * scale + wallWidth / 2 <= cord_Y + scale / 2)
-                && (pointsArray[i][j].x * scale + scale + wallWidth / 2 >= cord_X - scale / 2 && pointsArray[i][j].y * scale + wallWidth / 2 >= cord_Y - scale / 2))
-                if ((i >= middleHeight - 1 && i <= middleHeight + 1) && (j >= middleWidth - 1 && j <= middleWidth + 1))
+            && (pointsArray[i][j].x * scale + scale + wallWidth / 2 >= cord_X - scale / 2 && pointsArray[i][j].y * scale + wallWidth / 2 >= cord_Y - scale / 2)){
+                if ((i >= middleHeight - 1 && i <= middleHeight + 1) && (j >= middleWidth - 1 && j <= middleWidth + 1)){
                     if (curPoint.moveTable[i - middleHeight + 1][j - middleWidth + 1] == 0) {
                         loadBoardState();
                         ctx.beginPath();
-                        ctx.fillStyle = color;
-                        ctx.arc(pointsArray[i][j].x * scale + scale + wallWidth / 2 + marginXY / 3, pointsArray[i][j].y * scale + wallWidth / 2 + marginXY / 3, 15, 0, Math.PI * 2, false);
-                        ctx.fill();
+                            drawBall(pointsArray[i][j].x * scale + scale + wallWidth / 2 + marginXY / 3 -32, pointsArray[i][j].y * scale + wallWidth / 2 + marginXY / 3 -32);
                         ctx.closePath();
                     }
+                }   
+            }       
+        }
+    }
 
     ///PUNKTY BRAMEK///
-    for (let i = 0; i < gatewayArray.length; i++)
-        for (let j = 0; j < gatewayArray[i].length; j++)
+    for (let i = 0; i < gatewayArray.length; i++){
+        for (let j = 0; j < gatewayArray[i].length; j++){
             if ((gatewayArray[i][j].x * scale + wallWidth / 2 <= cord_X + scale / 2 && gatewayArray[i][j].y * scale + wallWidth / 2 <= cord_Y + scale / 2)
-                && (gatewayArray[i][j].x * scale + wallWidth / 2 >= cord_X - scale / 2 && gatewayArray[i][j].y * scale + wallWidth / 2 >= cord_Y - scale / 2))
+            && (gatewayArray[i][j].x * scale + wallWidth / 2 >= cord_X - scale / 2 && gatewayArray[i][j].y * scale + wallWidth / 2 >= cord_Y - scale / 2)){
                 if (((posX + scale == gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3) || (posX - scale == gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3))
-                    && ((posY - scale * 2 < gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3) && (posY + scale * 2 > gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3))) {
+                && ((posY - scale * 2 < gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3) && (posY + scale * 2 > gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3))) {
                     let value;
                     if (middleWidth == 10) value = 2;
                     else value = 0;
                     if ((curPoint.moveTable[j + 1 - (middleHeight - 3)][value] == 0)) {
                         loadBoardState();
                         ctx.beginPath();
-                        ctx.fillStyle = color;
-                        ctx.arc(gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3, gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3, 15, 0, Math.PI * 2, false);
-                        ctx.fill();
+                            drawBall(gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3-32, gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3-32);                            
                         ctx.closePath();
                     }
                 }
+            }
+                
+        }
+            
+    }
+        
 }
 
 function clickEvent(evt) {
@@ -446,21 +415,19 @@ function clickEvent(evt) {
     ///PUNKTY MAPY///
     if(playerTurn)
     {
-        for (let i = 0; i < pointsArray.length; i++)
-        for (let j = 0; j < pointsArray[i].length; j++)
-            if ((pointsArray[i][j].x * scale + scale + wallWidth / 2 <= cord_X + scale / 2 && pointsArray[i][j].y * scale + wallWidth / 2 <= cord_Y + scale / 2)
-                && (pointsArray[i][j].x * scale + scale + wallWidth / 2 >= cord_X - scale / 2 && pointsArray[i][j].y * scale + wallWidth / 2 >= cord_Y - scale / 2))
-                {
-                    if ((i >= middleHeight - 1 && i <= middleHeight + 1) && (j >= middleWidth - 1 && j <= middleWidth + 1))
-                    {
+        for (let i = 0; i < pointsArray.length; i++){
+            for (let j = 0; j < pointsArray[i].length; j++){
+                if ((pointsArray[i][j].x * scale + scale + wallWidth / 2 <= cord_X + scale / 2 && pointsArray[i][j].y * scale + wallWidth / 2 <= cord_Y + scale / 2)
+                && (pointsArray[i][j].x * scale + scale + wallWidth / 2 >= cord_X - scale / 2 && pointsArray[i][j].y * scale + wallWidth / 2 >= cord_Y - scale / 2)){
+                    if ((i >= middleHeight - 1 && i <= middleHeight + 1) && (j >= middleWidth - 1 && j <= middleWidth + 1)){
                         if (curPoint.moveTable[i - middleHeight + 1][j - middleWidth + 1] == 0) {
                             ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
                             ctx.putImageData(myImgData, 0, 0);
                             ctx.strokeStyle = "blue";
                             ctx.beginPath();
-                            ctx.moveTo(posX, posY);
-                            ctx.lineTo(pointsArray[i][j].x * scale + scale + wallWidth / 2 + marginXY / 3, pointsArray[i][j].y * scale + wallWidth / 2 + marginXY / 3)
-                            ctx.stroke();
+                                ctx.moveTo(posX, posY);
+                                ctx.lineTo(pointsArray[i][j].x * scale + scale + wallWidth / 2 + marginXY / 3, pointsArray[i][j].y * scale + wallWidth / 2 + marginXY / 3)
+                                ctx.stroke();
                             ctx.closePath();
                             saveBoardState(i, j, true);
                             loadBoardState();
@@ -481,34 +448,51 @@ function clickEvent(evt) {
                             }
                         }
                     }
+                } 
+            }
+            
+        }
+
+
+        ///PUNKTY BRAMEK///
+        for (let i = 0; i < gatewayArray.length; i++){
+            for (let j = 0; j < gatewayArray[i].length; j++){
+                if ((gatewayArray[i][j].x * scale + wallWidth / 2 <= cord_X + scale / 2 && gatewayArray[i][j].y * scale + wallWidth / 2 <= cord_Y + scale / 2)
+                && (gatewayArray[i][j].x * scale + wallWidth / 2 >= cord_X - scale / 2 && gatewayArray[i][j].y * scale + wallWidth / 2 >= cord_Y - scale / 2)){
+                        if (((posX + scale == gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3) || (posX - scale == gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3))
+                        && ((posY - scale * 2 < gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3) && (posY + scale * 2 > gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3))) {
+                            let value;
+                            if (middleWidth == 10) value = 2;
+                            else value = 0;
+                            if ((curPoint.moveTable[j + 1 - (middleHeight - 3)][value] == 0)) {
+                                ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
+                                ctx.putImageData(myImgData, 0, 0);
+                                ctx.strokeStyle = "blue";
+                                ctx.beginPath();
+                                    ctx.moveTo(posX, posY);
+                                    ctx.lineTo(gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3, gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3);
+                                    ctx.stroke();
+                                ctx.closePath();
+                                saveBoardState(i, j, false);
+                                loadBoardState();
+                                endGame(i + 1);
+                                return;
+                            }
+                        }
                 }
 
-    ///PUNKTY BRAMEK///
-    for (let i = 0; i < gatewayArray.length; i++)
-        for (let j = 0; j < gatewayArray[i].length; j++)
-            if ((gatewayArray[i][j].x * scale + wallWidth / 2 <= cord_X + scale / 2 && gatewayArray[i][j].y * scale + wallWidth / 2 <= cord_Y + scale / 2)
-                && (gatewayArray[i][j].x * scale + wallWidth / 2 >= cord_X - scale / 2 && gatewayArray[i][j].y * scale + wallWidth / 2 >= cord_Y - scale / 2))
-                if (((posX + scale == gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3) || (posX - scale == gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3))
-                    && ((posY - scale * 2 < gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3) && (posY + scale * 2 > gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3))) {
-                    let value;
-                    if (middleWidth == 10) value = 2;
-                    else value = 0;
-                    if ((curPoint.moveTable[j + 1 - (middleHeight - 3)][value] == 0)) {
-                        ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
-                        ctx.putImageData(myImgData, 0, 0);
-                        ctx.strokeStyle = "blue";
-                        ctx.beginPath();
-                        ctx.moveTo(posX, posY);
-                        ctx.lineTo(gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3, gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3);
-                        ctx.stroke();
-                        ctx.closePath();
-                        saveBoardState(i, j, false);
-                        loadBoardState();
-                        endGame(i + 1);
-                        return;
-                    }
-                }
+            }
+
+        }
+
     }
+}
+
+function drawBall(x,y){
+    ballImage.addEventListener('load', function(){
+        ctx.drawImage(ballImage,x,y);
+    });
+    ballImage.src = 'graphic/ball.png';
 }
 
 canvas.addEventListener('mousemove', mouseMoveEvent, false);
