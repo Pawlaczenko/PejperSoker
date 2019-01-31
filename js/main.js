@@ -29,6 +29,7 @@ let bestGhost;
 let startDrawGhost;
 let counter = 0;
 let ballImage = new Image();
+let tmp = 0;
 
 function Board(div_id) {
     this.squaresX = squaresX;
@@ -231,7 +232,7 @@ function setup() {
     drawBall();
 
     myImgData = ctx.getImageData(0, 0, canvasWidthResolution, canvasHeightResolution);
-    
+
     pointsArray[middleHeight][middleWidth].wall = true;
     pointsArray[middleHeight][middleWidth].ghostWall = true;
     curPoint = pointsArray[middleHeight][middleWidth];
@@ -253,7 +254,7 @@ function loadBoardState() {
     ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
     ctx.putImageData(myImgData, 0, 0);
     //ctx.fillStyle = "black";
-    drawBall();
+
     //ctx.arc(posX, posY, 15, 0, Math.PI * 2, false);
 
 }
@@ -297,16 +298,17 @@ function endGame(i) {
 function ghostDraw(i) {
     ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
     ctx.putImageData(myImgData, 0, 0);
-    
+
     ctx.strokeStyle = CurrentColor;
     ctx.beginPath();
         ctx.moveTo(posX, posY);
         ctx.lineTo(bestGhost.pointsTab[counter].x * scale + scale + wallWidth / 2 + marginXY / 3, bestGhost.pointsTab[counter].y * scale + wallWidth / 2 + marginXY / 3)
         ctx.stroke();
     ctx.closePath();
-    
+
     saveBoardState(bestGhost.pointsTab[counter].y, bestGhost.pointsTab[counter].x, true);
     loadBoardState();
+    drawBall();
     pointsArray[bestGhost.pointsTab[counter].y][bestGhost.pointsTab[counter].x].wall = true;
     pointsArray[bestGhost.pointsTab[counter].y][bestGhost.pointsTab[counter].x].ghostWall = true;
     counter++;
@@ -375,14 +377,15 @@ function mouseMoveEvent(evt) {
                     if ((i >= middleHeight - 1 && i <= middleHeight + 1) && (j >= middleWidth - 1 && j <= middleWidth + 1)){
                         if (curPoint.moveTable[i - middleHeight + 1][j - middleWidth + 1] == 0) {
                             loadBoardState();
+                            drawBall();
                             ctx.beginPath();
                                 ctx.fillStyle = CurrentColor;
                                 ctx.arc(pointsArray[i][j].x * scale + scale + wallWidth / 2 + marginXY / 3, pointsArray[i][j].y * scale + wallWidth / 2 + marginXY / 3, 15, 0, Math.PI * 2, false);
                                 ctx.fill();
                             ctx.closePath();
                         }
-                    }   
-                }       
+                    }
+                }
             }
         }
 
@@ -398,6 +401,7 @@ function mouseMoveEvent(evt) {
                         else value = 0;
                         if ((curPoint.moveTable[j + 1 - (middleHeight - 3)][value] == 0)) {
                             loadBoardState();
+                            drawBall();
                             ctx.beginPath();
                                 ctx.fillStyle = CurrentColor;
                                 ctx.arc(gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3, gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3, 15, 0, Math.PI * 2, false);
@@ -406,14 +410,14 @@ function mouseMoveEvent(evt) {
                         }
                     }
                 }
-                    
+
             }
-                
+
         }
     }
 
-    
-        
+
+
 }
 
 function clickEvent(evt) {
@@ -443,6 +447,7 @@ function clickEvent(evt) {
                             ctx.closePath();
                             saveBoardState(i, j, true);
                             loadBoardState();
+                            drawBall();
                             if (pointsArray[i][j].wall)
                                 wallmove = true;
                             pointsArray[i][j].wall = true;
@@ -460,9 +465,9 @@ function clickEvent(evt) {
                             }
                         }
                     }
-                } 
+                }
             }
-            
+
         }
 
 
@@ -487,6 +492,7 @@ function clickEvent(evt) {
                                 ctx.closePath();
                                 saveBoardState(i, j, false);
                                 loadBoardState();
+                                drawBall();
                                 endGame(i + 1);
                                 return;
                             }
@@ -501,9 +507,14 @@ function clickEvent(evt) {
 }
 
 function drawBall(){
+
+    if(tmp == 0)
     ballImage.addEventListener('load', function(){
         ctx.drawImage(ballImage,posX-32,posY-32);
+        tmp = 1;
     });
+    else
+        ctx.drawImage(ballImage,posX-32,posY-32);
     ballImage.src = 'graphic/ball.png';
 }
 
