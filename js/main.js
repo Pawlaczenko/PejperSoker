@@ -329,7 +329,7 @@ function playerCheckTurn(nowGhost, tmpPoint) {
     //     colo = colorRullete();
     //     tempsave = ctx.getImageData(0, 0, canvasWidthResolution, canvasHeightResolution);
     // }
-    for (let i = tmpPoint.y - 1; i <= tmpPoint.y; i++)
+    for (let i = tmpPoint.y - 1; i <= tmpPoint.y+1; i++)
         for (let j = tmpPoint.x - 1; j <= tmpPoint.x; j++)
             if (tmpPoint.ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] == 0) {
                 if (j == -1) {
