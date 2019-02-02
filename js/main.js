@@ -321,7 +321,8 @@ function ghostDraw(i) {
 
 }
 
-function playerCheckTurn(nowGhost, tmpPoint) {
+function playerCheckTurn(nowGhost, tmpPoint, colo) {
+    colo+= 30;
     for (let i = tmpPoint.y - 1; i <= tmpPoint.y + 1; i++)
         for (let j = tmpPoint.x - 1; j <= tmpPoint.x + 1; j++)
             if (tmpPoint.ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] == 0) {
@@ -338,12 +339,26 @@ function playerCheckTurn(nowGhost, tmpPoint) {
                 pointsArray[i][j].ghostWall = true;
                 pointsArray[tmpPoint.y][tmpPoint.x].ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 1;
                 pointsArray[i][j].ghostTable[2 - (i - tmpPoint.y + 1)][2 - (j - tmpPoint.x + 1)] = 1;
+                let co1 = colo;
+                let co2 = 255- colo;
+                let co3 = 122 + colo;
+                ctx.strokeStyle = 'rgb('+co1+', '+co2+', '+co3+')';
+                ctx.beginPath();
+                ctx.moveTo(tmpPoint.x * scale + scale + wallWidth / 2 + marginXY / 3, tmpPoint.y * scale + wallWidth / 2 + marginXY / 3);
+                ctx.lineTo(j * scale + scale + wallWidth / 2 + marginXY / 3, i * scale + wallWidth / 2 + marginXY / 3)
+                ctx.stroke();
+                ctx.closePath();
                 if (pointsArray[i][j].wall) {
                     let newPoint = JSON.parse(JSON.stringify(pointsArray[i][j]));
                     let newGhost = JSON.parse(JSON.stringify(nowGhost));
-                    playerCheckTurn(newGhost, newPoint)
-                    if (winFlag == true)
+                    playerCheckTurn(newGhost, newPoint, colo)
+                    if (winFlag == true) {
+                        pointsArray[i][j].ghostWall = pointsArray[i][j].wall;
+                        pointsArray[tmpPoint.y][tmpPoint.x].ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 0;
+                        pointsArray[i][j].ghostTable[2 - (i - tmpPoint.y + 1)][2 - (j - tmpPoint.x + 1)] = 0;
                         return;
+                    }
+
                 }
                 else
                     if (nowGhost.enemyGateX > bestPlayer.enemyGateX) //nowGhost.enemyGateDistance < bestGhost.enemyGateDistance
@@ -355,9 +370,10 @@ function playerCheckTurn(nowGhost, tmpPoint) {
                             if (nowGhost.enemyGateY < bestPlayer.enemyGateY)
                                 bestPlayer = JSON.parse(JSON.stringify(nowGhost));
                     }
-                pointsArray[i][j].ghostWall = false;
+                pointsArray[i][j].ghostWall = pointsArray[i][j].wall;
                 pointsArray[tmpPoint.y][tmpPoint.x].ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 0;
                 pointsArray[i][j].ghostTable[2 - (i - tmpPoint.y + 1)][2 - (j - tmpPoint.x + 1)] = 0;
+
             }
 }
 
@@ -380,6 +396,12 @@ function botTry(nowGhost, tmpPoint) {
                 pointsArray[i][j].ghostWall = true;
                 pointsArray[tmpPoint.y][tmpPoint.x].ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 1;
                 pointsArray[i][j].ghostTable[2 - (i - tmpPoint.y + 1)][2 - (j - tmpPoint.x + 1)] = 1;
+                ctx.strokeStyle = "black";
+                ctx.beginPath();
+                ctx.moveTo(tmpPoint.x * scale + scale + wallWidth / 2 + marginXY / 3, tmpPoint.y * scale + wallWidth / 2 + marginXY / 3);
+                ctx.lineTo(j * scale + scale + wallWidth / 2 + marginXY / 3, i * scale + wallWidth / 2 + marginXY / 3)
+                ctx.stroke();
+                ctx.closePath();
                 let newPoint = JSON.parse(JSON.stringify(pointsArray[i][j]));
                 let newGhost = JSON.parse(JSON.stringify(nowGhost));
                 if (pointsArray[i][j].wall) {
@@ -388,8 +410,9 @@ function botTry(nowGhost, tmpPoint) {
                         return;
                 }
                 else {
-                    playerCheckTurn(newGhost, newPoint);
+                    playerCheckTurn(newGhost, newPoint, 5);
                     winFlag = false;
+                    loadBoardState();
                     if (nowGhost.enemyGateX < bestGhost.enemyGateX) //nowGhost.enemyGateDistance < bestGhost.enemyGateDistance
                     {
                         if (bestPlayer.enemyGateX <= bestGhost.awayGateX) {
