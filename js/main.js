@@ -330,11 +330,12 @@ function playerCheckTurn(nowGhost, tmpPoint) {
     //     tempsave = ctx.getImageData(0, 0, canvasWidthResolution, canvasHeightResolution);
     // }
     for (let i = tmpPoint.y - 1; i <= tmpPoint.y+1; i++)
-        for (let j = tmpPoint.x - 1; j <= tmpPoint.x; j++)
+        for (let j = tmpPoint.x - 1; j <= tmpPoint.x+1; j++)
             if (tmpPoint.ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] == 0) {
                 if (j == -1) {
                     nowGhost.enemyGateX = pointsArray[i].length;
-                    bestPlayer = JSON.parse(JSON.stringify(nowGhost));
+                    // bestPlayer = JSON.parse(JSON.stringify(nowGhost));
+                    bestPlayer = Object.assign({}, nowGhost);
                     winFlag = true;
                     return;
                 }
@@ -354,9 +355,10 @@ function playerCheckTurn(nowGhost, tmpPoint) {
                 //     ctx.stroke();
                 //     ctx.closePath();
                 // }
-                if (pointsArray[i][j].wall) {
+                if (pointsArray[i][j].wall && !(i == tmpPoint.y && j == tmpPoint.x + 1)) {
                     let newPoint = JSON.parse(JSON.stringify(pointsArray[i][j]));
-                    let newGhost = JSON.parse(JSON.stringify(nowGhost));
+                    // let newGhost = JSON.parse(JSON.stringify(nowGhost));
+                    let newGhost = Object.assign({}, nowGhost);
                     playerCheckTurn(newGhost, newPoint)
                     if (winFlag == true) {
                         pointsArray[i][j].ghostWall = pointsArray[i][j].wall;
@@ -369,12 +371,14 @@ function playerCheckTurn(nowGhost, tmpPoint) {
                 else
                     if (nowGhost.enemyGateX > bestPlayer.enemyGateX) //nowGhost.enemyGateDistance < bestGhost.enemyGateDistance
                     {
-                        bestPlayer = JSON.parse(JSON.stringify(nowGhost));
+                        // bestPlayer = JSON.parse(JSON.stringify(nowGhost));
+                        bestPlayer = Object.assign({}, nowGhost);
                     }
                     else {
                         if (nowGhost.enemyGateX == bestPlayer.enemyGateX)
                             if (nowGhost.enemyGateY < bestPlayer.enemyGateY)
-                                bestPlayer = JSON.parse(JSON.stringify(nowGhost));
+                                bestPlayer = Object.assign({}, nowGhost);
+                                // bestPlayer = JSON.parse(JSON.stringify(nowGhost));
                     }
                 pointsArray[i][j].ghostWall = pointsArray[i][j].wall;
                 pointsArray[tmpPoint.y][tmpPoint.x].ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 0;
