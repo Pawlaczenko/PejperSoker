@@ -28,6 +28,7 @@ let bestPlayer;
 let startDrawGhost;
 let counter = 0;
 let winFlag = false;
+let debugmode = false;
 
 function Board(div_id) {
     this.squaresX = squaresX;
@@ -321,10 +322,15 @@ function ghostDraw(i) {
 
 }
 
-function playerCheckTurn(nowGhost, tmpPoint, colo) {
-    colo+= 30;
-    for (let i = tmpPoint.y - 1; i <= tmpPoint.y + 1; i++)
-        for (let j = tmpPoint.x - 1; j <= tmpPoint.x + 1; j++)
+function playerCheckTurn(nowGhost, tmpPoint) {
+    // let colo;
+    // let tempsave;
+    // if (debugmode) {
+    //     colo = colorRullete();
+    //     tempsave = ctx.getImageData(0, 0, canvasWidthResolution, canvasHeightResolution);
+    // }
+    for (let i = tmpPoint.y - 1; i <= tmpPoint.y; i++)
+        for (let j = tmpPoint.x - 1; j <= tmpPoint.x; j++)
             if (tmpPoint.ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] == 0) {
                 if (j == -1) {
                     nowGhost.enemyGateX = pointsArray[i].length;
@@ -339,19 +345,19 @@ function playerCheckTurn(nowGhost, tmpPoint, colo) {
                 pointsArray[i][j].ghostWall = true;
                 pointsArray[tmpPoint.y][tmpPoint.x].ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 1;
                 pointsArray[i][j].ghostTable[2 - (i - tmpPoint.y + 1)][2 - (j - tmpPoint.x + 1)] = 1;
-                let co1 = colo;
-                let co2 = 255- colo;
-                let co3 = 122 + colo;
-                ctx.strokeStyle = 'rgb('+co1+', '+co2+', '+co3+')';
-                ctx.beginPath();
-                ctx.moveTo(tmpPoint.x * scale + scale + wallWidth / 2 + marginXY / 3, tmpPoint.y * scale + wallWidth / 2 + marginXY / 3);
-                ctx.lineTo(j * scale + scale + wallWidth / 2 + marginXY / 3, i * scale + wallWidth / 2 + marginXY / 3)
-                ctx.stroke();
-                ctx.closePath();
+                // if (debugmode) {
+                //     tempsave = ctx.getImageData(0, 0, canvasWidthResolution, canvasHeightResolution);
+                //     ctx.strokeStyle = colo;
+                //     ctx.beginPath();
+                //     ctx.moveTo(tmpPoint.x * scale + scale + wallWidth / 2 + marginXY / 3, tmpPoint.y * scale + wallWidth / 2 + marginXY / 3);
+                //     ctx.lineTo(j * scale + scale + wallWidth / 2 + marginXY / 3, i * scale + wallWidth / 2 + marginXY / 3)
+                //     ctx.stroke();
+                //     ctx.closePath();
+                // }
                 if (pointsArray[i][j].wall) {
                     let newPoint = JSON.parse(JSON.stringify(pointsArray[i][j]));
                     let newGhost = JSON.parse(JSON.stringify(nowGhost));
-                    playerCheckTurn(newGhost, newPoint, colo)
+                    playerCheckTurn(newGhost, newPoint)
                     if (winFlag == true) {
                         pointsArray[i][j].ghostWall = pointsArray[i][j].wall;
                         pointsArray[tmpPoint.y][tmpPoint.x].ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 0;
@@ -373,7 +379,10 @@ function playerCheckTurn(nowGhost, tmpPoint, colo) {
                 pointsArray[i][j].ghostWall = pointsArray[i][j].wall;
                 pointsArray[tmpPoint.y][tmpPoint.x].ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 0;
                 pointsArray[i][j].ghostTable[2 - (i - tmpPoint.y + 1)][2 - (j - tmpPoint.x + 1)] = 0;
-
+                // if (debugmode) {
+                //     ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
+                //     ctx.putImageData(tempsave, 0, 0);
+                // }
             }
 }
 
@@ -396,12 +405,15 @@ function botTry(nowGhost, tmpPoint) {
                 pointsArray[i][j].ghostWall = true;
                 pointsArray[tmpPoint.y][tmpPoint.x].ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 1;
                 pointsArray[i][j].ghostTable[2 - (i - tmpPoint.y + 1)][2 - (j - tmpPoint.x + 1)] = 1;
-                ctx.strokeStyle = "black";
-                ctx.beginPath();
-                ctx.moveTo(tmpPoint.x * scale + scale + wallWidth / 2 + marginXY / 3, tmpPoint.y * scale + wallWidth / 2 + marginXY / 3);
-                ctx.lineTo(j * scale + scale + wallWidth / 2 + marginXY / 3, i * scale + wallWidth / 2 + marginXY / 3)
-                ctx.stroke();
-                ctx.closePath();
+                // if (debugmode) {
+                //     ctx.strokeStyle = "black";
+                //     ctx.beginPath();
+                //     ctx.moveTo(tmpPoint.x * scale + scale + wallWidth / 2 + marginXY / 3, tmpPoint.y * scale + wallWidth / 2 + marginXY / 3);
+                //     ctx.lineTo(j * scale + scale + wallWidth / 2 + marginXY / 3, i * scale + wallWidth / 2 + marginXY / 3)
+                //     ctx.stroke();
+                //     ctx.closePath();
+                // }
+
                 let newPoint = JSON.parse(JSON.stringify(pointsArray[i][j]));
                 let newGhost = JSON.parse(JSON.stringify(nowGhost));
                 if (pointsArray[i][j].wall) {
@@ -410,7 +422,7 @@ function botTry(nowGhost, tmpPoint) {
                         return;
                 }
                 else {
-                    playerCheckTurn(newGhost, newPoint, 5);
+                    playerCheckTurn(newGhost, newPoint);
                     winFlag = false;
                     loadBoardState();
                     if (nowGhost.enemyGateX < bestGhost.enemyGateX) //nowGhost.enemyGateDistance < bestGhost.enemyGateDistance
