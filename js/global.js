@@ -6,7 +6,7 @@ function logs() {
         for (var i=0; i<arguments.length; i++) arg += arguments[i]+'--';
         console.log(arg);
     }
-        
+
 }
 
 function log(arg) {
@@ -15,7 +15,7 @@ function log(arg) {
     {
         console.log(arg);
     }
-        
+
 }
 
 function create2dArray(row,column){
@@ -26,3 +26,11 @@ function create2dArray(row,column){
     return tab;
 }
 
+function colorRullete(){
+    let r = Math.floor((Math.random() * 255));
+    let g = Math.floor((Math.random() * 255));
+    let b = Math.floor((Math.random() * 255));
+    let color = 'rgb('+r+','+g+','+b+')';
+
+    return color;
+}
