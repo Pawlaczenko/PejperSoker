@@ -395,6 +395,7 @@ function botTry(nowGhost, tmpPoint, pointsArray) {
                     }
                     else {
                         if (nowGhost.enemyGateX == bestGhost.enemyGateX)
+                        {
                             if (bestPlayer.enemyGateX < bestGhost.awayGateX) {
                                 bestGhost = JSON.parse(JSON.stringify(nowGhost));
                                 bestGhost.awayGateX = bestPlayer.enemyGateX;
@@ -402,6 +403,8 @@ function botTry(nowGhost, tmpPoint, pointsArray) {
                             // else
                             //     if (nowGhost.enemyGateY < bestGhost.enemyGateY)
                             //         bestGhost = JSON.parse(JSON.stringify(nowGhost));
+                        }
+
                     }
                     bestPlayer.enemyGateX = 0;
                     bestPlayer.enemyGateY = 0;
