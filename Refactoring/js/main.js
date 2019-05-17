@@ -358,19 +358,23 @@ function Game() {
 
     this.checkPlayerMoves = function (nowGhost, tmpPoint) {
         let enemyGatePoint = 0;
+        let ownGatePoint = 0;
         if (this.player == false) {
             enemyGatePoint = this.columns;
+        }
+        else {
+            ownGatePoint = 10;
         }
 
         for (let i = tmpPoint.x - 1; i <= tmpPoint.x + 1; i++)
             for (let j = tmpPoint.y - 1; j <= tmpPoint.y + 1; j++)
                 if (this.pointsArray[i] != undefined && this.pointsArray[i][j] != undefined) {
                     if (tmpPoint.moveTable[i - tmpPoint.x + 1][j - tmpPoint.y + 1] == 0) {
-                        // if (j == -1) {
-                        //     nowGhost.enemyGateX = this.pointsArray[i].length;
-                        //     bestPlayer = Object.assign({}, nowGhost);
-                        //     return true;
-                        // }
+                        if (j == ownGatePoint) {
+                            nowGhost.enemyGateX = this.pointsArray[i].length;
+                            bestPlayer = Object.assign({}, nowGhost);
+                            return true;
+                        }
                         // if (j == this.pointsArray[i].length)
                         //     break;
                         nowGhost.enemyGateX = (enemyGatePoint - this.pointsArray[i][j].y);
@@ -449,7 +453,7 @@ function Game() {
                                     }
                                 }
                             }
-                            if(suicideWall == 1 && this.bestGhost.pointsTab.length == 0){
+                            if (suicideWall == 1 && this.bestGhost.pointsTab.length == 0) {
                                 gameEnd(true);
                                 return;
                             }
@@ -457,7 +461,7 @@ function Game() {
                                 return true;
                         }
                         else {
-                            this.checkPlayerMoves(newGhost, this.pointsArray[i][j]);
+                            this.checkPlayerMoves(newGhost, this.pointsArray[i][j])
                             // winFlag = false;
                             // loadBoardState();
                             if (nowGhost.enemyGateX < this.bestGhost.enemyGateX) {
