@@ -17,6 +17,10 @@
         "name": "Andrzej"
       },
       "creation_time": "2019-05-17T15:33:26.559Z",
+      "description": {
+        "content": "+ [ ]Wchodzenie do własnej bramki\n- [ ]Rysowanie gdy nie ma ruchu",
+        "mime": "text/markdown"
+      },
       "id": "3",
       "prio": 6,
       "references": [],
