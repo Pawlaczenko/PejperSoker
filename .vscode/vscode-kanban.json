@@ -1,0 +1,72 @@
+{
+  "done": [],
+  "in-progress": [
+    {
+      "assignedTo": {
+        "name": "Dawid"
+      },
+      "creation_time": "2019-05-17T15:32:59.976Z",
+      "id": "2",
+      "prio": 6,
+      "references": [],
+      "title": "Multi Online",
+      "type": "emergency"
+    },
+    {
+      "assignedTo": {
+        "name": "Andrzej"
+      },
+      "creation_time": "2019-05-17T15:33:26.559Z",
+      "id": "3",
+      "prio": 6,
+      "references": [],
+      "title": "Refaktoryzacja"
+    },
+    {
+      "assignedTo": {
+        "name": "Bartek"
+      },
+      "creation_time": "2019-05-17T15:32:40.529Z",
+      "id": "1",
+      "prio": 5,
+      "references": [],
+      "title": "Wygląd",
+      "type": "bug"
+    }
+  ],
+  "testing": [],
+  "todo": [
+    {
+      "assignedTo": {
+        "name": "Dawid"
+      },
+      "creation_time": "2019-05-17T15:34:26.695Z",
+      "id": "5",
+      "prio": 6,
+      "references": [],
+      "title": "Dawid",
+      "type": "emergency"
+    },
+    {
+      "assignedTo": {
+        "name": "Bartek"
+      },
+      "creation_time": "2019-05-17T15:34:40.487Z",
+      "id": "6",
+      "prio": 6,
+      "references": [],
+      "title": "Bartek",
+      "type": "bug"
+    },
+    {
+      "assignedTo": {
+        "name": "Andrzej"
+      },
+      "creation_time": "2019-05-17T15:34:13.567Z",
+      "id": "4",
+      "prio": 6,
+      "references": [],
+      "title": "Andrzej"
+    }
+  ]
+}

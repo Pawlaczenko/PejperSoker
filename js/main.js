@@ -2,7 +2,7 @@
 let gatewayArray = create2dArray(1, 2);
 let allowPoints = create2dArray(2, 2);
 let canvas = document.createElement("canvas");
-let divBoard = document.getElementById("board");;
+let divBoard = document.getElementById("board");
 let boardWidth = divBoard.offsetWidth;
 let boardHeight = divBoard.offsetHeight;
 let ctx = canvas.getContext('2d');
@@ -236,13 +236,7 @@ function setup() {
 setup();
 
 //-------------------------------------------------------------
-function getMousePos(canvas, evt) {
-    var rect = canvas.getBoundingClientRect();
-    return {
-        x: evt.clientX - rect.left,
-        y: evt.clientY - rect.top
-    };
-}
+
 
 function loadBoardState() {
     ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
@@ -300,6 +294,11 @@ function ghostDraw(myboard, pointsArray) {
     ctx.lineTo(bestGhost.pointsTab[counter].x * scale + scale + wallWidth / 2 + marginXY / 3, bestGhost.pointsTab[counter].y * scale + wallWidth / 2 + marginXY / 3)
     ctx.stroke();
     ctx.closePath();
+    if (pointsArray[bestGhost.pointsTab[counter].y][bestGhost.pointsTab[counter].x] == undefined) {
+        endGame(1);
+        clearInterval(startDrawGhost);
+    }
+
     saveBoardState(bestGhost.pointsTab[counter].y, bestGhost.pointsTab[counter].x, true, myboard, pointsArray);
     loadBoardState();
     pointsArray[bestGhost.pointsTab[counter].y][bestGhost.pointsTab[counter].x].wall = true;
@@ -376,15 +375,14 @@ function botTry(nowGhost, tmpPoint, pointsArray) {
                 // pointsArray[i][j].ghostWall = true;
                 pointsArray[tmpPoint.y][tmpPoint.x].moveTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 1;
                 pointsArray[i][j].moveTable[2 - (i - tmpPoint.y + 1)][2 - (j - tmpPoint.x + 1)] = 1;
-                let newPoint = copyObj(pointsArray[i][j]);
                 let newGhost = Object.assign({}, nowGhost);
                 if (pointsArray[i][j].wall) {
-                    botTry(newGhost, newPoint, pointsArray)
+                    botTry(newGhost, pointsArray[i][j], pointsArray)
                     if (winFlag == true)
                         return;
                 }
                 else {
-                    playerCheckTurn(newGhost, newPoint, pointsArray);
+                    playerCheckTurn(newGhost, pointsArray[i][j], pointsArray);
                     winFlag = false;
                     // loadBoardState();
                     if (nowGhost.enemyGateX < bestGhost.enemyGateX) {
@@ -394,8 +392,7 @@ function botTry(nowGhost, tmpPoint, pointsArray) {
                         }
                     }
                     else {
-                        if (nowGhost.enemyGateX == bestGhost.enemyGateX)
-                        {
+                        if (nowGhost.enemyGateX == bestGhost.enemyGateX) {
                             if (bestPlayer.enemyGateX < bestGhost.awayGateX) {
                                 bestGhost = JSON.parse(JSON.stringify(nowGhost));
                                 bestGhost.awayGateX = bestPlayer.enemyGateX;
@@ -494,8 +491,7 @@ function clickEvent(evt, myboard, pointsArray) {
                             if (!wallmove) {
                                 changePlayer();
                                 let newGhost = new ghostMoves();
-                                tmpPoint = copyObj(curPoint);
-                                botTry(newGhost, tmpPoint, pointsArray)
+                                botTry(newGhost, curPoint, pointsArray)
                                 startDrawGhost = setInterval(function () { ghostDraw(myboard, pointsArray); }, 400);
                                 bestGhost.enemyGateX = 100;
                                 bestGhost.enemyGateY = 100;
