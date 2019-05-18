@@ -389,8 +389,8 @@ function Game() {
 
                             if (this.checkPlayerMoves(newGhost, this.pointsArray[i][j]) == true) {
                                 // this.pointsArray[i][j].ghostWall = this.pointsArray[i][j].wall;
-                                this.pointsArray[tmpPoint.y][tmpPoint.x].moveTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 0;
-                                this.pointsArray[i][j].moveTable[2 - (i - tmpPoint.y + 1)][2 - (j - tmpPoint.x + 1)] = 0;
+                                this.pointsArray[tmpPoint.x][tmpPoint.y].moveTable[i - tmpPoint.x + 1][j - tmpPoint.y + 1] = 0;
+                                this.pointsArray[i][j].moveTable[2 - (i - tmpPoint.x + 1)][2 - (j - tmpPoint.y + 1)] = 0;
                                 return true;
                             }
                         }
