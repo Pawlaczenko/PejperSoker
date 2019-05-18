@@ -180,7 +180,8 @@ function Game() {
         this.bestGhost = new ghostMoves();
         this.bestPlayer = new ghostMoves();
         this.gameOn = true;
-        this.suicideGate = 0;
+        this.suicideBotGate = 0;
+        this.suicideBotWall = 0;
         this.player = Boolean(Math.floor(Math.random() * 2));
         this.curPoint.wall = true;
     }
@@ -274,18 +275,18 @@ function Game() {
                                         if (this.curPoint.moveTable[k][l] != 0) continue;
                                         else {
                                             if (this.botGame == true && !wallHit) {
-                                                this.canvas.removeEventListener('mousemove', this.mouseMoveEvent);
-                                                this.canvas.removeEventListener('click', this.clickEvent);
-                                                let newGhost = new ghostMoves();
-                                                // let tmpPoint = copyObj(curPoint);
-                                                this.checkBotMoves(newGhost, this.curPoint);
-                                                let startDrawGhost = setInterval(() => { this.botDraw(startDrawGhost); }, 400);
-                                                this.canvas.addEventListener('mousemove', this.mouseMoveEvent);
-                                                this.canvas.addEventListener('click', this.clickEvent);
-                                                this.player = !this.player;
-                                                this.bestGhost.enemyGateX = 100;
-                                                this.bestGhost.enemyGateY = 100;
-                                                this.bestGhost.awayGateX = 100;
+                                                // this.canvas.removeEventListener('mousemove', this.mouseMoveEvent);
+                                                // this.canvas.removeEventListener('click', this.clickEvent);
+                                                // let newGhost = new ghostMoves();
+                                                // // let tmpPoint = copyObj(curPoint);
+                                                // this.checkBotMoves(newGhost, this.curPoint);
+                                                // let startDrawGhost = setInterval(() => { this.botDraw(startDrawGhost); }, 400);
+                                                // this.canvas.addEventListener('mousemove', this.mouseMoveEvent);
+                                                // this.canvas.addEventListener('click', this.clickEvent);
+                                                // this.player = !this.player;
+                                                // this.bestGhost.enemyGateX = 100;
+                                                // this.bestGhost.enemyGateY = 100;
+                                                // this.bestGhost.awayGateX = 100;
 
                                             }
                                             return;
@@ -351,6 +352,7 @@ function Game() {
                 console.log("Wygrywa gracz czerwony");
                 this.gameEnd(false);
             }
+            if (this.suicideWall == 1) this.gameEnd(true);
             clearInterval(startDrawGhost);
         }
 
@@ -410,9 +412,26 @@ function Game() {
                 }
     }
 
+    this.debug = () => {
+        console.log("a");
+        // this.canvas.removeEventListener('mousemove', this.mouseMoveEvent);
+        // this.canvas.removeEventListener('click', this.clickEvent);
+        let newGhost = new ghostMoves();
+        // let tmpPoint = copyObj(curPoint);
+        this.checkBotMoves(newGhost, this.curPoint);
+        let startDrawGhost = setInterval(() => { this.botDraw(startDrawGhost); }, 400);
+        // this.canvas.addEventListener('mousemove', this.mouseMoveEvent);
+        // this.canvas.addEventListener('click', this.clickEvent);
+        // this.player = !this.player;
+        this.bestGhost.enemyGateX = 100;
+        this.bestGhost.enemyGateY = 100;
+        this.bestGhost.awayGateX = 100;
+    }
+
     this.checkBotMoves = function (nowGhost, tmpPoint) {
         let enemyGatePoint = 0;
         let ownGatePoint = 0;
+        let winOrLose = 0;
         if (this.player == true) {
             enemyGatePoint = this.columns;
         }
@@ -431,8 +450,10 @@ function Game() {
                             return true;
                         }
                         if (j == ownGatePoint) {
-                            this.suicideGate = Object.assign({}, nowGhost);
-                            return;
+                            nowGhost.pointsTab.pop();
+                            this.suicideGate = new Coordinates(this.pointsArray[i][j].x, this.pointsArray[i][j].y);
+                            nowGhost.pointsTab.push(this.suicideGate);
+                            break;
                         }
                         nowGhost.pointsTab.push(new Coordinates(this.pointsArray[i][j].x, this.pointsArray[i][j].y))
                         nowGhost.enemyGateX = Math.abs(enemyGatePoint - this.pointsArray[i][j].y);
@@ -442,22 +463,19 @@ function Game() {
                         this.pointsArray[i][j].moveTable[2 - (i - tmpPoint.x + 1)][2 - (j - tmpPoint.y + 1)] = 1;
                         // let newPoint = copyObj(this.pointsArray[i][j]);
                         let newGhost = Object.assign({}, nowGhost);
-                        let suicideWall = 0;
+                        // let suicideWall = 0;
                         if (this.pointsArray[i][j].wall) {
-                            loop1:
-                            for (let k = 0; k < 3; k++) {
-                                for (let l = 0; l < 3; l++) {
-                                    if (tmpPoint.moveTable[k][l] == 0) {
-                                        suicideWall = 1;
-                                        break loop1;
-                                    }
-                                }
-                            }
-                            if (suicideWall == 1 && this.bestGhost.pointsTab.length == 0) {
-                                gameEnd(true);
-                                return;
-                            }
-                            if (this.checkBotMoves(newGhost, this.pointsArray[i][j]) == true)
+                            // loop1:
+                            // for (let k = 0; k < 3; k++) {
+                            //     for (let l = 0; l < 3; l++) {
+                            //         if (tmpPoint.moveTable[k][l] == 0) {
+                            //             // suicideWall = 1;
+                            //             break loop1;
+                            //         }
+                            //     }
+                            // }
+                            let winOrLose = this.checkBotMoves(newGhost, this.pointsArray[i][j])
+                            if (winOrLose == true)
                                 return true;
                         }
                         else {
@@ -500,14 +518,27 @@ function Game() {
                             // bestPlayer.enemyGateY = 0;
                             // bestPlayer.awayGateX = 100;
                         }
-                        this.pointsArray[i][j].ghostWall = false;
-                        this.pointsArray[tmpPoint.x][tmpPoint.y].moveTable[i - tmpPoint.x + 1][j - tmpPoint.y + 1] = 0;
-                        this.pointsArray[i][j].moveTable[2 - (i - tmpPoint.x + 1)][2 - (j - tmpPoint.y + 1)] = 0;
-                        nowGhost.pointsTab.pop();
-
+                        if (winOrLose != false) {
+                            this.pointsArray[i][j].ghostWall = false;
+                            this.pointsArray[tmpPoint.x][tmpPoint.y].moveTable[i - tmpPoint.x + 1][j - tmpPoint.y + 1] = 0;
+                            this.pointsArray[i][j].moveTable[2 - (i - tmpPoint.x + 1)][2 - (j - tmpPoint.y + 1)] = 0;
+                            nowGhost.pointsTab.pop();
+                            return;
+                        }
 
                     }
                 }
+        if (this.suicideGate != 0) {
+
+            this.bestGhost = JSON.parse(JSON.stringify(nowGhost));
+        }
+        else {
+            this.suicideWall = 1;
+            this.bestGhost = JSON.parse(JSON.stringify(nowGhost));
+        }
+
+        return false;
+
     }
 }
 
@@ -535,6 +566,11 @@ function ghostMoves() {
     this.awayGateX = 100;
 }
 
+
 let game = new Game();
 game.gamePrepare();
 game.gameStart();
+
+
+let btn = document.querySelector(".btn");
+btn.addEventListener("click", game.debug);

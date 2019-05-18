@@ -18,7 +18,7 @@
       },
       "creation_time": "2019-05-17T15:33:26.559Z",
       "description": {
-        "content": "+ [ ]Wchodzenie do własnej bramki\n- [ ]Rysowanie gdy nie ma ruchu\n- [ ]Wybór ruchu który sprawi że gracz będzie musiał wejść do bramki",
+        "content": "+ [X]Wchodzenie do własnej bramki\n- [X]Rysowanie gdy nie ma ruchu\n- [ ]Wybór ruchu który sprawi że gracz będzie musiał wejść do bramki",
         "mime": "text/markdown"
       },
       "id": "3",
