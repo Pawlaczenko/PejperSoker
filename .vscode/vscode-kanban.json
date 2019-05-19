@@ -36,6 +36,16 @@
       "references": [],
       "title": "Wygląd",
       "type": "bug"
+    },
+    {
+      "assignedTo": {
+        "name": "Andrzej"
+      },
+      "creation_time": "2019-05-17T15:33:26.559Z",
+      "id": "3",
+      "prio": 6,
+      "references": [],
+      "title": "Refaktoryzacja"
     }
   ],
   "testing": [],
