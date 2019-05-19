@@ -4,12 +4,13 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
 }
 
-#board{
+/* #board{
     width: 600px;
     height: 400px;
-}
+} */
 
 canvas{
     width: 100%;
