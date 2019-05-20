@@ -1,123 +1,3 @@
-// let tab = new Array(4);
-
-// for (let i = 0; i < tab.length; i++) {
-//     tab[i] = new Array(4);
-// }
-// counter = 1;
-// for (let i = 0; i < tab.length; i++) {
-//     for (let j = 0; j < tab.length; j++) {
-//         tab[i][j] = counter;
-//         counter++;
-//     }
-// }
-
-// let pathTab = new Array(16);
-// for (let i = 0; i < pathTab.length; i++) {
-//     pathTab[i] = new Array();
-// }
-
-
-// for (let i = 0; i < tab.length; i++) {
-//     for (let j = 0; j < tab[i].length; j++) {
-//         let curNumber = i * 4 + j;
-//         if (curNumber - 5 >= 0) {
-//             pathTab[curNumber].push(curNumber - 5)
-//         }
-//         if (curNumber - 4 >= 0) {
-//             pathTab[curNumber].push(curNumber - 4)
-//         }
-//         if (curNumber - 3 >= 0) {
-//             pathTab[curNumber].push(curNumber - 3)
-//         }
-//         if (curNumber - 1 >= 0) {
-//             pathTab[curNumber].push(curNumber - 1)
-//         }
-//         if (curNumber + 1 < pathTab.length) {
-//             pathTab[curNumber].push(curNumber + 1)
-//         }
-//         if (curNumber + 3 < pathTab.length) {
-//             pathTab[curNumber].push(curNumber + 3)
-//         }
-//         if (curNumber + 4 < pathTab.length) {
-//             pathTab[curNumber].push(curNumber + 4)
-//         }
-//         if (curNumber + 5 < pathTab.length) {
-//             pathTab[curNumber].push(curNumber + 5)
-//         }
-
-//     }
-
-
-// }
-
-// pathTab[0].push(1)
-// pathTab[0].push(4)
-// pathTab[0].push(5)
-
-// console.log(tab);
-// console.log(pathTab);
-
-
-/* let Graph = function () {
-    this.storage = {};
-    this.size = 0;
-}
-
-Graph.prototype.add = function (value) {
-    this.storage[value] = {};
-    this.size++;
-}
-
-Graph.prototype.addConnection = function (fr, to) {
-    this.storage[fr][to] = true;
-    this.storage[to][fr] = true;
-}
-
-Graph.prototype.removeConnection = function (fr, to) {
-    delete this.storage[fr][to];
-    delete this.storage[to][fr];
-}
-
-Graph.prototype.contains = function (taget) {
-    return this.storage.hasOwnProperty(taget);
-}
-
-Graph.prototype.hasConnection = function (fr, to) {
-    return this.storage[fr].hasOwnProperty(to);
-}
-
-Graph.prototype.remove = function (val) {
-    delete this.storage[val];
-    this.size--;
-    for (let key in this.storage) {
-        if (this.storage[key][val]) {
-            delete this.storage[key][val];
-        }
-    }
-}
-
-
-let maple = new Graph();
-maple.add(1);
-maple.add(2);
-maple.add(3);
-maple.add(4);
-maple.add(5);
-maple.add(6);
-maple.add(7);
-maple.add(8);
-maple.add(9);
-
-maple.addConnection(1, 2);
-maple.addConnection(1, 4);
-maple.addConnection(1, 5);
-maple.addConnection(2, 3);
-maple.addConnection(2, 4);
-maple.addConnection(2, 5);
-maple.addConnection(2, 6);
-
- */
-
 const addNode = (graph, node) => {
     graph.set(node, { in: new Set(), out: new Set() });
 };
@@ -195,14 +75,6 @@ const findPath = (source, target, graph) => {
     return null;
 };
 
-//  A --* B
-//      / | \
-//     *  |  *
-//    C   |   D --* E
-//     \  |  /     *
-//      * * *     /
-//        F------/
-
 let rows = 8;
 let columns = 10;
 
@@ -211,12 +83,6 @@ for (let i = 0; i < tab.length; i++) {
     tab[i] = new Array(columns + 1);
 }
 counter = 0;
-// for (let i = 0; i < tab.length; i++) {
-//     for (let j = 0; j < tab.length; j++) {
-//         tab[i][j] = counter;
-//         counter++;
-//     }
-// }
 
 for (let i = 0; i <= rows; i++) {
     for (let j = 0; j <= columns; j++) {
@@ -236,56 +102,73 @@ for (let i = 0; i <= rows; i++) {
     }
 }
 
-// for (let i = 0; i < tab.length; i++) {
-//     for (let j = 0; j < tab[i].length; j++) {
-//         if (tab[i][j] == undefined) tab[i].shift();
-
-//     }
-
-// }
-
 let tabEdges = new Array();
 let horizontalBlock = false;
 let verticalBlock = false;
+let blockLeftGate = false;
+let blockRightGate = false;
+let blockTopGate = false;
+let blockBottomGate = false;
 
 for (let i = 0; i < tab.length; i++) {
     for (let j = 0; j < tab[i].length; j++) {
         if (tab[i] != -1 && tab[i][j] != -1) {
+            if (i == rows / 2 - 1 && j == 1) {
+                blockLeftGate = true;
+                blockTopGate = true;
+            }
+
+            if (i == rows / 2 + 1 && j == 1) {
+                blockLeftGate = true;
+                blockBottomGate = true;
+            }
+
+            if (i == rows / 2 - 1 && j == columns - 1) {
+                blockRightGate = true;
+                blockTopGate = true;
+            }
+
+            if (i == rows / 2 + 1 && j == columns - 1) {
+                blockRightGate = true;
+                blockBottomGate = true;
+            }
+
             if ((i == rows / 2 - 1 || i == rows / 2 + 1) && j == 0) {
-                tabEdges.push({ source: `${i}_${j}`, target: `${i}_${j + 1}` })
                 continue;
             }
 
             if ((i == rows / 2 - 1 || i == rows / 2 + 1) && j == columns) {
-                tabEdges.push({ source: `${i}_${j}`, target: `${i}_${j - 1}` })
                 continue;
             }
 
             if (i == 0 || i == rows) horizontalBlock = true;
 
-            if ((i >= rows / 2 - 1 && i <= rows / 2 + 1) && (j == 0 || j == columns)) verticalBlock = true;
+            if ((i >= rows / 2 - 1 && i <= rows / 2 + 1) && (j == 0 || j == columns)) {
+                verticalBlock = true;
+                horizontalBlock = true;
+            }
 
             if (!(i >= rows / 2 - 1 && i <= rows / 2 + 1) && (j == 1 || j == columns - 1)) verticalBlock = true;
 
             if (tab[i - 1] != undefined && tab[i - 1][j - 1] > -1 && verticalBlock == false) {
                 tabEdges.push({ source: `${i}_${j}`, target: `${i - 1}_${j - 1}` })
             }
-            if (tab[i - 1] != undefined && tab[i - 1][j] > -1 && verticalBlock == false) {
+            if (tab[i - 1] != undefined && tab[i - 1][j] > -1 && verticalBlock == false && blockTopGate == false) {
                 tabEdges.push({ source: `${i}_${j}`, target: `${i - 1}_${j}` })
             }
             if (tab[i - 1] != undefined && tab[i - 1][j + 1] > -1 && verticalBlock == false) {
                 tabEdges.push({ source: `${i}_${j}`, target: `${i - 1}_${j + 1}` })
             }
-            if (tab[i][j - 1] > -1 && horizontalBlock == false) {
+            if (tab[i][j - 1] > -1 && horizontalBlock == false && blockLeftGate == false) {
                 tabEdges.push({ source: `${i}_${j}`, target: `${i}_${j - 1}` })
             }
-            if (tab[i][j + 1] > -1 && horizontalBlock == false) {
+            if (tab[i][j + 1] > -1 && horizontalBlock == false && blockRightGate == false) {
                 tabEdges.push({ source: `${i}_${j}`, target: `${i}_${j + 1}` })
             }
             if (tab[i + 1] != undefined && tab[i + 1][j - 1] > -1 && verticalBlock == false) {
                 tabEdges.push({ source: `${i}_${j}`, target: `${i + 1}_${j - 1}` })
             }
-            if (tab[i + 1] != undefined && tab[i + 1][j] > -1 && verticalBlock == false) {
+            if (tab[i + 1] != undefined && tab[i + 1][j] > -1 && verticalBlock == false && blockBottomGate == false) {
                 tabEdges.push({ source: `${i}_${j}`, target: `${i + 1}_${j}` })
             }
             if (tab[i + 1] != undefined && tab[i + 1][j + 1] > -1 && verticalBlock == false) {
@@ -293,6 +176,10 @@ for (let i = 0; i < tab.length; i++) {
             }
             horizontalBlock = false;
             verticalBlock = false;
+            blockLeftGate = false;
+            blockRightGate = false;
+            blockTopGate = false;
+            blockBottomGate = false;
         }
     }
 }
