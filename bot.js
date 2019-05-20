@@ -76,7 +76,7 @@ const findPath = (source, target, graph) => {
 };
 
 let rows = 8;
-let columns = 10;
+let columns = 12;
 
 let tab = new Array(rows + 1);
 for (let i = 0; i < tab.length; i++) {
@@ -270,7 +270,7 @@ function Game() {
 
     //* Metody gry
     this.gamePrepare = function () {
-        this.createBoard(8, 10);
+        this.createBoard(8, 12);
         this.createField();
     }
 
