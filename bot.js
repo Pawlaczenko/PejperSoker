@@ -1,192 +1,7 @@
-const addNode = (graph, node) => {
-    graph.set(node, { in: new Set(), out: new Set() });
-};
 
-const connectNodes = (graph, source, target) => {
-    graph.get(source).out.add(target);
-    graph.get(target).in.add(source);
-    graph.get(source).in.add(target);
-    graph.get(target).out.add(source);
-};
+const graph = createGraph(8, 12);
 
-const buildGraphFromEdges = (edges) => edges.reduce(
-    (graph, { source, target }) => {
-        if (!graph.has(source)) {
-            addNode(graph, source);
-        }
 
-        if (!graph.has(target)) {
-            addNode(graph, target);
-        }
-
-        connectNodes(graph, source, target);
-
-        return graph;
-    },
-    new Map()
-);
-
-const buildPath = (target, path) => {
-    const result = [];
-
-    while (path.has(target)) {
-        const source = path.get(target);
-        result.push({ source, target });
-        target = source;
-    }
-
-    return result.reverse();
-};
-
-const findPath = (source, target, graph) => {
-    if (!graph.has(source)) {
-        throw new Error('Unknown source.');
-    }
-
-    if (!graph.has(target)) {
-        throw new Error('Unknown target.');
-    }
-
-    const queue = [source];
-    const visited = new Set();
-    const path = new Map();
-
-    while (queue.length > 0) {
-        const start = queue.shift();
-
-        if (start === target) {
-            return buildPath(start, path);
-        }
-
-        for (const next of graph.get(start).out) {
-            if (visited.has(next)) {
-                continue;
-            }
-
-            if (!queue.includes(next)) {
-                path.set(next, start);
-                queue.push(next);
-            }
-        }
-
-        visited.add(start);
-    }
-
-    return null;
-};
-
-let rows = 8;
-let columns = 12;
-
-let tab = new Array(rows + 1);
-for (let i = 0; i < tab.length; i++) {
-    tab[i] = new Array(columns + 1);
-}
-let licznik = 0;
-
-for (let i = 0; i <= rows; i++) {
-    for (let j = 0; j <= columns; j++) {
-        if (j >= 1 && j < columns) {
-            tab[i][j] = licznik;
-            licznik++;
-            continue;
-        }
-        else if (i >= rows / 2 - 1 && i <= rows / 2 + 1) {
-            tab[i][j] = licznik;
-            licznik++;
-            continue;
-        }
-        else {
-            tab[i][j] = -1;
-        }
-    }
-}
-
-let tabEdges = new Array();
-let horizontalBlock = false;
-let verticalBlock = false;
-let blockLeftGate = false;
-let blockRightGate = false;
-let blockTopGate = false;
-let blockBottomGate = false;
-
-for (let i = 0; i < tab.length; i++) {
-    for (let j = 0; j < tab[i].length; j++) {
-        if (tab[i] != -1 && tab[i][j] != -1) {
-            if (i == rows / 2 - 1 && j == 1) {
-                blockLeftGate = true;
-                blockTopGate = true;
-            }
-
-            if (i == rows / 2 + 1 && j == 1) {
-                blockLeftGate = true;
-                blockBottomGate = true;
-            }
-
-            if (i == rows / 2 - 1 && j == columns - 1) {
-                blockRightGate = true;
-                blockTopGate = true;
-            }
-
-            if (i == rows / 2 + 1 && j == columns - 1) {
-                blockRightGate = true;
-                blockBottomGate = true;
-            }
-
-            if ((i == rows / 2 - 1 || i == rows / 2 + 1) && j == 0) {
-                continue;
-            }
-
-            if ((i == rows / 2 - 1 || i == rows / 2 + 1) && j == columns) {
-                continue;
-            }
-
-            if (i == 0 || i == rows) horizontalBlock = true;
-
-            if ((i >= rows / 2 - 1 && i <= rows / 2 + 1) && (j == 0 || j == columns)) {
-                verticalBlock = true;
-                horizontalBlock = true;
-            }
-
-            if (!(i >= rows / 2 - 1 && i <= rows / 2 + 1) && (j == 1 || j == columns - 1)) verticalBlock = true;
-
-            if (tab[i - 1] != undefined && tab[i - 1][j - 1] > -1 && verticalBlock == false) {
-                tabEdges.push({ source: `${i}_${j}`, target: `${i - 1}_${j - 1}` })
-            }
-            if (tab[i - 1] != undefined && tab[i - 1][j] > -1 && verticalBlock == false && blockTopGate == false) {
-                tabEdges.push({ source: `${i}_${j}`, target: `${i - 1}_${j}` })
-            }
-            if (tab[i - 1] != undefined && tab[i - 1][j + 1] > -1 && verticalBlock == false) {
-                tabEdges.push({ source: `${i}_${j}`, target: `${i - 1}_${j + 1}` })
-            }
-            if (tab[i][j - 1] > -1 && horizontalBlock == false && blockLeftGate == false) {
-                tabEdges.push({ source: `${i}_${j}`, target: `${i}_${j - 1}` })
-            }
-            if (tab[i][j + 1] > -1 && horizontalBlock == false && blockRightGate == false) {
-                tabEdges.push({ source: `${i}_${j}`, target: `${i}_${j + 1}` })
-            }
-            if (tab[i + 1] != undefined && tab[i + 1][j - 1] > -1 && verticalBlock == false) {
-                tabEdges.push({ source: `${i}_${j}`, target: `${i + 1}_${j - 1}` })
-            }
-            if (tab[i + 1] != undefined && tab[i + 1][j] > -1 && verticalBlock == false && blockBottomGate == false) {
-                tabEdges.push({ source: `${i}_${j}`, target: `${i + 1}_${j}` })
-            }
-            if (tab[i + 1] != undefined && tab[i + 1][j + 1] > -1 && verticalBlock == false) {
-                tabEdges.push({ source: `${i}_${j}`, target: `${i + 1}_${j + 1}` })
-            }
-            horizontalBlock = false;
-            verticalBlock = false;
-            blockLeftGate = false;
-            blockRightGate = false;
-            blockTopGate = false;
-            blockBottomGate = false;
-        }
-    }
-}
-
-const graph = buildGraphFromEdges(tabEdges);
-console.log(`"${rows / 2}_${columns / 2}"`);
-console.log(graph.get(`${rows / 2}_${columns / 2}`).out);
 let counter = 0;
 //! przeżucić counter
 function Game() {
@@ -223,12 +38,10 @@ function Game() {
         this.color = 'blue';
 
         //? this.curPoint = this.pointsArray[this.halfRows][this.halfColumns];
-
         for (let x = 0; x <= this.rows; x++) {
             for (let y = 0; y <= this.columns; y++) {
                 if (graph.has(`${x}_${y}`)) {
                     for (const next of graph.get(`${x}_${y}`).out) {
-                        console.log(next);
                         if (next == `${x + 1}_${y}` || next == `${x}_${y + 1}`) {
                             this.ctx.lineWidth = this.noLineWidth;
                             this.drawLine(x, y, Number(next.substring(0, 1)), Number(next.substring(2, next.length)));
@@ -236,11 +49,17 @@ function Game() {
                     }//graph.get(`${x}_${y}`).out.has(`${x}_${y + 1}`)
                     if (!(graph.get(`${x}_${y}`).out.has(`${x + 1}_${y}`)) && graph.has(`${x + 1}_${y}`)) {
                         this.ctx.lineWidth = this.wallLineWidth;
-                        this.drawLine(x, y, Number(`${x + 1}_${y}`.substring(0, 1)), Number(`${x + 1}_${y}`.substring(2, `${x + 1}_${y}`.length)));
+                        this.drawLine(x, y, x + 1, y);
                     }
                     if (!(graph.get(`${x}_${y}`).out.has(`${x}_${y + 1}`)) && graph.has(`${x}_${y + 1}`)) {
                         this.ctx.lineWidth = this.wallLineWidth;
-                        this.drawLine(x, y, Number(`${x}_${y + 1}`.substring(0, 1)), Number(`${x}_${y + 1}`.substring(2, `${x}_${y + 1}`.length)));
+                        this.drawLine(x, y, x, y + 1);
+                    }
+                    if (graph.get(`${x}_${y}`).out.size < 8) {
+                        graph.get(`${x}_${y}`).wallValue = 0;
+                    }
+                    else {
+                        graph.get(`${x}_${y}`).wallValue = 1;
                     }
                 }
 
@@ -248,8 +67,10 @@ function Game() {
 
         }
 
+        this.curPoint = new Coordinates(this.rows / 2, this.columns / 2)
         this.myImgData = this.ctx.getImageData(0, 0, this.canvasWidth, this.canvasHeight);
-        this.drawPoint(this.pointsArray[this.halfRows][this.halfColumns].x, this.pointsArray[this.halfRows][this.halfColumns].y);
+        this.curPoint = new Coordinates(this.rows / 2, this.columns / 2)
+        this.drawPoint(this.curPoint.x, this.curPoint.y);
         this.gameOn = false;
 
     }
@@ -279,13 +100,12 @@ function Game() {
         this.canvas.addEventListener('click', this.clickEvent);
 
         this.botGame = true;
-        this.bestGhost = new ghostMoves();
-        this.bestPlayer = new ghostMoves();
+        // this.bestGhost = new ghostMoves();
+        // this.bestPlayer = new ghostMoves();
         this.gameOn = true;
-        this.suicideGate = 0;
-        this.suicideWall = 0;
+        // this.suicideGate = 0;
+        // this.suicideWall = 0;
         this.player = Boolean(Math.floor(Math.random() * 2));
-        this.curPoint.wall = true;
     }
 
     this.gameEnd = function (bool) {
@@ -314,17 +134,16 @@ function Game() {
         let cord_Y = mousePos.y * przelicznik_na_y;
 
         ///PUNKTY MAPY///
-        for (let i = 0; i < this.pointsArray.length; i++)
-            for (let j = 0; j < this.pointsArray[i].length; j++) {
-
-                if (this.pointsArray[i][j] != undefined) {
-                    if ((this.pointsArray[i][j].y * this.scale + this.wallLineWidth / 2 <= cord_X + this.scale / 2 && this.pointsArray[i][j].x * this.scale + this.wallLineWidth / 2 <= cord_Y + this.scale / 2)
-                        && (this.pointsArray[i][j].y * this.scale + this.wallLineWidth / 2 >= cord_X - this.scale / 2 && this.pointsArray[i][j].x * this.scale + this.wallLineWidth / 2 >= cord_Y - this.scale / 2))
-                        if ((i >= this.curPoint.x - 1 && i <= this.curPoint.x + 1) && (j >= this.curPoint.y - 1 && j <= this.curPoint.y + 1))
-                            if (this.curPoint.moveTable[i - this.curPoint.x + 1][j - this.curPoint.y + 1] == 0) {
+        for (let x = 0; x <= this.rows; x++)
+            for (let y = 0; y <= this.columns; y++) {
+                if (graph.has(`${x}_${y}`)) {
+                    if ((y * this.scale + this.wallLineWidth / 2 <= cord_X + this.scale / 2 && x * this.scale + this.wallLineWidth / 2 <= cord_Y + this.scale / 2)
+                        && (y * this.scale + this.wallLineWidth / 2 >= cord_X - this.scale / 2 && x * this.scale + this.wallLineWidth / 2 >= cord_Y - this.scale / 2))
+                        if ((x >= this.curPoint.x - 1 && x <= this.curPoint.x + 1) && (y >= this.curPoint.y - 1 && y <= this.curPoint.y + 1))
+                            if (graph.get(`${this.curPoint.x}_${this.curPoint.y}`).out.has(`${x}_${y}`)) {
                                 this.loadBoardState();
                                 this.ctx.fillStyle = this.color;
-                                this.drawPoint(this.pointsArray[i][j].x, this.pointsArray[i][j].y);
+                                this.drawPoint(x, y);
                             }
                 }
             }
@@ -338,8 +157,8 @@ function Game() {
         let cord_Y = mousePos.x * this.canvasHeight / this.boardHeight; //*Tak ma być
         let wallHit = false;
 
-        for (let i = 0; i < this.pointsArray.length; i++) {
-            for (let j = 0; j < this.pointsArray[i].length; j++) {
+        for (let x = 0; x < this.rows; x++) {
+            for (let y = 0; y < this.pointsArray[i].length; y++) {
                 if (this.pointsArray[i][j] != undefined) {
                     if ((this.pointsArray[i][j].x * this.scale + this.wallLineWidth / 2 <= cord_X + this.scale / 2 && this.pointsArray[i][j].y * this.scale + this.wallLineWidth / 2 <= cord_Y + this.scale / 2)
                         && (this.pointsArray[i][j].x * this.scale + this.wallLineWidth / 2 >= cord_X - this.scale / 2 && this.pointsArray[i][j].y * this.scale + this.wallLineWidth / 2 >= cord_Y - this.scale / 2)) {

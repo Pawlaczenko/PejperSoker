@@ -1,3 +1,6 @@
+
+
+
 let counter = 0;
 //! przeżucić counter
 function Game() {
