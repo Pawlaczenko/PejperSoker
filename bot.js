@@ -101,7 +101,7 @@ function Game() {
         this.canvas.addEventListener('mousemove', this.mouseMoveEvent);
         this.canvas.addEventListener('click', this.clickEvent);
 
-        this.botGame = false;
+        this.botGame = true;
         // this.bestGhost = new ghostMoves();
         // this.bestPlayer = new ghostMoves();
         this.gameOn = true;
@@ -197,22 +197,35 @@ function Game() {
                                     if (this.botGame == true && !wallHit) {
                                         this.canvas.removeEventListener('mousemove', this.mouseMoveEvent);
                                         this.canvas.removeEventListener('click', this.clickEvent);
-                                        let newGhost = new ghostMoves();
-                                        this.checkBotMoves(newGhost, this.curPoint);
-                                        if (this.bestGhost.pointsTab.length == 0) {
-                                            if (this.suicideWall != 0) {
-                                                this.bestGhost = this.suicideWall;
-                                                this.suicideWall = 1;
-                                            }
+                                        const path = findPath(`${this.curPoint.x}_${this.curPoint.y}`, "4_12", graph);
+                                        path.forEach(element => {
+                                            this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+                                            this.ctx.putImageData(this.myImgData, 0, 0);
+                                            this.ctx.strokeStyle = "black";
+                                            this.drawLine(this.curPoint.x, this.curPoint.y, Number(element.target.substring(0, 1)), Number(element.target.substring(2, element.target.length)))
 
-                                            if (this.suicideGate != 0) {
-                                                this.bestGhost = this.suicideGate;
-                                            }
-                                        }
-                                        let startDrawGhost = setInterval(() => { this.botDraw(startDrawGhost); }, 400);
-                                        this.bestGhost.enemyGateX = 100;
-                                        this.bestGhost.enemyGateY = 100;
-                                        this.bestGhost.awayGateX = 100;
+
+                                            this.saveBoardState(Number(element.target.substring(0, 1)), Number(element.target.substring(2, element.target.length)));
+                                            this.loadBoardState();
+                                            this.curPoint.x = Number(element.target.substring(0, 1));
+                                            this.curPoint.y = Number(element.target.substring(2, element.target.length))
+                                        });
+                                        // let newGhost = new ghostMoves();
+                                        // this.checkBotMoves(newGhost, this.curPoint);
+                                        // if (this.bestGhost.pointsTab.length == 0) {
+                                        //     if (this.suicideWall != 0) {
+                                        //         this.bestGhost = this.suicideWall;
+                                        //         this.suicideWall = 1;
+                                        //     }
+
+                                        //     if (this.suicideGate != 0) {
+                                        //         this.bestGhost = this.suicideGate;
+                                        //     }
+                                        // }
+                                        // let startDrawGhost = setInterval(() => { this.botDraw(startDrawGhost); }, 400);
+                                        // this.bestGhost.enemyGateX = 100;
+                                        // this.bestGhost.enemyGateY = 100;
+                                        // this.bestGhost.awayGateX = 100;
                                         this.canvas.addEventListener('mousemove', this.mouseMoveEvent);
                                         this.canvas.addEventListener('click', this.clickEvent);
                                         this.player = !this.player;
@@ -227,7 +240,6 @@ function Game() {
             }
         }
     }
-
     //* Metody pomocnicze
     this.drawPoint = function (x, y) {
         this.ctx.beginPath();
@@ -253,7 +265,6 @@ function Game() {
         this.ctx.stroke();
         this.ctx.closePath();
     }
-
     //*Metody bota
     this.botDraw = function (startDrawGhost) {
         this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
