@@ -75,11 +75,13 @@ function Game() {
 
     }
 
-    this.saveBoardState = function (i, j) {
+    this.saveBoardState = function (x, y) {
         this.myImgData = this.ctx.getImageData(0, 0, this.canvasWidth, this.canvasHeight);
-        this.curPoint.moveTable[i - this.curPoint.x + 1][j - this.curPoint.y + 1] = 1;
-        this.pointsArray[i][j].moveTable[2 - (i - this.curPoint.x + 1)][2 - (j - this.curPoint.y + 1)] = 1;
-        this.curPoint = this.pointsArray[i][j];
+        graph.get(`${this.curPoint.x}_${this.curPoint.y}`).out.delete(`${x}_${y}`);
+        graph.get(`${this.curPoint.x}_${this.curPoint.y}`).wallValue = 0;
+        graph.get(`${x}_${y}`).out.delete(`${this.curPoint.x}_${this.curPoint.y}`);
+        this.curPoint.x = x;
+        this.curPoint.y = y;
     }
 
     this.loadBoardState = function () {
@@ -99,7 +101,7 @@ function Game() {
         this.canvas.addEventListener('mousemove', this.mouseMoveEvent);
         this.canvas.addEventListener('click', this.clickEvent);
 
-        this.botGame = true;
+        this.botGame = false;
         // this.bestGhost = new ghostMoves();
         // this.bestPlayer = new ghostMoves();
         this.gameOn = true;
@@ -157,25 +159,25 @@ function Game() {
         let cord_Y = mousePos.x * this.canvasHeight / this.boardHeight; //*Tak ma być
         let wallHit = false;
 
-        for (let x = 0; x < this.rows; x++) {
-            for (let y = 0; y < this.pointsArray[i].length; y++) {
-                if (this.pointsArray[i][j] != undefined) {
-                    if ((this.pointsArray[i][j].x * this.scale + this.wallLineWidth / 2 <= cord_X + this.scale / 2 && this.pointsArray[i][j].y * this.scale + this.wallLineWidth / 2 <= cord_Y + this.scale / 2)
-                        && (this.pointsArray[i][j].x * this.scale + this.wallLineWidth / 2 >= cord_X - this.scale / 2 && this.pointsArray[i][j].y * this.scale + this.wallLineWidth / 2 >= cord_Y - this.scale / 2)) {
-                        if ((i >= this.curPoint.x - 1 && i <= this.curPoint.x + 1) && (j >= this.curPoint.y - 1 && j <= this.curPoint.y + 1)) {
-                            if (this.curPoint.moveTable[i - this.curPoint.x + 1][j - this.curPoint.y + 1] == 0) {
+        for (let x = 0; x <= this.rows; x++) {
+            for (let y = 0; y <= this.columns; y++) {
+                if (graph.has(`${x}_${y}`)) {
+                    if ((x * this.scale + this.wallLineWidth / 2 <= cord_X + this.scale / 2 && y * this.scale + this.wallLineWidth / 2 <= cord_Y + this.scale / 2)
+                        && (x * this.scale + this.wallLineWidth / 2 >= cord_X - this.scale / 2 && y * this.scale + this.wallLineWidth / 2 >= cord_Y - this.scale / 2)) {
+                        if ((x >= this.curPoint.x - 1 && x <= this.curPoint.x + 1) && (y >= this.curPoint.y - 1 && y <= this.curPoint.y + 1)) {
+                            if (graph.get(`${this.curPoint.x}_${this.curPoint.y}`).out.has(`${x}_${y}`)) {
                                 this.ctx.fillStyle = "blue";
-                                this.drawPoint(this.pointsArray[i][j].x, this.pointsArray[i][j].y)
+                                this.drawPoint(x, y)
                                 this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
                                 this.ctx.putImageData(this.myImgData, 0, 0);
                                 this.ctx.strokeStyle = this.color;
-                                this.drawLine(this.curPoint.x, this.curPoint.y, this.pointsArray[i][j].x, this.pointsArray[i][j].y)
-                                this.saveBoardState(i, j);
+                                this.drawLine(this.curPoint.x, this.curPoint.y, x, y)
+                                this.saveBoardState(x, y);
                                 this.loadBoardState();
 
-                                if (this.pointsArray[i][j].wall)
+                                if (graph.get(`${x}_${y}`).wallValue == 0)
                                     wallHit = true;
-                                this.pointsArray[i][j].wall = true;
+                                graph.get(`${x}_${y}`).wallValue = 0;
 
                                 if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == this.columns) {
                                     console.log("Wygrywa gracz niebieski");
@@ -191,36 +193,31 @@ function Game() {
                                 if (!wallHit)
                                     this.player = !this.player;
 
-                                for (let k = 0; k < this.curPoint.moveTable.length; k++) {
-                                    for (let l = 0; l < this.curPoint.moveTable.length; l++) {
-                                        if (this.curPoint.moveTable[k][l] != 0) continue;
-                                        else {
-                                            if (this.botGame == true && !wallHit) {
-                                                this.canvas.removeEventListener('mousemove', this.mouseMoveEvent);
-                                                this.canvas.removeEventListener('click', this.clickEvent);
-                                                let newGhost = new ghostMoves();
-                                                this.checkBotMoves(newGhost, this.curPoint);
-                                                if (this.bestGhost.pointsTab.length == 0) {
-                                                    if (this.suicideWall != 0) {
-                                                        this.bestGhost = this.suicideWall;
-                                                        this.suicideWall = 1;
-                                                    }
-
-                                                    if (this.suicideGate != 0) {
-                                                        this.bestGhost = this.suicideGate;
-                                                    }
-                                                }
-                                                let startDrawGhost = setInterval(() => { this.botDraw(startDrawGhost); }, 400);
-                                                this.bestGhost.enemyGateX = 100;
-                                                this.bestGhost.enemyGateY = 100;
-                                                this.bestGhost.awayGateX = 100;
-                                                this.canvas.addEventListener('mousemove', this.mouseMoveEvent);
-                                                this.canvas.addEventListener('click', this.clickEvent);
-                                                this.player = !this.player;
+                                if (graph.get(`${x}_${y}`).out.size > 0) {
+                                    if (this.botGame == true && !wallHit) {
+                                        this.canvas.removeEventListener('mousemove', this.mouseMoveEvent);
+                                        this.canvas.removeEventListener('click', this.clickEvent);
+                                        let newGhost = new ghostMoves();
+                                        this.checkBotMoves(newGhost, this.curPoint);
+                                        if (this.bestGhost.pointsTab.length == 0) {
+                                            if (this.suicideWall != 0) {
+                                                this.bestGhost = this.suicideWall;
+                                                this.suicideWall = 1;
                                             }
-                                            return;
+
+                                            if (this.suicideGate != 0) {
+                                                this.bestGhost = this.suicideGate;
+                                            }
                                         }
+                                        let startDrawGhost = setInterval(() => { this.botDraw(startDrawGhost); }, 400);
+                                        this.bestGhost.enemyGateX = 100;
+                                        this.bestGhost.enemyGateY = 100;
+                                        this.bestGhost.awayGateX = 100;
+                                        this.canvas.addEventListener('mousemove', this.mouseMoveEvent);
+                                        this.canvas.addEventListener('click', this.clickEvent);
+                                        this.player = !this.player;
                                     }
+                                    return;
                                 }
                                 this.gameEnd(true);
                             }
