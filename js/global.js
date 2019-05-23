@@ -81,6 +81,79 @@ const buildPath = (target, path) => {
     return result.reverse();
 };
 
+const findLowestCostNode = (costs, processed) => {
+    const knownNodes = Object.keys(costs)
+
+    const lowestCostNode = knownNodes.reduce((lowest, node) => {
+        if (lowest === null && !processed.includes(node)) {
+            lowest = node;
+        }
+        if (costs[node] < costs[lowest] && !processed.includes(node)) {
+            lowest = node;
+        }
+        return lowest;
+    }, null);
+
+    return lowestCostNode
+};
+
+const dijkstra = (startNodeName, endNodeName, graph) => {
+
+    // track the lowest cost to reach each node
+    let costs = {};
+    let makeCostObject = new Object();
+    for (const child of graph.get(startNodeName).out) {
+        makeCostObject[child] = graph.get(child).wallValue;
+    }
+    costs = Object.assign(costs, makeCostObject);
+    costs[endNodeName] = "Infinity";
+
+    // track paths
+    const parents = { endNodeName: null };
+    for (let child of graph.get(startNodeName).out) {
+        parents[child] = startNodeName;
+    }
+
+    // track nodes that have already been processed
+    const processed = [];
+
+    let node = findLowestCostNode(costs, processed);
+    break1:
+    while (node) {
+        let cost = costs[node];
+        let children = graph.get(node);
+        for (let n of children.out) {
+            if (String(n) !== String(startNodeName)) {
+                let newCost = cost + graph.get(n).wallValue;
+                if (costs[n] == undefined || costs[n] > newCost) {
+                    costs[n] = newCost;
+                    parents[n] = node;
+                    if (n === endNodeName) {
+                        break break1;
+                    }
+                }
+            }
+        }
+        processed.push(node);
+        node = findLowestCostNode(costs, processed);
+    }
+
+    let optimalPath = [endNodeName];
+    let parent = parents[endNodeName];
+    while (parent) {
+        optimalPath.push(parent);
+        parent = parents[parent];
+    }
+    optimalPath.reverse();
+
+    const results = {
+        distance: costs[endNodeName],
+        path: optimalPath
+    };
+    if (results.distance === "Infinity") return false
+    return results;
+};
+
 const findPath = (source, target, graph) => {
     if (!graph.has(source)) {
         throw new Error('Unknown source.');

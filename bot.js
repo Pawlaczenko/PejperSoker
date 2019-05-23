@@ -195,21 +195,21 @@ function Game() {
 
                                 if (graph.get(`${x}_${y}`).out.size > 0) {
                                     if (this.botGame == true && !wallHit) {
-                                        this.canvas.removeEventListener('mousemove', this.mouseMoveEvent);
-                                        this.canvas.removeEventListener('click', this.clickEvent);
-                                        const path = findPath(`${this.curPoint.x}_${this.curPoint.y}`, "4_12", graph);
-                                        path.forEach(element => {
-                                            this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-                                            this.ctx.putImageData(this.myImgData, 0, 0);
-                                            this.ctx.strokeStyle = "black";
-                                            this.drawLine(this.curPoint.x, this.curPoint.y, Number(element.target.substring(0, 1)), Number(element.target.substring(2, element.target.length)))
+                                        // this.canvas.removeEventListener('mousemove', this.mouseMoveEvent);
+                                        // this.canvas.removeEventListener('click', this.clickEvent);
+                                        // const path = dijkstra(`${this.curPoint.x}_${this.curPoint.y}`, "4_12", graph);
+                                        // for (const element of path.path) {
+                                        //     this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+                                        //     this.ctx.putImageData(this.myImgData, 0, 0);
+                                        //     this.ctx.strokeStyle = "black";
+                                        //     this.drawLine(this.curPoint.x, this.curPoint.y, Number(element.substring(0, 1)), Number(element.substring(2, element.length)))
 
 
-                                            this.saveBoardState(Number(element.target.substring(0, 1)), Number(element.target.substring(2, element.target.length)));
-                                            this.loadBoardState();
-                                            this.curPoint.x = Number(element.target.substring(0, 1));
-                                            this.curPoint.y = Number(element.target.substring(2, element.target.length))
-                                        });
+                                        //     this.saveBoardState(Number(element.substring(0, 1)), Number(element.substring(2, element.length)));
+                                        //     this.loadBoardState();
+                                        //     this.curPoint.x = Number(element.substring(0, 1));
+                                        //     this.curPoint.y = Number(element.substring(2, element.length))
+                                        // };
                                         // let newGhost = new ghostMoves();
                                         // this.checkBotMoves(newGhost, this.curPoint);
                                         // if (this.bestGhost.pointsTab.length == 0) {
@@ -349,30 +349,28 @@ function Game() {
                 }
     }
 
-    // this.debug = () => {
-    //     this.canvas.removeEventListener('mousemove', this.mouseMoveEvent);
-    //     this.canvas.removeEventListener('click', this.clickEvent);
-    //     let newGhost = new ghostMoves();
-    //     this.checkBotMoves(newGhost, this.curPoint);
-    //     if (this.bestGhost.pointsTab.length == 0) {
-    //         if (this.suicideWall != 0) {
-    //             this.bestGhost = this.suicideWall;
-    //             this.suicideWall = 1;
-    //         }
+    this.debug = () => {
+        this.canvas.removeEventListener('mousemove', this.mouseMoveEvent);
+        this.canvas.removeEventListener('click', this.clickEvent);
+        const path = dijkstra(`${this.curPoint.x}_${this.curPoint.y}`, "4_12", graph);
+        if(path == false){
+            console.log("Nie znaleziono drogi");
+            return;
+        }
+        for (const element of path.path) {
+            this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+            this.ctx.putImageData(this.myImgData, 0, 0);
+            this.ctx.strokeStyle = "black";
+            this.drawLine(this.curPoint.x, this.curPoint.y, Number(element.substring(0, 1)), Number(element.substring(2, element.length)))
 
-    //         if (this.suicideGate != 0) {
-    //             this.bestGhost = this.suicideGate;
-    //         }
-    //     }
-    //     let startDrawGhost = setInterval(() => { this.botDraw(startDrawGhost); }, 400);
-    //     this.bestGhost.enemyGateX = 100;
-    //     this.bestGhost.enemyGateY = 100;
-    //     this.bestGhost.awayGateX = 100;
-    //     this.canvas.addEventListener('mousemove', this.mouseMoveEvent);
-    //     this.canvas.addEventListener('click', this.clickEvent);
-    //     // this.player = !this.player;
 
-    // }
+            this.saveBoardState(Number(element.substring(0, 1)), Number(element.substring(2, element.length)));
+            this.loadBoardState();
+            this.curPoint.x = Number(element.substring(0, 1));
+            this.curPoint.y = Number(element.substring(2, element.length))
+        };
+
+    }
 
     this.checkBotMoves = function (nowGhost, tmpPoint) {
         let enemyGatePoint = 0;
@@ -483,4 +481,4 @@ game.gameStart();
 
 
 let btn = document.querySelector(".btn");
-// btn.addEventListener("click", game.debug);
+btn.addEventListener("click", game.debug);
