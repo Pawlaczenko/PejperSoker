@@ -353,7 +353,7 @@ function Game() {
         this.canvas.removeEventListener('mousemove', this.mouseMoveEvent);
         this.canvas.removeEventListener('click', this.clickEvent);
         const path = dijkstra(`${this.curPoint.x}_${this.curPoint.y}`, "4_12", graph);
-        if(path == false){
+        if (path == false) {
             console.log("Nie znaleziono drogi");
             return;
         }
@@ -366,9 +366,12 @@ function Game() {
 
             this.saveBoardState(Number(element.substring(0, 1)), Number(element.substring(2, element.length)));
             this.loadBoardState();
-            this.curPoint.x = Number(element.substring(0, 1));
-            this.curPoint.y = Number(element.substring(2, element.length))
+            graph.get(element).wallValue = 0;
+
         };
+        this.canvas.addEventListener('mousemove', this.mouseMoveEvent);
+        this.canvas.addEventListener('click', this.clickEvent);
+        this.player = !this.player;
 
     }
 
