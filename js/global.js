@@ -105,8 +105,9 @@ const dijkstra = (startNodeName, endNodeName, graph) => {
     for (const child of graph.get(startNodeName).out) {
         makeCostObject[child] = graph.get(child).wallValue;
     }
-    costs = Object.assign(costs, makeCostObject);
     costs[endNodeName] = "Infinity";
+    costs = Object.assign(costs, makeCostObject);
+
 
     // track paths
     const parents = { endNodeName: null };
@@ -150,6 +151,7 @@ const dijkstra = (startNodeName, endNodeName, graph) => {
         distance: costs[endNodeName],
         path: optimalPath
     };
+    console.log(results.distance);
     if (results.distance === "Infinity") return false
     return results;
 };
