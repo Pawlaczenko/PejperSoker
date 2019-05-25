@@ -380,7 +380,7 @@ function Game() {
     this.debug = () => {
         this.canvas.removeEventListener('mousemove', this.mouseMoveEvent);
         this.canvas.removeEventListener('click', this.clickEvent);
-        const path = dijkstra(`${this.curPoint.x}_${this.curPoint.y}`, "4_12", graph);
+        const path = dijkstra("4_12", `${this.curPoint.x}_${this.curPoint.y}`, graph);
         if (path == false) {
             console.log("Nie znaleziono drogi");
             return;
