@@ -194,7 +194,7 @@ const dijkstra = (startNodeName, endNodeName, graph) => {
             parent = parents[key];
             counter++;
         }
-        optimalPath.reverse();
+        // optimalPath.reverse();
         optimalPathArray.push(optimalPath)
         flag.status = false;
     }
