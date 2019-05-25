@@ -349,6 +349,34 @@ function Game() {
                 }
     }
 
+    this.rysuj = function (i, stopper, path, x, y) {
+        this.loadBoardState();
+        for (const element of path.path[i]) {
+            // this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+            // this.ctx.putImageData(this.myImgData, 0, 0);
+            this.ctx.strokeStyle = "black";
+            this.drawLine(this.curPoint.x, this.curPoint.y, Number(element.substring(0, 1)), Number(element.substring(2, element.length)))
+            this.curPoint.x = Number(element.substring(0, 1));
+            this.curPoint.y = Number(element.substring(2, element.length));
+
+            // this.saveBoardState(Number(element.substring(0, 1)), Number(element.substring(2, element.length)));
+            // this.loadBoardState();
+            graph.get(element).wallValue = 0;
+
+        }
+
+        this.curPoint.x = x;
+        this.curPoint.y = y;
+
+        if (this.con == 4) {
+            clearInterval(stopper)
+        }
+
+        this.con++;
+    }
+
+    this.con = 0;
+
     this.debug = () => {
         this.canvas.removeEventListener('mousemove', this.mouseMoveEvent);
         this.canvas.removeEventListener('click', this.clickEvent);
@@ -357,18 +385,29 @@ function Game() {
             console.log("Nie znaleziono drogi");
             return;
         }
-        for (const element of path.path) {
-            this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-            this.ctx.putImageData(this.myImgData, 0, 0);
-            this.ctx.strokeStyle = "black";
-            this.drawLine(this.curPoint.x, this.curPoint.y, Number(element.substring(0, 1)), Number(element.substring(2, element.length)))
+        let stopper = setInterval(() => { this.rysuj(this.con, stopper, path, this.curPoint.x, this.curPoint.y) }, 3000)
 
 
-            this.saveBoardState(Number(element.substring(0, 1)), Number(element.substring(2, element.length)));
-            this.loadBoardState();
-            graph.get(element).wallValue = 0;
+        // for (let i = 0; i < 4; i++) {
+        //     for (const element of path.path[i]) {
+        //         // this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+        //         // this.ctx.putImageData(this.myImgData, 0, 0);
+        //         this.ctx.strokeStyle = "black";
+        //         this.drawLine(this.curPoint.x, this.curPoint.y, Number(element.substring(0, 1)), Number(element.substring(2, element.length)))
+        //         this.curPoint.x = Number(element.substring(0, 1));
+        //         this.curPoint.y = Number(element.substring(2, element.length));
 
-        };
+        //         // this.saveBoardState(Number(element.substring(0, 1)), Number(element.substring(2, element.length)));
+        //         // this.loadBoardState();
+        //         graph.get(element).wallValue = 0;
+
+        //     }
+        //     this.loadBoardState();
+        //     this.curPoint.x = 4;
+        //     this.curPoint.y = 6;
+
+        // }
+
         this.canvas.addEventListener('mousemove', this.mouseMoveEvent);
         this.canvas.addEventListener('click', this.clickEvent);
         this.player = !this.player;

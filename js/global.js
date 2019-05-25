@@ -110,16 +110,20 @@ const dijkstra = (startNodeName, endNodeName, graph) => {
 
 
     // track paths
-    const parents = { endNodeName: null };
+    const parents = { startNodeName: null };
     for (let child of graph.get(startNodeName).out) {
-        parents[child] = startNodeName;
+        let parentValArray = new Array();
+        let parentVal = new Object();
+        parentVal[startNodeName] = graph.get(child).wallValue;
+        parentValArray.push(parentVal)
+        parents[child] = parentValArray;
     }
 
     // track nodes that have already been processed
     const processed = [];
 
     let node = findLowestCostNode(costs, processed);
-    break1:
+    // break1:
     while (node) {
         let cost = costs[node];
         let children = graph.get(node);
@@ -128,28 +132,76 @@ const dijkstra = (startNodeName, endNodeName, graph) => {
                 let newCost = cost + graph.get(n).wallValue;
                 if (costs[n] == undefined || costs[n] > newCost) {
                     costs[n] = newCost;
-                    parents[n] = node;
-                    if (n === endNodeName) {
-                        break break1;
-                    }
+
+
                 }
+                let parentValArray = new Array();
+                let parentVal = new Object();
+                parentVal[node] = newCost
+                parentValArray.push(parentVal);
+                if (parents[n] == undefined)
+                    parents[n] = parentValArray;
+                else parents[n].push(parentVal)
+                // if (n === endNodeName) {
+                //     break break1;
+                // }
+
             }
         }
         processed.push(node);
         node = findLowestCostNode(costs, processed);
     }
 
-    let optimalPath = [endNodeName];
-    let parent = parents[endNodeName];
-    while (parent) {
-        optimalPath.push(parent);
-        parent = parents[parent];
+    // for (let next in parents) {
+    //     for (let child in next)
+    //         console.log(child);
+    // }
+    let optimalPathArray = new Array();
+    let flag = { status: false, rounds: -1 };
+
+    for (let k = 0; k < 5; k++) {
+        let optimalPath = [endNodeName];
+        let parent = parents[endNodeName];
+        let counter = 0;
+        break1:
+        while (parent) {
+            for (let j = 0; j < parent.length; j++) {
+                for (let i in parent[j]) {
+                    if (i == startNodeName) {
+                        optimalPath.push(i);
+                        break break1;
+                    }
+
+                }
+            }
+            let key;
+            console.log(Object.values(parent[0])[0]);
+            if (parent[1] != undefined && k > 0 && Object.values(parent[1])[0] == Object.values(parent[0])[0] && flag.rounds <= counter && flag.status == false) {
+                if (flag.rounds == counter) {
+                    key = Object.keys(parent[1])[0];
+
+                }
+                else {
+                    key = Object.keys(parent[1])[0];
+                    flag.status = true;
+                    flag.rounds = counter;
+                }
+
+            }
+            else
+                key = Object.keys(parent[0])[0];
+            optimalPath.push(key);
+            parent = parents[key];
+            counter++;
+        }
+        optimalPath.reverse();
+        optimalPathArray.push(optimalPath)
+        flag.status = false;
     }
-    optimalPath.reverse();
 
     const results = {
         distance: costs[endNodeName],
-        path: optimalPath
+        path: optimalPathArray
     };
     console.log(results.distance);
     if (results.distance === "Infinity") return false
