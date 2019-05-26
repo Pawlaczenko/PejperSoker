@@ -18,9 +18,19 @@
       },
       "creation_time": "2019-05-17T15:33:26.559Z",
       "description": {
-        "content": "+ [X]Wchodzenie do własnej bramki\n- [X]Rysowanie gdy nie ma ruchu\n- [ ]Wybór ruchu który sprawi że gracz będzie musiał wejść do bramki\n+ [ ]Sprawdzić bota",
+        "content": "Pozbyć się przechodzenia do rodzica",
         "mime": "text/markdown"
       },
+      "id": "3",
+      "prio": 6,
+      "references": [],
+      "title": "Refaktoryzacja"
+    },
+    {
+      "assignedTo": {
+        "name": "Andrzej"
+      },
+      "creation_time": "2019-05-17T15:33:26.559Z",
       "id": "3",
       "prio": 6,
       "references": [],
@@ -36,16 +46,6 @@
       "references": [],
       "title": "Wygląd",
       "type": "bug"
-    },
-    {
-      "assignedTo": {
-        "name": "Andrzej"
-      },
-      "creation_time": "2019-05-17T15:33:26.559Z",
-      "id": "3",
-      "prio": 6,
-      "references": [],
-      "title": "Refaktoryzacja"
     }
   ],
   "testing": [],
