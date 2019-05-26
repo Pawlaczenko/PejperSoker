@@ -191,7 +191,7 @@ const dijkstra = (startNodeName, endNodeName, graph) => {
                     break;
                 }
             }
-            if (parent[x] != undefined && Object.values(parent[x])[0] == Object.values(parent[0])[0] && !optimalPath.includes(Object.keys(parent[x])[0])) {
+            if (parent[x] != undefined && (Object.values(parent[x])[0] == Object.values(parent[0])[0] || Object.values(parent[x])[0] == Object.values(parent[0])[0] + 1) && !optimalPath.includes(Object.keys(parent[x])[0])) {
                 key = Object.keys(parent[x])[0];
                 counter++;
             }
