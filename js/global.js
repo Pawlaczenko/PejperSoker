@@ -152,17 +152,12 @@ const dijkstra = (startNodeName, endNodeName, graph) => {
         node = findLowestCostNode(costs, processed);
     }
 
-    // for (let next in parents) {
-    //     for (let child in next)
-    //         console.log(child);
-    // }
     let optimalPathArray = new Array();
     let flag = { status: false, rounds: -1 };
 
     for (let k = 0; k < 5; k++) {
         let optimalPath = [endNodeName];
         let parent = parents[endNodeName];
-        let counter = 0;
         break1:
         while (parent) {
             for (let j = 0; j < parent.length; j++) {
@@ -171,28 +166,57 @@ const dijkstra = (startNodeName, endNodeName, graph) => {
                         optimalPath.push(i);
                         break break1;
                     }
-
                 }
             }
             let key;
-            console.log(Object.values(parent[0])[0]);
-            if (parent[1] != undefined && k > 0 && Object.values(parent[1])[0] == Object.values(parent[0])[0] && flag.rounds <= counter && flag.status == false) {
-                if (flag.rounds == counter) {
-                    key = Object.keys(parent[1])[0];
 
+            if (parent[k - 1] != undefined && parent[k] != undefined) {
+                if (Object.values(parent[k])[0] == Object.values(parent[0])[0]) {
+                    key = Object.keys(parent[k])[0];
+                }
+                else if (Object.values(parent[k - 1])[0] == Object.values(parent[0])[0]) {
+                    key = Object.keys(parent[k - 1])[0];
+                }
+                else if (parent[k - 2] != undefined && Object.values(parent[k - 2])[0] == Object.values(parent[0])[0]) {
+                    key = Object.keys(parent[k - 2])[0];
                 }
                 else {
-                    key = Object.keys(parent[1])[0];
-                    flag.status = true;
-                    flag.rounds = counter;
+                    key = Object.keys(parent[0])[0];
                 }
-
             }
-            else
+            else {
                 key = Object.keys(parent[0])[0];
+            }
+
+            for (element of optimalPath) {
+                if (key == element) {
+                    if (k >= 2 && k < optimalPath.length) {
+                        key = Object.keys(parent[0])[0];
+                    }
+                    // if (parent[k - 1] != undefined && parent[k] != undefined)
+                    // if (Object.keys(parent[k - 1])[0] == key)
+                    //     key = Object.keys(parent[k])[0];
+                    // else if (Object.keys(parent[k])[0] == key) {
+                    //     key = Object.keys(parent[k - 1])[0];
+                    // }
+                }
+            }
+            //     if (parent[1] != undefined && k > 0 && Object.values(parent[1])[0] == Object.values(parent[0])[0] && flag.rounds <= counter && flag.status == false) {
+            //         if (flag.rounds == counter) {
+            //             key = Object.keys(parent[1])[0];
+
+            //         }
+            //         else {
+            //             key = Object.keys(parent[1])[0];
+            //             flag.status = true;
+            //             flag.rounds = counter;
+            //         }
+            //     }
+            //     else
+            //         key = Object.keys(parent[0])[0];
             optimalPath.push(key);
             parent = parents[key];
-            counter++;
+            //     counter++;
         }
         // optimalPath.reverse();
         optimalPathArray.push(optimalPath)
@@ -207,6 +231,7 @@ const dijkstra = (startNodeName, endNodeName, graph) => {
     if (results.distance === "Infinity") return false
     return results;
 };
+
 
 const findPath = (source, target, graph) => {
     if (!graph.has(source)) {
