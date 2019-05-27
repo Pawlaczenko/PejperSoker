@@ -1,5 +1,13 @@
 let counter = 0;
+let tour = false;
 //! przeżucić counter
+var Player = function(name,color) {
+    this.name = name;
+    this.color = color;
+}
+
+var players = [];
+
 function Game() {
 
     //? this.playerTurn = true;
@@ -20,6 +28,8 @@ function Game() {
     this.boardHeight = 400;
     this.canvasWidth = 1800;
     this.canvasHeight = 1210;
+    this.columnsNumber = 12;
+    this.rowsNumber = 8;
 
     //* Metody przygotowania gry
     this.createBoard = function (rows, columns) {
@@ -37,7 +47,7 @@ function Game() {
     }
 
     this.applyPoints = function () {
-        this.pointsArray = create2dArray(8, 10);
+        this.pointsArray = create2dArray(this.rowsNumber,this.columnsNumber);
         for (let x = 0; x <= this.rows; x++) {
             for (let y = 0; y <= this.columns; y++) {
                 if (y >= 1 && y <= this.columns - 1)
@@ -90,6 +100,12 @@ function Game() {
 
         this.scale = 147;
         this.color = 'blue';
+
+        this.ctx.fillStyle = "#0a8006";
+        this.fillWidth = this.canvasWidth/this.columnsNumber+this.marginXY;
+        this.ctx.fillRect(this.fillWidth, this.marginXY,this.canvasWidth-2*this.fillWidth,this.canvasHeight-this.marginXY*2);
+        this.ctx.fillRect(this.marginXY,3*(this.canvasHeight/this.rowsNumber),this.fillWidth,2*(this.canvasHeight/this.rowsNumber)-this.marginXY);
+        this.ctx.fillRect(this.canvasWidth-2*this.fillWidth,3*(this.canvasHeight/this.rowsNumber),this.fillWidth*2-this.marginXY,2*(this.canvasHeight/this.rowsNumber)-this.marginXY);
 
         this.curPoint = this.pointsArray[this.halfRows][this.halfColumns];
         // this.posX = this.curPoint.x * this.scale + this.scale + this.wallLineWidth / 2 + this.marginXY / 3;
@@ -162,19 +178,22 @@ function Game() {
 
     //* Metody gry
     this.gamePrepare = function () {
-        this.createBoard(8, 10);
+        this.createBoard(8, 12);
         this.applyPoints();
         this.createField();
     }
 
     this.gameStart = function () {
         this.botGame = true;
+        if(this.botGame) {
+            players[1] = new Player("Andrzej","red");
+        }
         this.bestGhost = new ghostMoves();
         this.bestPlayer = new ghostMoves();
         this.gameOn = true;
         this.suicideGate = 0;
         this.suicideWall = 0;
-        this.player = Boolean(Math.floor(Math.random() * 2));
+        this.player = true;
         this.curPoint.wall = true;
     }
 
@@ -190,7 +209,7 @@ function Game() {
     this.mouseMoveEvent = e => {
         if (!this.gameOn) return;
 
-        if (this.player == true) {
+        if (this.player) {
             this.color = "blue";
         }
         else {
