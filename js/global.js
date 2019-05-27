@@ -381,3 +381,17 @@ function createGraph(rows, columns) {
     return buildGraphFromEdges(tabEdges);
 }
 
+var colors = [
+    "#c65b7c","#7e78d2","#c1df1f","#f1f1f1","#1f7a8c","#000000"
+];
+
+function genereteCreator() {
+    colors.forEach(function(color,i){
+        $("#creator .colors").append(`
+            <input type="radio" name="color" value=${i} class="colorInput">
+            <span class="colorBox" style="background-color:${colors[i]}"></span>
+        `);
+    });
+}
+
+genereteCreator();
