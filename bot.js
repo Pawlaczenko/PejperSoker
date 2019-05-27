@@ -395,7 +395,17 @@ function Game() {
             bestBotTable.push(checkPath(enemyGatePoint, ownGatePoint, paths.path[i]));
 
         }
-        console.log(bestBotTable);
+        for (let i = 0; i < bestBotTable.length; i++) {
+            for (let element in bestBotTable[i]) {
+                if (bestBotTable[i][element][0] != 0)
+                    console.log(bestBotTable[i][element][0] - bestBotTable[i][element][1]);
+                else {
+                    console.log("Wygrana");
+                }
+            }
+
+
+        }
 
 
         if (paths == false) {
