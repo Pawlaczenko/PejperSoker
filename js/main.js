@@ -1,17 +1,6 @@
-
-
-
 let counter = 0;
 //! przeżucić counter
 function Game() {
-
-
-
-
-
-
-
-
 
     //? this.playerTurn = true;
     //! this.enemyGatePoint;
