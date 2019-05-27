@@ -97,7 +97,7 @@ const findLowestCostNode = (costs, processed) => {
     return lowestCostNode
 };
 
-const dijkstra = (startNodeName, endNodeName, graph) => {
+const dijkstra = (startNodeName, endNodeName, graph, blockNodeName) => {
 
     // track the lowest cost to reach each node
     let costs = {};
@@ -191,7 +191,7 @@ const dijkstra = (startNodeName, endNodeName, graph) => {
                     break;
                 }
             }
-            if (parent[x] != undefined && (Object.values(parent[x])[0] == Object.values(parent[0])[0] || Object.values(parent[x])[0] == Object.values(parent[0])[0] + 1) && !optimalPath.includes(Object.keys(parent[x])[0])) {
+            if (parent[x] != undefined && (Object.values(parent[x])[0] == Object.values(parent[0])[0] || Object.values(parent[x])[0] == Object.values(parent[0])[0] + 1) && !optimalPath.includes(Object.keys(parent[x])[0]) && parent[x] != blockNodeName) {
                 key = Object.keys(parent[x])[0];
                 counter++;
             }

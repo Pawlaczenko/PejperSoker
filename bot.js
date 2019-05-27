@@ -378,9 +378,17 @@ function Game() {
     this.con = 0;
 
     this.debug = () => {
+        let enemyGatePoint = 0;
+        let ownGatePoint = 0;
+        if (this.player == true) {
+            enemyGatePoint = this.columns;
+        }
+        else {
+            ownGatePoint = this.columns;
+        }
         this.canvas.removeEventListener('mousemove', this.mouseMoveEvent);
         this.canvas.removeEventListener('click', this.clickEvent);
-        const path = dijkstra("4_12", `${this.curPoint.x}_${this.curPoint.y}`, graph);
+        const path = dijkstra(`4_${enemyGatePoint}`, `${this.curPoint.x}_${this.curPoint.y}`, graph, ownGatePoint);
         if (path == false) {
             console.log("Nie znaleziono drogi");
             return;
