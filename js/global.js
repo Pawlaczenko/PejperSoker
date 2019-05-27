@@ -216,50 +216,6 @@ const dijkstra = (startNodeName, endNodeName, graph, blockNodeName) => {
                 keyRepeat.counter = 0;;
             }
 
-            // if (parent[k - 1] != undefined && parent[k] != undefined) {
-            //     if (Object.values(parent[k])[0] == Object.values(parent[0])[0]) {
-            //         key = Object.keys(parent[k])[0];
-            //     }
-            //     else if (Object.values(parent[k - 1])[0] == Object.values(parent[0])[0]) {
-            //         key = Object.keys(parent[k - 1])[0];
-            //     }
-            //     else if (parent[k - 2] != undefined && Object.values(parent[k - 2])[0] == Object.values(parent[0])[0]) {
-            //         key = Object.keys(parent[k - 2])[0];
-            //     }
-            //     else {
-            //         key = Object.keys(parent[0])[0];
-            //     }
-            // }
-            // else {
-            //     key = Object.keys(parent[0])[0];
-            // }
-
-            // for (element of optimalPath) {
-            //     if (key == element) {
-            //         if (k >= 2 && k < optimalPath.length) {
-            //             key = Object.keys(parent[0])[0];
-
-            // if (parent[k - 1] != undefined && parent[k] != undefined)
-            // if (Object.keys(parent[k - 1])[0] == key)
-            //     key = Object.keys(parent[k])[0];
-            // else if (Object.keys(parent[k])[0] == key) {
-            //     key = Object.keys(parent[k - 1])[0];
-            // }
-            //     }
-            // }
-            //     if (parent[1] != undefined && k > 0 && Object.values(parent[1])[0] == Object.values(parent[0])[0] && flag.rounds <= counter && flag.status == false) {
-            //         if (flag.rounds == counter) {
-            //             key = Object.keys(parent[1])[0];
-
-            //         }
-            //         else {
-            //             key = Object.keys(parent[1])[0];
-            //             flag.status = true;
-            //             flag.rounds = counter;
-            //         }
-            //     }
-            //     else
-            //         key = Object.keys(parent[0])[0];
             optimalPath.push(key);
             parent = parents[key];
         }
@@ -270,7 +226,6 @@ const dijkstra = (startNodeName, endNodeName, graph, blockNodeName) => {
         }
 
     }
-    // optimalPath.reverse();
 
     const results = {
         distance: costs[endNodeName],
