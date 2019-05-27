@@ -97,7 +97,7 @@ const findLowestCostNode = (costs, processed) => {
     return lowestCostNode
 };
 
-const dijkstra = (startNodeName, endNodeName, graph, blockNodeName) => {
+const findMultiplyPaths = (startNodeName, endNodeName, graph, blockNodeName) => {
 
     // track the lowest cost to reach each node
     let costs = {};
@@ -110,7 +110,7 @@ const dijkstra = (startNodeName, endNodeName, graph, blockNodeName) => {
 
 
     // track paths
-    const parents = { startNodeName: null };
+    const parents = { endNodeName: null };
     for (let child of graph.get(startNodeName).out) {
         let parentValArray = new Array();
         let parentVal = new Object();
@@ -142,10 +142,6 @@ const dijkstra = (startNodeName, endNodeName, graph, blockNodeName) => {
                 if (parents[n] == undefined)
                     parents[n] = parentValArray;
                 else parents[n].push(parentVal)
-                // if (n === endNodeName) {
-                //     break break1;
-                // }
-
             }
         }
         processed.push(node);
@@ -231,47 +227,85 @@ const dijkstra = (startNodeName, endNodeName, graph, blockNodeName) => {
         distance: costs[endNodeName],
         path: optimalPathArray
     };
-    console.log(results.distance);
+    // console.log(results.distance);
     if (results.distance === "Infinity") return false
     return results;
 };
 
+const findSinglePath = (startNodeName, endNodeName, graph) => {
 
-const findPath = (source, target, graph) => {
-    if (!graph.has(source)) {
-        throw new Error('Unknown source.');
+    // track the lowest cost to reach each node
+    let costs = {};
+    let makeCostObject = new Object();
+    for (const child of graph.get(startNodeName).out) {
+        makeCostObject[child] = graph.get(child).wallValue;
+    }
+    costs = Object.assign(costs, makeCostObject);
+    costs[endNodeName] = "Infinity";
+
+    // track paths
+    const parents = { endNodeName: null };
+    for (let child of graph.get(startNodeName).out) {
+        parents[child] = startNodeName;
     }
 
-    if (!graph.has(target)) {
-        throw new Error('Unknown target.');
-    }
+    // track nodes that have already been processed
+    const processed = [];
 
-    const queue = [source];
-    const visited = new Set();
-    const path = new Map();
-
-    while (queue.length > 0) {
-        const start = queue.shift();
-
-        if (start === target) {
-            return buildPath(start, path);
-        }
-
-        for (const next of graph.get(start).out) {
-            if (visited.has(next)) {
-                continue;
+    let node = findLowestCostNode(costs, processed);
+    break1:
+    while (node) {
+        let cost = costs[node];
+        let children = graph.get(node);
+        for (let n of children.out) {
+            if (String(n) !== String(startNodeName)) {
+                let newCost = cost + graph.get(n).wallValue;
+                if (costs[n] == undefined || costs[n] > newCost) {
+                    costs[n] = newCost;
+                    parents[n] = node;
+                    if (n === endNodeName) {
+                        break break1;
+                    }
+                }
             }
-
-            if (!queue.includes(next)) {
-                path.set(next, start);
-                queue.push(next);
-            }
         }
-
-        visited.add(start);
+        processed.push(node);
+        node = findLowestCostNode(costs, processed);
     }
 
-    return null;
+    let optimalPath = [endNodeName];
+    let parent = parents[endNodeName];
+    while (parent) {
+        optimalPath.push(parent);
+        parent = parents[parent];
+    }
+    // optimalPath.reverse();
+
+    const results = {
+        distance: costs[endNodeName],
+        path: optimalPath
+    };
+    if (results.distance === "Infinity") return false
+    return results;
+};
+
+const checkPath = function (enemyGatePoint, ownGatePoint, path) {
+    for (let i = 1; i < path.length; i++) {
+        if (graph.get(path[i]).wallValue == 1) {
+            let ownDistance = findSinglePath(`4_${enemyGatePoint}`, `${path[i]}`, graph).distance;
+            let enemyDistance = findSinglePath(`4_${ownGatePoint}`, `${path[i]}`, graph).distance;
+            console.log(ownDistance);
+            let obj = {};
+            obj[i] = [ownDistance, enemyDistance]
+            return obj
+        }
+        if (path[i] == `4_${enemyGatePoint}`) {
+            let ownDistance = 0;
+            let obj = {};
+            obj[i] = [ownDistance]
+            return obj
+        }
+    }
 };
 
 function createGraph(rows, columns) {

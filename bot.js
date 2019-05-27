@@ -388,12 +388,21 @@ function Game() {
         }
         this.canvas.removeEventListener('mousemove', this.mouseMoveEvent);
         this.canvas.removeEventListener('click', this.clickEvent);
-        const path = dijkstra(`4_${enemyGatePoint}`, `${this.curPoint.x}_${this.curPoint.y}`, graph, ownGatePoint);
-        if (path == false) {
+        const paths = findMultiplyPaths(`4_${enemyGatePoint}`, `${this.curPoint.x}_${this.curPoint.y}`, graph, ownGatePoint);
+        // findSinglePath(`4_${enemyGatePoint}`, `${this.curPoint.x}_${this.curPoint.y}`, graph)
+        let bestBotTable = new Array();
+        for (let i = 0; i < paths.path.length; i++) {
+            bestBotTable.push(checkPath(enemyGatePoint, ownGatePoint, paths.path[i]));
+
+        }
+        console.log(bestBotTable);
+
+
+        if (paths == false) {
             console.log("Nie znaleziono drogi");
             return;
         }
-        let stopper = setInterval(() => { this.rysuj(this.con, stopper, path, this.curPoint.x, this.curPoint.y) }, 3000)
+        let stopper = setInterval(() => { this.rysuj(this.con, stopper, paths, this.curPoint.x, this.curPoint.y) }, 3000)
 
 
         // for (let i = 0; i < 4; i++) {
