@@ -390,26 +390,26 @@ function Game() {
         this.canvas.removeEventListener('click', this.clickEvent);
         const paths = findMultiplyPaths(`4_${enemyGatePoint}`, `${this.curPoint.x}_${this.curPoint.y}`, graph, ownGatePoint);
         // findSinglePath(`4_${enemyGatePoint}`, `${this.curPoint.x}_${this.curPoint.y}`, graph)
-        let bestBotTable = new Array();
+        let bestTable = new Array();
         for (let i = 0; i < paths.path.length; i++) {
-            bestBotTable.push(checkPath(enemyGatePoint, ownGatePoint, paths.path[i]));
+            bestTable.push(checkPath(enemyGatePoint, ownGatePoint, paths.path[i]));
 
         }
-        for (let i = 0; i < bestBotTable.length; i++) {
-            for (let element in bestBotTable[i]) {
-                if (bestBotTable[i][element][0] != 0)
-                    console.log(bestBotTable[i][element][0] - bestBotTable[i][element][1]);
+        let bestSummaryDistance = new Array();
+        for (let i = 0; i < bestTable.length; i++) {
+            for (let element in bestTable[i]) {
+                if (bestTable[i][element][0] != 0)
+                    bestSummaryDistance.push(bestTable[i][element][0] - bestTable[i][element][1]);
                 else {
-                    console.log("Wygrana");
+                    console.log("Wygrana"); //!OGARNĄĆ GDY JEST WYGRANA
                 }
             }
-
-
         }
+        let chosenPath = paths[bestSummaryDistance.indexOf(Math.min(...bestSummaryDistance))];
 
 
         if (paths == false) {
-            console.log("Nie znaleziono drogi");
+            console.log("Nie znaleziono drogi"); //!Ogarnąć gdy nie ma ruchu
             return;
         }
         let stopper = setInterval(() => { this.rysuj(this.con, stopper, paths, this.curPoint.x, this.curPoint.y) }, 3000)

@@ -294,7 +294,7 @@ const checkPath = function (enemyGatePoint, ownGatePoint, path) {
         if (graph.get(path[i]).wallValue == 1) {
             let ownDistance = findSinglePath(`4_${enemyGatePoint}`, `${path[i]}`, graph).distance;
             let enemyDistance = findSinglePath(`4_${ownGatePoint}`, `${path[i]}`, graph).distance;
-            console.log(ownDistance);
+            // console.log(ownDistance);
             let obj = {};
             obj[i] = [ownDistance, enemyDistance]
             return obj
