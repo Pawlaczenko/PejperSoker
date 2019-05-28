@@ -228,7 +228,7 @@ function Game() {
                                         // this.bestGhost.awayGateX = 100;
                                         this.canvas.addEventListener('mousemove', this.mouseMoveEvent);
                                         this.canvas.addEventListener('click', this.clickEvent);
-                                        this.player = !this.player;
+                                        // this.player = !this.player;
                                     }
                                     return;
                                 }
@@ -349,35 +349,32 @@ function Game() {
                 }
     }
 
-    this.rysuj = function (i, stopper, path, x, y) {
+    this.rysuj = function (stopper, path) {
         this.loadBoardState();
-        for (const element of path.path[i]) {
-            // this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-            // this.ctx.putImageData(this.myImgData, 0, 0);
+        const element = path[this.con]
+        if (graph.get(element).wallValue == 1 || this.con == (path.length - 1)) {
+            this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+            this.ctx.putImageData(this.myImgData, 0, 0);
             this.ctx.strokeStyle = "black";
             this.drawLine(this.curPoint.x, this.curPoint.y, Number(element.substring(0, 1)), Number(element.substring(2, element.length)))
-            this.curPoint.x = Number(element.substring(0, 1));
-            this.curPoint.y = Number(element.substring(2, element.length));
-
-            // this.saveBoardState(Number(element.substring(0, 1)), Number(element.substring(2, element.length)));
-            // this.loadBoardState();
-            graph.get(element).wallValue = 0;
-
-        }
-
-        this.curPoint.x = x;
-        this.curPoint.y = y;
-
-        if (this.con == 4) {
+            this.saveBoardState(Number(element.substring(0, 1)), Number(element.substring(2, element.length)));
+            this.loadBoardState();
             clearInterval(stopper)
+            return;
         }
-
+        this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+        this.ctx.putImageData(this.myImgData, 0, 0);
+        this.ctx.strokeStyle = "black";
+        this.drawLine(this.curPoint.x, this.curPoint.y, Number(element.substring(0, 1)), Number(element.substring(2, element.length)))
+        this.saveBoardState(Number(element.substring(0, 1)), Number(element.substring(2, element.length)));
+        this.loadBoardState();
         this.con++;
     }
 
-    this.con = 0;
+
 
     this.debug = () => {
+        this.con = 0;
         let enemyGatePoint = 0;
         let ownGatePoint = 0;
         if (this.player == true) {
@@ -389,30 +386,40 @@ function Game() {
         this.canvas.removeEventListener('mousemove', this.mouseMoveEvent);
         this.canvas.removeEventListener('click', this.clickEvent);
         const paths = findMultiplyPaths(`4_${enemyGatePoint}`, `${this.curPoint.x}_${this.curPoint.y}`, graph, ownGatePoint);
+
+        if (paths != false) {
+            const bestPath = findBestPath(paths, ownGatePoint, enemyGatePoint);
+
+        }
+
+
         // findSinglePath(`4_${enemyGatePoint}`, `${this.curPoint.x}_${this.curPoint.y}`, graph)
-        let bestTable = new Array();
-        for (let i = 0; i < paths.path.length; i++) {
-            bestTable.push(checkPath(enemyGatePoint, ownGatePoint, paths.path[i]));
+        // let bestTable = new Array();
+        // for (let i = 0; i < paths.path.length; i++) {
+        //     bestTable.push(checkPath(enemyGatePoint, ownGatePoint, paths.path[i]));
 
-        }
-        let bestSummaryDistance = new Array();
-        for (let i = 0; i < bestTable.length; i++) {
-            for (let element in bestTable[i]) {
-                if (bestTable[i][element][0] != 0)
-                    bestSummaryDistance.push(bestTable[i][element][0] - bestTable[i][element][1]);
-                else {
-                    console.log("Wygrana"); //!OGARNĄĆ GDY JEST WYGRANA
-                }
-            }
-        }
-        let chosenPath = paths[bestSummaryDistance.indexOf(Math.min(...bestSummaryDistance))];
+        // }
+        // let bestSummaryDistance = new Array();
+        // for (let i = 0; i < bestTable.length; i++) {
+        //     for (let element in bestTable[i]) {
+        //         if (bestTable[i][element][0] != 0)
+        //             bestSummaryDistance.push(bestTable[i][element][0] - bestTable[i][element][1]);
+        //         else {
+        //             bestSummaryDistance.push(bestTable[i][element][0])
+        //         }
+        //     }
+        // }
+        // let chosenPath = paths.path[bestSummaryDistance.indexOf(Math.min(...bestSummaryDistance))];
+        // chosenPath.shift();
 
+        // if (paths == false) {
+        //     console.log("Nie znaleziono drogi"); //!Ogarnąć gdy nie ma ruchu
+        //     return;
+        // }
+        // else {
+        //     let stopper = setInterval(() => { this.rysuj(stopper, chosenPath) }, 500)
 
-        if (paths == false) {
-            console.log("Nie znaleziono drogi"); //!Ogarnąć gdy nie ma ruchu
-            return;
-        }
-        let stopper = setInterval(() => { this.rysuj(this.con, stopper, paths, this.curPoint.x, this.curPoint.y) }, 3000)
+        // }
 
 
         // for (let i = 0; i < 4; i++) {

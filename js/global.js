@@ -148,84 +148,93 @@ const findMultiplyPaths = (startNodeName, endNodeName, graph, blockNodeName) => 
         node = findLowestCostNode(costs, processed);
     }
 
-    let optimalPathArray = new Array();
-    let flag = { rounds: [] };
-    let keyRepeat = { key: "", counter: 0 };
-    break2:
-    while (true) {
-        let optimalPath = [endNodeName];
-        let parent = parents[endNodeName];
-        let counter = 0;
-        break1:
-        while (parent) {
-            for (let j = 0; j < parent.length; j++) {
-                for (let i in parent[j]) {
-                    if (i == startNodeName) {
-                        optimalPath.push(i);
-                        if (flag.rounds.length > 0) {
-                            if (flag.rounds[flag.rounds.length - 1] + 1 <= counter) {
-                                flag.rounds[flag.rounds.length - 1]++;
-                            }
-                            else {
-                                flag.rounds[flag.rounds.length - 1] = flag.rounds.length - 1;
-                                flag.rounds.push(flag.rounds.length)
+    // let optimalPathArray = new Array();
+    // let flag = { rounds: [] };
+    // let keyRepeat = { key: "", counter: 0 };
+    // break2:
+    // while (true) {
+    //     let optimalPath = [endNodeName];
+    //     let parent = parents[endNodeName];
+    //     let counter = 0;
+    //     break1:
+    //     while (parent) {
+    //         for (let j = 0; j < parent.length; j++) {
+    //             for (let i in parent[j]) {
+    //                 if (i == startNodeName) {
+    //                     optimalPath.push(i);
+    //                     if (flag.rounds.length > 0) {
+    //                         if (flag.rounds[flag.rounds.length - 1] + 1 <= counter) {
+    //                             flag.rounds[flag.rounds.length - 1]++;
+    //                         }
+    //                         else {
+    //                             flag.rounds[flag.rounds.length - 1] = flag.rounds.length - 1;
+    //                             flag.rounds.push(flag.rounds.length)
 
-                            }
-                        }
-                        if (optimalPathArray.length == 0) {
-                            flag.rounds.push(0);
-                        }
-                        break break1;
-                    }
-                }
-            }
-            let key;
-            let x = 0;
-            for (const i of flag.rounds) {
-                if (counter == i) {
-                    x = 1;
-                    break;
-                }
-            }
-            if (parent[x] != undefined && (Object.values(parent[x])[0] == Object.values(parent[0])[0] || Object.values(parent[x])[0] == Object.values(parent[0])[0] + 1) && !optimalPath.includes(Object.keys(parent[x])[0]) && parent[x] != blockNodeName) {
-                key = Object.keys(parent[x])[0];
-                counter++;
-            }
-            else {
-                if (flag.rounds[flag.rounds.length - 1] + 1 < parents[optimalPath[optimalPath.length - 1]].length) {
-                    flag.rounds[flag.rounds.length - 1]++;
-                }
-                else {
-                    flag.rounds[flag.rounds.length - 1] = flag.rounds.length - 1;
-                    flag.rounds.push(flag.rounds.length)
-                }
-                break;
-            }
-            if (keyRepeat.counter == 4) {
-                break break2;
-            }
-            if (keyRepeat.key == key) {
-                keyRepeat.counter++;
-            }
-            else {
-                keyRepeat.key = key;
-                keyRepeat.counter = 0;;
-            }
+    //                         }
+    //                     }
+    //                     if (optimalPathArray.length == 0) {
+    //                         flag.rounds.push(0);
+    //                     }
+    //                     break break1;
+    //                 }
+    //             }
+    //         }
+    //         let key;
+    //         let x = 0;
+    //         for (const i of flag.rounds) {
+    //             if (counter == i) {
+    //                 x = 1;
+    //                 break;
+    //             }
+    //         }
+    //         if (parent[x] != undefined && (Object.values(parent[x])[0] == Object.values(parent[0])[0] || Object.values(parent[x])[0] == Object.values(parent[0])[0] + 1) && !optimalPath.includes(Object.keys(parent[x])[0]) && parent[x] != blockNodeName) {
+    //             key = Object.keys(parent[x])[0];
+    //             counter++;
+    //         }
+    //         else {
+    //             if (flag.rounds[flag.rounds.length - 1] + 1 < parents[optimalPath[optimalPath.length - 1]].length) {
+    //                 flag.rounds[flag.rounds.length - 1]++;
+    //             }
+    //             else {
+    //                 flag.rounds[flag.rounds.length - 1] = flag.rounds.length - 1;
+    //                 flag.rounds.push(flag.rounds.length)
+    //             }
+    //             break;
+    //         }
 
-            optimalPath.push(key);
-            parent = parents[key];
-        }
-        if (optimalPath[optimalPath.length - 1] == `${startNodeName}`)
-            optimalPathArray.push(optimalPath)
-        if (optimalPathArray.length == 5) {
-            break;
-        }
+    //         if (keyRepeat.counter == 4) {
+    //             break break2;
+    //         }
+    //         if (keyRepeat.key == key) {
+    //             keyRepeat.counter++;
+    //         }
+    //         else {
+    //             keyRepeat.key = key;
+    //             keyRepeat.counter = 0;;
+    //         }
 
-    }
+    //         optimalPath.push(key);
+    //         parent = parents[key];
+    //     }
+    //     if (optimalPathArray[0] != undefined) {
+    //         if (arraysEqual(optimalPathArray[0], optimalPath)) {
+    //             break;
+    //         }
+    //     }
+
+
+
+    //     if (optimalPath[optimalPath.length - 1] == `${startNodeName}`)
+    //         optimalPathArray.push(optimalPath)
+    //     if (optimalPathArray.length == 10) {
+    //         break;
+    //     }
+
+    // }
 
     const results = {
         distance: costs[endNodeName],
-        path: optimalPathArray
+        path: parents
     };
     // console.log(results.distance);
     if (results.distance === "Infinity") return false
@@ -415,3 +424,54 @@ function createGraph(rows, columns) {
     return buildGraphFromEdges(tabEdges);
 }
 
+function arraysEqual(arr1, arr2) {
+    if (arr1.length !== arr2.length)
+        return false;
+    for (var i = arr1.length; i--;) {
+        if (arr1[i] !== arr2[i])
+            return false;
+    }
+
+    return true;
+}
+
+function findBestPath(paths, ownGatePoint, enemyGatePoint) {
+    let bestPath = { path: null, sumDistance: 100 };
+    let ownDistance = null;
+    let enemyDistance = null;
+    let enemyWinPath = null;
+
+
+
+    if (ownDistance > 0) {
+        if (bestPath.sumDistance > sumDistance) {
+            if (enemyDistance > 0) {
+                bestPath.sumDistance = sumDistance;
+                bestPath.path = path;
+            }
+            else {
+                if (bestPath.sumDistance == 100) {
+                    enemyWinPath = path;
+                }
+            }
+        }
+    }
+    else {
+        bestPath.sumDistance = sumDistance;
+        bestPath.path = path;
+        return bestPath;
+    }
+
+
+    if (x >= paths.length) { //! jeszcze nie wiem czym jest x moze byc ze po wyjsciu z petli wchodzi tu
+        if (bestPath.distance == 100) {
+            bestPath.sumDistance = sumDistance;
+            bestPath.path = enemyWinPath;
+            return bestPath;
+        }
+        else {
+            return bestPath;
+        }
+    }
+
+}
