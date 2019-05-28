@@ -441,7 +441,7 @@ function findBestPath(paths, ownGatePoint, enemyGatePoint) {
     let enemyDistance = null;
     let enemyWinPath = null;
 
-
+    //?
 
     if (ownDistance > 0) {
         if (bestPath.sumDistance > sumDistance) {
@@ -462,6 +462,7 @@ function findBestPath(paths, ownGatePoint, enemyGatePoint) {
         return bestPath;
     }
 
+    //?
 
     if (x >= paths.length) { //! jeszcze nie wiem czym jest x moze byc ze po wyjsciu z petli wchodzi tu
         if (bestPath.distance == 100) {
