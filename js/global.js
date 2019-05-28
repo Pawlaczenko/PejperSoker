@@ -382,15 +382,18 @@ function createGraph(rows, columns) {
 }
 
 var colors = [
-    "#c65b7c","#7e78d2","#c1df1f","#f1f1f1","#1f7a8c","#000000"
+    "blue","yellow","black","pink","green","orange"
 ];
 
 function genereteCreator() {
     colors.forEach(function(color,i){
-        $("#creator .colors").append(`
-            <input type="radio" name="color" value=${i} class="colorInput">
-            <span class="colorBox" style="background-color:${colors[i]}"></span>
+        $(".creator .colors").append(`
+            <div class="color">
+                <input type="radio" name="color" value=${i} class="colorInput" id="id${i}">
+                <label for="id${i}"></label>
+            </div>
         `);
+        $('.color #id'+i+' + label').css("background-color", colors[i]);
     });
 }
 

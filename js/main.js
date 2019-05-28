@@ -1,10 +1,15 @@
 let counter = 0;
 let tour = false;
+let ball = document.getElementById('ball');
 //! przeżucić counter
-var Player = function(name,color) {
+var Player = function(name,color,id) {
     this.name = name;
     this.color = color;
+    this.id = id;
 }
+
+//! this.player == TRUE => Tura player1
+//! this.player == FALSE => Tura player2 //BOT TO DOMYŚLNIE PLAYER2
 
 var players = [];
 
@@ -22,7 +27,6 @@ function Game() {
     //? this.allowPoints = create2dArray(2, 2);
 
     //? this.gameOn = false;
-
 
     this.boardWidth = 600;
     this.boardHeight = 400;
@@ -101,7 +105,7 @@ function Game() {
         this.scale = 147;
         this.color = 'blue';
 
-        this.ctx.fillStyle = "#0a8006";
+        this.ctx.fillStyle = "#84b369";
         this.fillWidth = this.canvasWidth/this.columnsNumber+this.marginXY;
         this.ctx.fillRect(this.fillWidth, this.marginXY,this.canvasWidth-2*this.fillWidth,this.canvasHeight-this.marginXY*2);
         this.ctx.fillRect(this.marginXY,3*(this.canvasHeight/this.rowsNumber),this.fillWidth,2*(this.canvasHeight/this.rowsNumber)-this.marginXY);
@@ -193,7 +197,7 @@ function Game() {
         this.gameOn = true;
         this.suicideGate = 0;
         this.suicideWall = 0;
-        this.player = true;
+        this.player = false;
         this.curPoint.wall = true;
     }
 
@@ -207,7 +211,9 @@ function Game() {
 
     //* Metody do eventów
     this.mouseMoveEvent = e => {
-        if (!this.gameOn) return;
+        if (!this.gameOn){
+            return;
+        };
 
         if (this.player) {
             this.color = "blue";
@@ -324,8 +330,9 @@ function Game() {
     //* Metody pomocnicze
     this.drawPoint = function (x, y) {
         this.ctx.beginPath();
-        this.ctx.arc(y * this.scale + this.wallLineWidth / 2 + this.marginXY / 3, x * this.scale + this.wallLineWidth / 2 + this.marginXY / 3, 15, 0, Math.PI * 2, false);
-        this.ctx.fill();
+        this.ctx.drawImage(ball,y * this.scale + this.wallLineWidth / 2 - 25, x * this.scale + this.wallLineWidth / 2 - 25);
+        //this.ctx.arc(y * this.scale + this.wallLineWidth / 2 + this.marginXY / 3, x * this.scale + this.wallLineWidth / 2 + this.marginXY / 3, 15, 0, Math.PI * 2, false);
+        //this.ctx.fill();
         this.ctx.closePath();
     }
 

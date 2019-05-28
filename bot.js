@@ -72,7 +72,6 @@ function Game() {
         this.curPoint = new Coordinates(this.rows / 2, this.columns / 2)
         this.drawPoint(this.curPoint.x, this.curPoint.y);
         this.gameOn = false;
-
     }
 
     this.saveBoardState = function (x, y) {
