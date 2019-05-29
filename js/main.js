@@ -160,7 +160,7 @@ function Game() {
         }
 
         this.myImgData = this.ctx.getImageData(0, 0, this.canvasWidth, this.canvasHeight);
-        this.drawPoint(this.pointsArray[this.halfRows][this.halfColumns].x, this.pointsArray[this.halfRows][this.halfColumns].y);
+        this.drawPoint(this.pointsArray[this.halfRows][this.halfColumns].x, this.pointsArray[this.halfRows][this.halfColumns].y,1);
         this.canvas.addEventListener('mousemove', this.mouseMoveEvent);
         this.canvas.addEventListener('click', this.clickEvent);
         this.gameOn = false;
@@ -177,7 +177,7 @@ function Game() {
         this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
         this.ctx.putImageData(this.myImgData, 0, 0);
         this.ctx.fillStyle = "black";
-        this.drawPoint(this.curPoint.x, this.curPoint.y);
+        this.drawPoint(this.curPoint.x, this.curPoint.y,1);
     }
 
     //* Metody gry
@@ -198,10 +198,10 @@ function Game() {
         this.suicideGate = 0;
         this.suicideWall = 0;
 
-        players[0] = new Player("Gracz1","yellow");
-        players[1] = new Player("Gracz2","black");
-        $('.name[data-id="0"]').html(players[0].name);
-        $('.name[data-id="1"]').html(players[1].name);
+        players[0] = new Player("oscarxd","cyan");
+        players[1] = new Player("lorem12","blue");
+        $('.name[data-id="0"]').html(`${players[0].name}`).css("background-color",`${players[0].color}`);
+        $('.name[data-id="1"]').html(`${players[1].name}`).css("background-color",`${players[1].color}`);
 
         this.player = false;
         this.curPoint.wall = true;
@@ -209,10 +209,11 @@ function Game() {
 
     this.gameEnd = function (bool) {
         this.gameOn = false;
-        if (this.player == true && bool)
-            console.log("Wygrywa gracz czerwony");
-        else if (bool)
-            console.log("Wygrywa gracz niebieski");
+        console.log("Wygrywa "+players[+bool].name);
+        // if (this.player == true && bool)
+        //     console.log("Wygrywa gracz czerwony");
+        // else if (bool)
+        //     console.log("Wygrywa gracz niebieski");
     }
 
     //* Metody do eventów
@@ -247,7 +248,7 @@ function Game() {
                             if (this.curPoint.moveTable[i - this.curPoint.x + 1][j - this.curPoint.y + 1] == 0) {
                                 this.loadBoardState();
                                 this.ctx.fillStyle = this.color;
-                                this.drawPoint(this.pointsArray[i][j].x, this.pointsArray[i][j].y);
+                                this.drawPoint(this.pointsArray[i][j].x, this.pointsArray[i][j].y,.5);
                             }
                 }
             }
@@ -269,7 +270,7 @@ function Game() {
                         if ((i >= this.curPoint.x - 1 && i <= this.curPoint.x + 1) && (j >= this.curPoint.y - 1 && j <= this.curPoint.y + 1)) {
                             if (this.curPoint.moveTable[i - this.curPoint.x + 1][j - this.curPoint.y + 1] == 0) {
                                 this.ctx.fillStyle = "blue";
-                                this.drawPoint(this.pointsArray[i][j].x, this.pointsArray[i][j].y)
+                                this.drawPoint(this.pointsArray[i][j].x, this.pointsArray[i][j].y, 1)
                                 this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
                                 this.ctx.putImageData(this.myImgData, 0, 0);
                                 this.ctx.strokeStyle = this.color;
@@ -283,13 +284,13 @@ function Game() {
 
                                 if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == this.columns) {
                                     console.log("Wygrywa gracz niebieski");
-                                    this.gameEnd(false);
+                                    this.gameEnd(this.player);
                                     return;
                                 }
 
                                 if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == 0) {
                                     console.log("Wygrywa gracz czerwony");
-                                    this.gameEnd(false);
+                                    this.gameEnd(this.player);
                                     return;
                                 }
                                 if (!wallHit){
@@ -327,7 +328,7 @@ function Game() {
                                         }
                                     }
                                 }
-                                this.gameEnd(true);
+                                this.gameEnd(this.player);
                             }
                         }
                     }
@@ -337,11 +338,17 @@ function Game() {
     }
 
     //* Metody pomocnicze
-    this.drawPoint = function (x, y) {
+    this.drawPoint = function (x, y, alpha) {
         this.ctx.beginPath();
+        
+        this.ctx.globalAlpha = 0.5;
+        this.fillStyle = this.color;
+        this.ctx.arc(y * this.scale + this.wallLineWidth / 2 + this.marginXY / 3, x * this.scale + this.wallLineWidth / 2 + this.marginXY / 3, 30, 0, Math.PI * 2, false);
+        this.ctx.fill();
+        
+        this.ctx.globalAlpha = alpha;
         this.ctx.drawImage(ball,y * this.scale + this.wallLineWidth / 2 - 25, x * this.scale + this.wallLineWidth / 2 - 25);
-        //this.ctx.arc(y * this.scale + this.wallLineWidth / 2 + this.marginXY / 3, x * this.scale + this.wallLineWidth / 2 + this.marginXY / 3, 15, 0, Math.PI * 2, false);
-        //this.ctx.fill();
+        this.ctx.globalAlpha = 1;
         this.ctx.closePath();
     }
 
@@ -380,16 +387,16 @@ function Game() {
             counter = 0;
             if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == this.columns) {
                 console.log("Wygrywa gracz niebieski");
-                this.gameEnd(false);
+                this.gameEnd(this.player);
             }
 
             if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == 0) {
                 console.log("Wygrywa gracz czerwony");
-                this.gameEnd(false);
+                this.gameEnd(this.player);
             }
 
             if (this.suicideWall == 1) {
-                this.gameEnd(true);
+                this.gameEnd(this.player);
             }
             this.bestGhost.pointsTab = [];
 

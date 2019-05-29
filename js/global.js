@@ -382,7 +382,7 @@ function createGraph(rows, columns) {
 }
 
 var colors = [
-    "blue","yellow","black","pink","green","orange"
+    "blue","yellow","cyan","pink","green","orange"
 ];
 
 function genereteCreator() {
