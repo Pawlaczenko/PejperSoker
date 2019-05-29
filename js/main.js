@@ -1,40 +1,559 @@
-let squaresX = 10;
-let squaresY = 8;
-let pointsArray = create2dArray(8, 10);
-let gatewayArray = create2dArray(1, 2);
-let allowPoints = create2dArray(2, 2);
-let canvas = document.createElement("canvas");
-let divBoard = document.getElementById("board");;
-let boardWidth = divBoard.offsetWidth;
-let boardHeight = divBoard.offsetHeight;
-let ctx = canvas.getContext('2d');
-let scale = 147;
-let canvasWidthResolution = 1800;
-let canvasHeightResolution = 1210;
-let wallWidth = 20;
-let fieldWidth = 5;
-let middleWidth = Math.ceil(squaresX / 2);
-let middleHeight = Math.ceil(squaresY / 2);
-let marginXY = 15;
-let curPoint;
-let myImgData;
-let posX;
-let posY;
-let color = 'blue';
-let playerTurn = true;
-let enemyGatePoint;
-let bestGhost;
-let startDrawGhost;
 let counter = 0;
+let tour = false;
+let ball = document.getElementById('ball');
+//! przeżucić counter
+var Player = function(name,color,id) {
+    this.name = name;
+    this.color = color;
+    this.id = id;
+}
 
-function Board(div_id) {
-    this.squaresX = squaresX;
-    this.squaresY = squaresY;
+//! this.player == TRUE => Tura player2
+//! this.player == FALSE => Tura player1 //BOT TO DOMYŚLNIE PLAYER2
 
-    this.draw = function () {
-        divBoard.appendChild(canvas);
-        canvas.width = canvasWidthResolution;
-        canvas.height = canvasHeightResolution;
+var players = [];
+
+function Game() {
+
+    //? this.playerTurn = true;
+    //! this.enemyGatePoint;
+    //? this.bestGhost;
+    //? this.bestPlayer;
+    //? this.startDrawGhost;
+    //? this.counter = 0;
+    //? this.winFlag = false;
+
+    //! let gatewayArray = create2dArray(1, 2);
+    //? this.allowPoints = create2dArray(2, 2);
+
+    //? this.gameOn = false;
+
+    this.boardWidth = 600;
+    this.boardHeight = 400;
+    this.canvasWidth = 1800;
+    this.canvasHeight = 1210;
+    this.columnsNumber = 12;
+    this.rowsNumber = 8;
+
+    //* Metody przygotowania gry
+    this.createBoard = function (rows, columns) {
+        this.rows = rows;
+        this.columns = columns;
+
+        this.boardContener = document.getElementById("board");
+        this.canvas = document.createElement("canvas");
+        this.boardContener.style.width = this.boardWidth;
+        this.boardContener.style.height = this.boardHeight;
+        this.canvas.width = 1800;
+        this.canvas.height = 1210;
+        this.boardContener.appendChild(this.canvas);
+        this.ctx = this.canvas.getContext("2d");
+    }
+
+    this.applyPoints = function () {
+        this.pointsArray = create2dArray(this.rowsNumber,this.columnsNumber);
+        for (let x = 0; x <= this.rows; x++) {
+            for (let y = 0; y <= this.columns; y++) {
+                if (y >= 1 && y <= this.columns - 1)
+                    this.pointsArray[x][y] = new Point(x, y);
+                else if (x >= this.rows / 2 - 1 && x <= this.rows / 2 + 1)
+                    this.pointsArray[x][y] = new Point(x, y);
+                if ((x == 0 || x == this.rows) && (y != 0 && y != this.columns)) {
+                    this.pointsArray[x][y].wall = true;
+                    if (x == 0)
+                        this.pointsArray[x][y].moveTable = [[2, 2, 2], [1, 2, 1], [0, 0, 0]];
+                    if (x == this.rows)
+                        this.pointsArray[x][y].moveTable = [[0, 0, 0], [1, 2, 1], [2, 2, 2]];
+                }
+                else if ((y == 1 || y == this.columns - 1) && !(x == this.rows / 2)) {
+                    this.pointsArray[x][y].wall = true;
+                    if (y == 1)
+                        this.pointsArray[x][y].moveTable = [[2, 1, 0], [2, 2, 0], [2, 1, 0]];
+                    if (y == this.columns - 1)
+                        this.pointsArray[x][y].moveTable = [[0, 1, 2], [0, 2, 2], [0, 1, 2]];
+                }
+                else if ((y == 0 || y == this.columns) && (x >= this.rows / 2 - 1 && x <= this.rows / 2 + 1)) {
+                    this.pointsArray[x][y].wall = true;
+                }
+            }
+        }
+
+        this.pointsArray[0][1].moveTable = [[2, 2, 2], [2, 2, 1], [2, 1, 0]];
+        this.pointsArray[0][this.columns - 1].moveTable = [[2, 2, 2], [1, 2, 2], [0, 1, 2]];
+        this.pointsArray[this.rows / 2 - 1][1].moveTable = [[2, 1, 0], [1, 2, 0], [0, 0, 0]];
+        this.pointsArray[this.rows / 2 - 1][this.columns - 1].moveTable = [[0, 1, 2], [0, 2, 1], [0, 0, 0]];
+        this.pointsArray[this.rows / 2 + 1][1].moveTable = [[0, 0, 0], [1, 2, 0], [2, 1, 0]];
+        this.pointsArray[this.rows / 2 + 1][this.columns - 1].moveTable = [[0, 0, 0], [0, 2, 1], [0, 1, 2]];
+        this.pointsArray[this.rows][1].moveTable = [[2, 1, 0], [2, 2, 1], [2, 2, 2]];
+        this.pointsArray[this.rows][this.columns - 1].moveTable = [[0, 1, 2], [1, 2, 2], [2, 2, 2]];
+
+        this.pointsArray[this.rows / 2 - 1][0].moveTable = [[2, 2, 1], [2, 2, 1], [2, 1, 0]];
+        this.pointsArray[this.rows / 2 + 1][0].moveTable = [[2, 1, 0], [2, 2, 1], [2, 2, 1]];
+        this.pointsArray[this.rows / 2 - 1][this.columns].moveTable = [[1, 2, 2], [1, 2, 2], [0, 1, 2]];
+        this.pointsArray[this.rows / 2 + 1][this.columns].moveTable = [[0, 1, 2], [1, 2, 2], [1, 2, 2]];
+    }
+
+    this.createField = function () {
+
+        this.halfRows = this.rows / 2;
+        this.halfColumns = this.columns / 2;
+
+        this.marginXY = 15;
+        this.wallLineWidth = 20;
+        this.noLineWidth = 5;
+
+        this.scale = 147;
+        this.color = 'blue';
+
+        this.ctx.fillStyle = "#84b369";
+        this.fillWidth = this.canvasWidth/this.columnsNumber+this.marginXY;
+        this.ctx.fillRect(this.fillWidth, this.marginXY,this.canvasWidth-2*this.fillWidth,this.canvasHeight-this.marginXY*2);
+        this.ctx.fillRect(this.marginXY,3*(this.canvasHeight/this.rowsNumber),this.fillWidth,2*(this.canvasHeight/this.rowsNumber)-this.marginXY);
+        this.ctx.fillRect(this.canvasWidth-2*this.fillWidth,3*(this.canvasHeight/this.rowsNumber),this.fillWidth*2-this.marginXY,2*(this.canvasHeight/this.rowsNumber)-this.marginXY);
+
+        this.curPoint = this.pointsArray[this.halfRows][this.halfColumns];
+        // this.posX = this.curPoint.x * this.scale + this.scale + this.wallLineWidth / 2 + this.marginXY / 3;
+        // this.posY = this.curPoint.y * this.scale + this.wallLineWidth / 2 + this.marginXY / 3;
+
+        for (let x = 0; x <= this.rows; x++) {
+            for (let y = 0; y <= this.columns; y++) {
+                if (y != 0 && y != this.columns) {
+                    if (x < this.rows) {
+                        if (this.pointsArray[x][y].moveTable[2][1] == 0) {
+                            this.ctx.lineWidth = this.noLineWidth;
+                            this.drawLine(this.pointsArray[x][y].x, this.pointsArray[x][y].y, this.pointsArray[x + 1][y].x, this.pointsArray[x + 1][y].y);
+                        }
+                        if (this.pointsArray[x][y].moveTable[2][1] == 1) {
+                            this.ctx.lineWidth = this.wallLineWidth;
+                            this.drawLine(this.pointsArray[x][y].x, this.pointsArray[x][y].y, this.pointsArray[x + 1][y].x, this.pointsArray[x + 1][y].y);
+                        }
+                    }
+                    if (this.pointsArray[x][y].moveTable[1][2] == 0) {
+                        this.ctx.lineWidth = this.noLineWidth;
+                        this.drawLine(this.pointsArray[x][y].x, this.pointsArray[x][y].y, this.pointsArray[x][y + 1].x, this.pointsArray[x][y + 1].y);
+                    }
+                    if (this.pointsArray[x][y].moveTable[1][2] == 1) {
+                        this.ctx.lineWidth = this.wallLineWidth;
+                        this.drawLine(this.pointsArray[x][y].x, this.pointsArray[x][y].y, this.pointsArray[x][y + 1].x, this.pointsArray[x][y + 1].y);
+                    }
+                }
+                else if (x >= this.rows / 2 - 1 && x <= this.rows / 2) {
+                    if (y == 0 || y == this.columns) {
+                        this.ctx.lineWidth = this.wallLineWidth;
+                        this.drawLine(this.pointsArray[x][y].x, this.pointsArray[x][y].y, this.pointsArray[x + 1][y].x, this.pointsArray[x + 1][y].y);
+                    }
+                    if (y == 1 || y == this.columns - 1) {
+                        this.ctx.lineWidth = this.noLineWidth;
+                        this.drawLine(this.pointsArray[x][y].x, this.pointsArray[x][y].y, this.pointsArray[x + 1][y].x, this.pointsArray[x + 1][y].y);
+                    }
+                    if (y == 0 && x != this.rows / 2) {
+                        this.ctx.lineWidth = this.wallLineWidth;
+                        this.drawLine(this.pointsArray[x][y].x, this.pointsArray[x][y].y, this.pointsArray[x][y + 1].x, this.pointsArray[x][y + 1].y);
+                        this.drawLine(this.pointsArray[x + 2][y].x, this.pointsArray[x + 2][y].y, this.pointsArray[x + 2][y + 1].x, this.pointsArray[x + 2][y + 1].y);
+                    }
+                    if (y == 0 && x == this.rows / 2) {
+                        this.ctx.lineWidth = this.noLineWidth;
+                        this.drawLine(this.pointsArray[x][y].x, this.pointsArray[x][y].y, this.pointsArray[x][y + 1].x, this.pointsArray[x][y + 1].y);
+                    }
+                }
+            }
+        }
+
+        this.myImgData = this.ctx.getImageData(0, 0, this.canvasWidth, this.canvasHeight);
+        this.drawPoint(this.pointsArray[this.halfRows][this.halfColumns].x, this.pointsArray[this.halfRows][this.halfColumns].y,1);
+        this.canvas.addEventListener('mousemove', this.mouseMoveEvent);
+        this.canvas.addEventListener('click', this.clickEvent);
+        this.gameOn = false;
+    }
+
+    this.saveBoardState = function (i, j) {
+        this.myImgData = this.ctx.getImageData(0, 0, this.canvasWidth, this.canvasHeight);
+        this.curPoint.moveTable[i - this.curPoint.x + 1][j - this.curPoint.y + 1] = 1;
+        this.pointsArray[i][j].moveTable[2 - (i - this.curPoint.x + 1)][2 - (j - this.curPoint.y + 1)] = 1;
+        this.curPoint = this.pointsArray[i][j];
+    }
+
+    this.loadBoardState = function () {
+        this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+        this.ctx.putImageData(this.myImgData, 0, 0);
+        this.ctx.fillStyle = "black";
+        this.drawPoint(this.curPoint.x, this.curPoint.y,1);
+    }
+
+    //* Metody gry
+    this.gamePrepare = function () {
+        this.createBoard(8, 12);
+        this.applyPoints();
+        this.createField();
+    }
+
+    this.gameStart = function () {
+        this.botGame = false;
+        if(this.botGame) {
+            players[1] = new Player("Andrzej","red");
+        }
+        this.bestGhost = new ghostMoves();
+        this.bestPlayer = new ghostMoves();
+        this.gameOn = true;
+        this.suicideGate = 0;
+        this.suicideWall = 0;
+
+        players[0] = new Player("oscarxd","cyan");
+        players[1] = new Player("lorem12","blue");
+        $('.name[data-id="0"]').html(`${players[0].name}`).css("background-color",`${players[0].color}`);
+        $('.name[data-id="1"]').html(`${players[1].name}`).css("background-color",`${players[1].color}`);
+
+        this.player = false;
+        this.curPoint.wall = true;
+    }
+
+    this.gameEnd = function (bool) {
+        this.gameOn = false;
+        console.log("Wygrywa "+players[+bool].name);
+        // if (this.player == true && bool)
+        //     console.log("Wygrywa gracz czerwony");
+        // else if (bool)
+        //     console.log("Wygrywa gracz niebieski");
+    }
+
+    //* Metody do eventów
+    this.mouseMoveEvent = e => {
+        if (!this.gameOn){
+            return;
+        };
+
+        this.color = players[+this.player].color;
+
+        // if (this.player) {
+        //     this.color = player[0].color;
+        // }
+        // else {
+        //     this.color = "red";
+        // }
+
+        let mousePos = getMousePos(this.canvas, event);
+        let przelicznik_na_x = this.canvasWidth / this.boardWidth;
+        let przelicznik_na_y = this.canvasHeight / this.boardHeight;
+        let cord_X = mousePos.x * przelicznik_na_x;
+        let cord_Y = mousePos.y * przelicznik_na_y;
+
+        ///PUNKTY MAPY///
+        for (let i = 0; i < this.pointsArray.length; i++)
+            for (let j = 0; j < this.pointsArray[i].length; j++) {
+
+                if (this.pointsArray[i][j] != undefined) {
+                    if ((this.pointsArray[i][j].y * this.scale + this.wallLineWidth / 2 <= cord_X + this.scale / 2 && this.pointsArray[i][j].x * this.scale + this.wallLineWidth / 2 <= cord_Y + this.scale / 2)
+                        && (this.pointsArray[i][j].y * this.scale + this.wallLineWidth / 2 >= cord_X - this.scale / 2 && this.pointsArray[i][j].x * this.scale + this.wallLineWidth / 2 >= cord_Y - this.scale / 2))
+                        if ((i >= this.curPoint.x - 1 && i <= this.curPoint.x + 1) && (j >= this.curPoint.y - 1 && j <= this.curPoint.y + 1))
+                            if (this.curPoint.moveTable[i - this.curPoint.x + 1][j - this.curPoint.y + 1] == 0) {
+                                this.loadBoardState();
+                                this.ctx.fillStyle = this.color;
+                                this.drawPoint(this.pointsArray[i][j].x, this.pointsArray[i][j].y,.5);
+                            }
+                }
+            }
+    }
+
+    this.clickEvent = e => {
+        if (!this.gameOn) return;
+
+        let mousePos = getMousePos(this.canvas, event);
+        let cord_X = mousePos.y * this.canvasWidth / this.boardWidth; //*Tak ma być
+        let cord_Y = mousePos.x * this.canvasHeight / this.boardHeight; //*Tak ma być
+        let wallHit = false;
+
+        for (let i = 0; i < this.pointsArray.length; i++) {
+            for (let j = 0; j < this.pointsArray[i].length; j++) {
+                if (this.pointsArray[i][j] != undefined) {
+                    if ((this.pointsArray[i][j].x * this.scale + this.wallLineWidth / 2 <= cord_X + this.scale / 2 && this.pointsArray[i][j].y * this.scale + this.wallLineWidth / 2 <= cord_Y + this.scale / 2)
+                        && (this.pointsArray[i][j].x * this.scale + this.wallLineWidth / 2 >= cord_X - this.scale / 2 && this.pointsArray[i][j].y * this.scale + this.wallLineWidth / 2 >= cord_Y - this.scale / 2)) {
+                        if ((i >= this.curPoint.x - 1 && i <= this.curPoint.x + 1) && (j >= this.curPoint.y - 1 && j <= this.curPoint.y + 1)) {
+                            if (this.curPoint.moveTable[i - this.curPoint.x + 1][j - this.curPoint.y + 1] == 0) {
+                                this.ctx.fillStyle = "blue";
+                                this.drawPoint(this.pointsArray[i][j].x, this.pointsArray[i][j].y, 1)
+                                this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+                                this.ctx.putImageData(this.myImgData, 0, 0);
+                                this.ctx.strokeStyle = this.color;
+                                this.drawLine(this.curPoint.x, this.curPoint.y, this.pointsArray[i][j].x, this.pointsArray[i][j].y)
+                                this.saveBoardState(i, j);
+                                this.loadBoardState();
+
+                                if (this.pointsArray[i][j].wall)
+                                    wallHit = true;
+                                this.pointsArray[i][j].wall = true;
+
+                                if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == this.columns) {
+                                    console.log("Wygrywa gracz niebieski");
+                                    this.gameEnd(this.player);
+                                    return;
+                                }
+
+                                if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == 0) {
+                                    console.log("Wygrywa gracz czerwony");
+                                    this.gameEnd(this.player);
+                                    return;
+                                }
+                                if (!wallHit){
+                                    this.player = changeRound(this.player);
+                                }
+
+                                for (let k = 0; k < this.curPoint.moveTable.length; k++) {
+                                    for (let l = 0; l < this.curPoint.moveTable.length; l++) {
+                                        if (this.curPoint.moveTable[k][l] != 0) continue;
+                                        else {
+                                            if (this.botGame == true && !wallHit) {
+                                                this.canvas.removeEventListener('mousemove', this.mouseMoveEvent);
+                                                this.canvas.removeEventListener('click', this.clickEvent);
+                                                let newGhost = new ghostMoves();
+                                                this.checkBotMoves(newGhost, this.curPoint);
+                                                if (this.bestGhost.pointsTab.length == 0) {
+                                                    if (this.suicideWall != 0) {
+                                                        this.bestGhost = this.suicideWall;
+                                                        this.suicideWall = 1;
+                                                    }
+
+                                                    if (this.suicideGate != 0) {
+                                                        this.bestGhost = this.suicideGate;
+                                                    }
+                                                }
+                                                let startDrawGhost = setInterval(() => { this.botDraw(startDrawGhost); }, 400);
+                                                this.bestGhost.enemyGateX = 100;
+                                                this.bestGhost.enemyGateY = 100;
+                                                this.bestGhost.awayGateX = 100;
+                                                this.canvas.addEventListener('mousemove', this.mouseMoveEvent);
+                                                this.canvas.addEventListener('click', this.clickEvent);
+                                                this.player = changeRound(this.player);
+                                            }
+                                            return;
+                                        }
+                                    }
+                                }
+                                this.gameEnd(this.player);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    //* Metody pomocnicze
+    this.drawPoint = function (x, y, alpha) {
+        this.ctx.beginPath();
+        
+        this.ctx.globalAlpha = 0.5;
+        this.fillStyle = this.color;
+        this.ctx.arc(y * this.scale + this.wallLineWidth / 2 + this.marginXY / 3, x * this.scale + this.wallLineWidth / 2 + this.marginXY / 3, 30, 0, Math.PI * 2, false);
+        this.ctx.fill();
+        
+        this.ctx.globalAlpha = alpha;
+        this.ctx.drawImage(ball,y * this.scale + this.wallLineWidth / 2 - 25, x * this.scale + this.wallLineWidth / 2 - 25);
+        this.ctx.globalAlpha = 1;
+        this.ctx.closePath();
+    }
+
+    this.drawLine = function (x1, y1, x2, y2) {
+        this.ctx.lineCap = "round";
+        this.ctx.beginPath();
+        this.ctx.moveTo(y1 * this.scale + this.marginXY, (x1) * this.scale + this.marginXY);
+        this.ctx.lineTo(y2 * this.scale + this.marginXY, (x2) * this.scale + this.marginXY);
+        this.ctx.stroke();
+        this.ctx.closePath();
+    }
+
+    this.drawGameLine = function (x1, y1, x2, y2) {
+        this.ctx.lineCap = "round";
+        this.ctx.beginPath();
+        this.ctx.moveTo(y1 * this.scale + this.marginXY, x1 * this.scale + this.marginXY);
+        this.ctx.lineTo(x2 * this.scale + this.scale + this.wallLineWidth / 2 + this.marginXY / 3, y2 * this.scale + this.wallWidth / 2 + this.marginXY / 3)
+        this.ctx.stroke();
+        this.ctx.closePath();
+    }
+
+    //*Metody bota
+    this.botDraw = function (startDrawGhost) {
+        this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+        this.ctx.putImageData(this.myImgData, 0, 0);
+        this.ctx.strokeStyle = "black";
+        this.drawLine(this.curPoint.x, this.curPoint.y, this.bestGhost.pointsTab[counter].x, this.bestGhost.pointsTab[counter].y)
+
+
+        this.saveBoardState(this.bestGhost.pointsTab[counter].x, this.bestGhost.pointsTab[counter].y);
+        this.loadBoardState();
+        this.pointsArray[this.bestGhost.pointsTab[counter].x][this.bestGhost.pointsTab[counter].y].wall = true;
+        // this.pointsArray[this.bestGhost.pointsTab[counter].y][this.bestGhost.pointsTab[counter].x].ghostWall = true;
+        counter++;
+        if (counter == this.bestGhost.pointsTab.length) {
+            counter = 0;
+            if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == this.columns) {
+                console.log("Wygrywa gracz niebieski");
+                this.gameEnd(this.player);
+            }
+
+            if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == 0) {
+                console.log("Wygrywa gracz czerwony");
+                this.gameEnd(this.player);
+            }
+
+            if (this.suicideWall == 1) {
+                this.gameEnd(this.player);
+            }
+            this.bestGhost.pointsTab = [];
+
+            clearInterval(startDrawGhost);
+        }
+
+    }
+
+    this.checkPlayerMoves = function (nowGhost, tmpPoint) {
+        let enemyGatePoint = 0;
+        let ownGatePoint = 0;
+        this.bestPlayer.enemyGateX = 0;
+        if (this.player == false) {
+            enemyGatePoint = this.columns;
+        }
+        else {
+            ownGatePoint = 10;
+        }
+
+        for (let i = tmpPoint.x - 1; i <= tmpPoint.x + 1; i++)
+            for (let j = tmpPoint.y - 1; j <= tmpPoint.y + 1; j++)
+                if (this.pointsArray[i] != undefined && this.pointsArray[i][j] != undefined) {
+                    if (tmpPoint.moveTable[i - tmpPoint.x + 1][j - tmpPoint.y + 1] == 0) {
+                        if (j == enemyGatePoint) {
+                            nowGhost.enemyGateX = this.pointsArray[i].length;
+                            this.bestPlayer = Object.assign({}, nowGhost);
+                            return true;
+                        }
+                        nowGhost.enemyGateX = Math.abs(ownGatePoint - this.pointsArray[i][j].y);
+                        nowGhost.enemyGateY = Math.abs(this.rows / 2 - this.pointsArray[i][j].x);
+                        this.pointsArray[tmpPoint.x][tmpPoint.y].moveTable[i - tmpPoint.x + 1][j - tmpPoint.y + 1] = 1;
+                        this.pointsArray[i][j].moveTable[2 - (i - tmpPoint.x + 1)][2 - (j - tmpPoint.y + 1)] = 1;
+
+                        if (this.pointsArray[i][j].wall) {// && !(i == tmpPoint.y && j == tmpPoint.x + 1)) {
+                            let newGhost = Object.assign({}, nowGhost);
+
+                            if (this.checkPlayerMoves(newGhost, this.pointsArray[i][j]) == true) {
+                                this.pointsArray[tmpPoint.x][tmpPoint.y].moveTable[i - tmpPoint.x + 1][j - tmpPoint.y + 1] = 0;
+                                this.pointsArray[i][j].moveTable[2 - (i - tmpPoint.x + 1)][2 - (j - tmpPoint.y + 1)] = 0;
+                                return true;
+                            }
+                        }
+                        else
+                            if (nowGhost.enemyGateX > this.bestPlayer.enemyGateX) {
+                                this.bestPlayer = Object.assign({}, nowGhost);
+                            }
+                            else {
+                                if (nowGhost.enemyGateX == this.bestPlayer.enemyGateX)
+                                    if (nowGhost.enemyGateY < this.bestPlayer.enemyGateY)
+                                        this.bestPlayer = Object.assign({}, nowGhost);
+                            }
+                        this.pointsArray[tmpPoint.x][tmpPoint.y].moveTable[i - tmpPoint.x + 1][j - tmpPoint.y + 1] = 0;
+                        this.pointsArray[i][j].moveTable[2 - (i - tmpPoint.x + 1)][2 - (j - tmpPoint.y + 1)] = 0;
+                    }
+                }
+    }
+
+    // this.debug = () => {
+    //     this.canvas.removeEventListener('mousemove', this.mouseMoveEvent);
+    //     this.canvas.removeEventListener('click', this.clickEvent);
+    //     let newGhost = new ghostMoves();
+    //     this.checkBotMoves(newGhost, this.curPoint);
+    //     if (this.bestGhost.pointsTab.length == 0) {
+    //         if (this.suicideWall != 0) {
+    //             this.bestGhost = this.suicideWall;
+    //             this.suicideWall = 1;
+    //         }
+
+    //         if (this.suicideGate != 0) {
+    //             this.bestGhost = this.suicideGate;
+    //         }
+    //     }
+    //     let startDrawGhost = setInterval(() => { this.botDraw(startDrawGhost); }, 400);
+    //     this.bestGhost.enemyGateX = 100;
+    //     this.bestGhost.enemyGateY = 100;
+    //     this.bestGhost.awayGateX = 100;
+    //     this.canvas.addEventListener('mousemove', this.mouseMoveEvent);
+    //     this.canvas.addEventListener('click', this.clickEvent);
+    //     // this.player = !this.player;
+
+    // }
+
+    this.checkBotMoves = function (nowGhost, tmpPoint) {
+        let enemyGatePoint = 0;
+        let ownGatePoint = 0;
+        let isMovePossible = 0;
+        if (this.player == true) {
+            enemyGatePoint = this.columns;
+        }
+        else {
+            ownGatePoint = 10;
+        }
+
+        for (let i = tmpPoint.x - 1; i <= tmpPoint.x + 1; i++) {
+            for (let j = tmpPoint.y - 1; j <= tmpPoint.y + 1; j++) {
+                if (this.pointsArray[i] != undefined && this.pointsArray[i][j] != undefined) {
+                    if (tmpPoint.moveTable[i - tmpPoint.x + 1][j - tmpPoint.y + 1] == 0) {
+                        isMovePossible = 1;
+                        if (j == enemyGatePoint) {
+                            nowGhost.pointsTab.push(new Coordinates(this.pointsArray[i][j].x, this.pointsArray[i][j].y))
+                            nowGhost.enemyGateX = 0;
+                            this.bestGhost = JSON.parse(JSON.stringify(nowGhost));
+                            return true;
+                        }
+                        if (j == ownGatePoint) {
+                            nowGhost.pointsTab.push(new Coordinates(this.pointsArray[i][j].x, this.pointsArray[i][j].y))
+                            this.suicideGate = JSON.parse(JSON.stringify(nowGhost));
+                            nowGhost.pointsTab.pop();
+                            continue;
+                        }
+
+                        nowGhost.pointsTab.push(new Coordinates(this.pointsArray[i][j].x, this.pointsArray[i][j].y))
+                        nowGhost.enemyGateX = Math.abs(enemyGatePoint - this.pointsArray[i][j].y);
+                        nowGhost.enemyGateY = Math.abs(this.rows / 2 - this.pointsArray[i][j].x);
+                        this.pointsArray[tmpPoint.x][tmpPoint.y].moveTable[i - tmpPoint.x + 1][j - tmpPoint.y + 1] = 1;
+                        this.pointsArray[i][j].moveTable[2 - (i - tmpPoint.x + 1)][2 - (j - tmpPoint.y + 1)] = 1;
+                        let newGhost = Object.assign({}, nowGhost);
+                        if (this.pointsArray[i][j].wall) {
+                            if (this.checkBotMoves(newGhost, this.pointsArray[i][j]) == true)
+                                return true;
+                        }
+                        else {
+                            this.checkPlayerMoves(newGhost, this.pointsArray[i][j])
+                            if (nowGhost.enemyGateX < this.bestGhost.enemyGateX) {
+                                if (this.bestPlayer.enemyGateX <= this.bestGhost.awayGateX) {
+                                    this.bestGhost = JSON.parse(JSON.stringify(nowGhost));
+                                    this.bestGhost.awayGateX = this.bestPlayer.enemyGateX;
+                                }
+                            }
+                            else {
+                                if (nowGhost.enemyGateX == this.bestGhost.enemyGateX) {
+                                    if (this.bestPlayer.enemyGateX < this.bestGhost.awayGateX) {
+                                        this.bestGhost = JSON.parse(JSON.stringify(nowGhost));
+                                        this.bestGhost.awayGateX = this.bestPlayer.enemyGateX;
+                                    }
+                                    else
+                                        if (nowGhost.enemyGateY < this.bestGhost.enemyGateY)
+                                            this.bestGhost = JSON.parse(JSON.stringify(nowGhost));
+                                }
+
+                            }
+                            this.bestPlayer.enemyGateX = 0;
+                            this.bestPlayer.enemyGateY = 0;
+                            this.bestPlayer.awayGateX = 100;
+
+                        }
+                        this.pointsArray[tmpPoint.x][tmpPoint.y].moveTable[i - tmpPoint.x + 1][j - tmpPoint.y + 1] = 0;
+                        this.pointsArray[i][j].moveTable[2 - (i - tmpPoint.x + 1)][2 - (j - tmpPoint.y + 1)] = 0;
+                        nowGhost.pointsTab.pop();
+
+                    }
+                }
+            }
+        }
+        if (isMovePossible == 0) {
+            this.suicideWall = JSON.parse(JSON.stringify(nowGhost));
+        }
     }
 }
 
@@ -47,470 +566,34 @@ function Point(x, y) {
             [0, 2, 0],
             [0, 0, 0]
         ];
-    this.ghostTable =
-        [
-            [0, 0, 0],
-            [0, 2, 0],
-            [0, 0, 0]
-        ];
     this.wall = false;
-    this.ghostWall = false;
+}
+
+function Coordinates(x, y) {
+    this.x = x;
+    this.y = y;
 }
 
 function ghostMoves() {
     this.pointsTab = [];
     this.enemyGateX = 100;
     this.enemyGateY = 100;
+    this.awayGateX = 100;
 }
 
-function drawLine(x1, y1, x2, y2) {
-    ctx.lineCap = "round";
-    ctx.beginPath();
-    ctx.moveTo((x1 + 1) * scale + marginXY, y1 * scale + marginXY);// to plus marginXY to ustawnia marginsow
-    ctx.lineTo((x2 + 1) * scale + marginXY, y2 * scale + marginXY);
-    ctx.stroke();
-    ctx.closePath();
+function changeRound(player) {
+    $('.name').each(function(i){
+        $(this).toggleClass('active');
+    }); //działa lokalnie, do zmiany przy grze online
+
+    return !player;
 }
 
-function drawGate(x1, y1, x2, y2) {
-    ctx.lineCap = "round";
-    ctx.beginPath();
-    ctx.moveTo((x1) * scale + marginXY, y1 * scale + marginXY);// to plus marginXY to ustawnia marginsow
-    ctx.lineTo((x2) * scale + marginXY, y2 * scale + marginXY);
-    ctx.stroke();
-    ctx.closePath();
-}
 
-function drawField() {
-    for (let i = 0; i <= squaresY; i++) {
-        for (let j = 0; j <= squaresX; j++) {
-            if (pointsArray[i][j].moveTable[2][1] == 0) {
-                ctx.lineWidth = fieldWidth;
-                drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i + 1][j].x, pointsArray[i + 1][j].y);
-            }
-            if (pointsArray[i][j].moveTable[2][1] == 1) {
-                ctx.lineWidth = wallWidth;
-                drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i + 1][j].x, pointsArray[i + 1][j].y);
-            }
-            if (j != squaresX) {
-                if (pointsArray[i][j].moveTable[1][2] == 0) {
-                    ctx.lineWidth = fieldWidth;
-                    drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i][j + 1].x, pointsArray[i][j + 1].y);
-                }
-                if (pointsArray[i][j].moveTable[1][2] == 1) {
-                    ctx.lineWidth = wallWidth;
-                    drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i][j + 1].x, pointsArray[i][j + 1].y);
-                }
-            }
-        }
-    }
-}
-
-function drawGateway() {
-    for (let i = 0; i <= 1; i++) {
-        for (let j = 0; j <= 2; j++) {
-            ctx.lineWidth = wallWidth;
-            if (j < 2)
-                drawGate(gatewayArray[i][j].x, gatewayArray[i][j].y, gatewayArray[i][j + 1].x, gatewayArray[i][j + 1].y);
-            if (j == 0 || j == 2) {
-                if (i == 1)
-                    drawGate(gatewayArray[i][j].x, gatewayArray[i][j].y, gatewayArray[i][j].x - 1, gatewayArray[i][j].y);
-                else
-                    drawGate(gatewayArray[i][j].x, gatewayArray[i][j].y, gatewayArray[i][j].x + 1, gatewayArray[i][j].y);
-            }
-            else {
-                ctx.lineWidth = fieldWidth;
-                if (i == 1)
-                    drawGate(gatewayArray[i][j].x, gatewayArray[i][j].y, gatewayArray[i][j].x - 1, gatewayArray[i][j].y);
-                else
-                    drawGate(gatewayArray[i][j].x, gatewayArray[i][j].y, gatewayArray[i][j].x + 1, gatewayArray[i][j].y);
-            }
-        }
-    }
-}
-
-function pointsApply() {
-    // WYPELNIANIE TABLICY SPECJALNYMI PKT
-    for (let i = 0; i <= squaresY; i++) {
-        for (let j = 0; j <= squaresX; j++) {
-            pointsArray[i][j] = new Point(j, i);
-            if (i == 0) {
-                pointsArray[i][j].moveTable = [[2, 2, 2], [1, 2, 1], [0, 0, 0]];
-                pointsArray[i][j].ghostTable = [[2, 2, 2], [1, 2, 1], [0, 0, 0]];
-                pointsArray[i][j].wall = true;
-            }
-            if (j == 0) {
-                pointsArray[i][j].moveTable = [[2, 1, 0], [2, 2, 0], [2, 1, 0]];
-                pointsArray[i][j].ghostTable = [[2, 1, 0], [2, 2, 0], [2, 1, 0]];
-                pointsArray[i][j].wall = true;
-            }
-            if (i == squaresY) {
-                pointsArray[i][j].moveTable = [[0, 0, 0], [1, 2, 1], [2, 2, 2]];
-                pointsArray[i][j].ghostTable = [[0, 0, 0], [1, 2, 1], [2, 2, 2]];
-                pointsArray[i][j].wall = true;
-            }
-            if (j == squaresX) {
-                pointsArray[i][j].moveTable = [[0, 1, 2], [0, 2, 2], [0, 1, 2]];
-                pointsArray[i][j].ghostTable = [[0, 1, 2], [0, 2, 2], [0, 1, 2]];
-                pointsArray[i][j].wall = true;
-            }
-        }
-    }
-
-    ///ROGI///
-    pointsArray[0][0].moveTable = [[2, 2, 2], [2, 2, 1], [2, 1, 0]];
-    pointsArray[0][0].ghostTable = [[2, 2, 2], [2, 2, 1], [2, 1, 0]];
-    pointsArray[0][0].wall = true;
-    pointsArray[0][squaresX].moveTable = [[2, 2, 2], [1, 2, 2], [0, 1, 2]];
-    pointsArray[0][squaresX].ghostTable = [[2, 2, 2], [1, 2, 2], [0, 1, 2]];
-    pointsArray[0][squaresX].wall = true;
-    pointsArray[squaresY][squaresX].moveTable = [[0, 1, 2], [1, 2, 2], [2, 2, 2]];
-    pointsArray[squaresY][squaresX].ghostTable = [[0, 1, 2], [1, 2, 2], [2, 2, 2]];
-    pointsArray[squaresY][squaresX].wall = true;
-    pointsArray[squaresY][0].moveTable = [[2, 1, 0], [2, 2, 1], [2, 2, 2]];
-    pointsArray[squaresY][0].ghostTable = [[2, 1, 0], [2, 2, 1], [2, 2, 2]];
-    pointsArray[squaresY][0].wall = true;
-
-    ///BRAMKI///
-    var side = ((squaresY - 2) / 2); //odleglosc_rogu_planszy_do_bramki
-    pointsArray[side][0].moveTable = [[2, 1, 0], [1, 2, 0], [0, 0, 0]];
-    pointsArray[side][0].ghostTable = [[2, 1, 0], [1, 2, 0], [0, 0, 0]];
-    pointsArray[side][0].wall = true;
-    pointsArray[side + 1][0].moveTable = [[0, 0, 0], [0, 2, 0], [0, 0, 0]];
-    pointsArray[side + 1][0].ghostTable = [[0, 0, 0], [0, 2, 0], [0, 0, 0]];
-    pointsArray[side + 1][0].wall = false;
-    pointsArray[side + 2][0].moveTable = [[0, 0, 0], [1, 2, 0], [2, 1, 0]];
-    pointsArray[side + 2][0].ghostTable = [[0, 0, 0], [1, 2, 0], [2, 1, 0]];
-    pointsArray[side + 2][0].wall = true;
-    pointsArray[side][squaresX].moveTable = [[0, 1, 2], [0, 2, 1], [0, 0, 0]];
-    pointsArray[side][squaresX].ghostTable = [[0, 1, 2], [0, 2, 1], [0, 0, 0]];
-    pointsArray[side][squaresX].wall = true;
-    pointsArray[side + 1][squaresX].moveTable = [[0, 0, 0], [0, 2, 0], [0, 0, 0]];
-    pointsArray[side + 1][squaresX].ghostTable = [[0, 0, 0], [0, 2, 0], [0, 0, 0]];
-    pointsArray[side + 1][squaresX].wall = false;
-    pointsArray[side + 2][squaresX].moveTable = [[0, 0, 0], [0, 2, 1], [0, 1, 2]];
-    pointsArray[side + 2][squaresX].ghostTable = [[0, 0, 0], [0, 2, 1], [0, 1, 2]];
-    pointsArray[side + 2][squaresX].wall = true;
-
-    for (let i = 0; i <= squaresY; i++) {
-        for (let j = 0; j <= squaresX; j++) {
-            pointsArray[i][j].ghostWall = pointsArray[i][j].wall;
-        }
-    }
-
-    ///PUNKTY BRAMEK///
-    gatewayArray[0][0] = new Point(0, side);
-    gatewayArray[0][1] = new Point(0, (side) + 1);
-    gatewayArray[0][2] = new Point(0, (side) + 2);
-    gatewayArray[1][0] = new Point(squaresX + 2, side);
-    gatewayArray[1][1] = new Point(squaresX + 2, (side) + 1);
-    gatewayArray[1][2] = new Point(squaresX + 2, (side) + 2);
-}
-
-function setup() {
-    var myboard = new Board("board");
-    myboard.draw();
-
-    bestGhost = new ghostMoves();
-    enemyGatePoint = new Point(squaresX + 1, squaresY / 2);
-
-    ///NAKŁADANIE PUNKTÓW///
-    pointsApply();
-    ///RYSOWANIE PLANSZY///
-    drawField();
-    ///RYSOWANIE BRAMEK///
-    drawGateway();
-
-    myImgData = ctx.getImageData(0, 0, canvasWidthResolution, canvasHeightResolution);
-
-    ctx.fillStyle = "black";
-    ctx.beginPath();
-    ctx.arc(pointsArray[middleHeight][middleWidth].x * scale + scale + wallWidth / 2 + marginXY / 3, pointsArray[middleHeight][middleWidth].y * scale + wallWidth / 2 + marginXY / 3, 15, 0, Math.PI * 2, false);
-    ctx.fill();
-    ctx.closePath();
-    pointsArray[middleHeight][middleWidth].wall = true;
-    pointsArray[middleHeight][middleWidth].ghostWall = true;
-    curPoint = pointsArray[middleHeight][middleWidth];
-    posX = curPoint.x * scale + scale + wallWidth / 2 + marginXY / 3;
-    posY = curPoint.y * scale + wallWidth / 2 + marginXY / 3;
-}
-setup();
-
-//-------------------------------------------------------------
-function getMousePos(canvas, evt) {
-    var rect = canvas.getBoundingClientRect();
-    return {
-        x: evt.clientX - rect.left,
-        y: evt.clientY - rect.top
-    };
-}
-
-function loadBoardState() {
-    ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
-    ctx.putImageData(myImgData, 0, 0);
-    ctx.fillStyle = "black";
-    ctx.beginPath();
-    ctx.arc(posX, posY, 15, 0, Math.PI * 2, false);
-    ctx.fill();
-    ctx.closePath();
-}
-
-function saveBoardState(i, j, bol) {
-    if (bol) {
-        myImgData = ctx.getImageData(0, 0, canvasWidthResolution, canvasHeightResolution);
-        curPoint.moveTable[i - middleHeight + 1][j - middleWidth + 1] = 1;
-        curPoint.ghostTable[i - middleHeight + 1][j - middleWidth + 1] = 1;
-        pointsArray[i][j].moveTable[2 - (i - middleHeight + 1)][2 - (j - middleWidth + 1)] = 1;
-        pointsArray[i][j].ghostTable[2 - (i - middleHeight + 1)][2 - (j - middleWidth + 1)] = 1;
-        curPoint = pointsArray[i][j];
-        posX = curPoint.x * scale + scale + wallWidth / 2 + marginXY / 3;
-        posY = curPoint.y * scale + wallWidth / 2 + marginXY / 3;
-        middleHeight = i;
-        middleWidth = j;
-    }
-    else {
-        myImgData = ctx.getImageData(0, 0, canvasWidthResolution, canvasHeightResolution);
-        curPoint = gatewayArray[i][j];
-        posX = (curPoint.x - 1) * scale + scale + wallWidth / 2 + marginXY / 3;
-        posY = curPoint.y * scale + wallWidth / 2 + marginXY / 3;
-    }
-}
-
-function changePlayer() {
-    if (color == 'blue') {
-        color = 'red';
-        playerTurn = false;
-    }
-    else {
-        color = 'blue';
-        playerTurn = true;
-    }
-}
-
-function endGame(i) {
-    log("Player " + i + " WIN");
-    canvas.removeEventListener('mousemove', mouseMoveEvent);
-    canvas.removeEventListener('click', clickEvent);
-}
-
-function ghostDraw(i) {
-    ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
-    ctx.putImageData(myImgData, 0, 0);
-    ctx.strokeStyle = "red";
-    ctx.beginPath();
-    ctx.moveTo(posX, posY);
-    ctx.lineTo(bestGhost.pointsTab[counter].x * scale + scale + wallWidth / 2 + marginXY / 3, bestGhost.pointsTab[counter].y * scale + wallWidth / 2 + marginXY / 3)
-    ctx.stroke();
-    ctx.closePath();
-    saveBoardState(bestGhost.pointsTab[counter].y, bestGhost.pointsTab[counter].x, true);
-    loadBoardState();
-    pointsArray[bestGhost.pointsTab[counter].y][bestGhost.pointsTab[counter].x].wall = true;
-    pointsArray[bestGhost.pointsTab[counter].y][bestGhost.pointsTab[counter].x].ghostWall = true;
-    counter++;
-    if (counter == bestGhost.pointsTab.length) {
-        counter = 0;
-        changePlayer();
-        clearInterval(startDrawGhost);
-    }
-
-}
-
-function botTry(nowGhost, tmpPoint) {
-    for (let i = tmpPoint.y - 1; i <= tmpPoint.y + 1; i++)
-        for (let j = tmpPoint.x - 1; j <= tmpPoint.x + 1; j++)
-            if (tmpPoint.ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] == 0) {
-                if (j == - 1)
-                    break;
-                if (j == pointsArray[i].length) {
-                    nowGhost.pointsTab.push(new Point(gatewayArray[1][1].x - 1, gatewayArray[1][1].y))
-                    nowGhost.enemyGateX = 0;
-                    bestGhost = JSON.parse(JSON.stringify(nowGhost));
-                    return;
-                }
-                nowGhost.pointsTab.push(new Point(pointsArray[i][j].x, pointsArray[i][j].y))
-                nowGhost.enemyGateX = (enemyGatePoint.x - pointsArray[i][j].x);
-                nowGhost.enemyGateY = Math.abs(enemyGatePoint.y - pointsArray[i][j].y);
-                pointsArray[i][j].ghostWall = true;
-                pointsArray[tmpPoint.y][tmpPoint.x].ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 1;
-                pointsArray[i][j].ghostTable[2 - (i - tmpPoint.y + 1)][2 - (j - tmpPoint.x + 1)] = 1;
-                if (pointsArray[i][j].wall) {
-                    let newPoint = JSON.parse(JSON.stringify(pointsArray[i][j]));
-                    let newGhost = JSON.parse(JSON.stringify(nowGhost));
-                    botTry(newGhost, newPoint)
-                }
-                else
-                    if (nowGhost.enemyGateX < bestGhost.enemyGateX) //nowGhost.enemyGateDistance < bestGhost.enemyGateDistance
-                    {
-                        bestGhost = JSON.parse(JSON.stringify(nowGhost));
-                    }
-                    else
-                    {
-                        if(nowGhost.enemyGateX == bestGhost.enemyGateX)
-                            if(nowGhost.enemyGateY < bestGhost.enemyGateY)
-                                bestGhost = JSON.parse(JSON.stringify(nowGhost));
-                    }
-                pointsArray[i][j].ghostWall = false;
-                pointsArray[tmpPoint.y][tmpPoint.x].ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 0;
-                pointsArray[i][j].ghostTable[2 - (i - tmpPoint.y + 1)][2 - (j - tmpPoint.x + 1)] = 0;
-                nowGhost.pointsTab.pop();
-
-            }
+let game = new Game();
+game.gamePrepare();
+game.gameStart();
 
 
-    // for (let i = tmpPoint.y - 1; i <= tmpPoint.y + 1; i++)
-    // for (let j = tmpPoint.x - 1; j <= tmpPoint.x + 1; j++)
-    //     if (tmpPoint.ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] == 0) {
-    //         if (j == - 1)
-    //             break;
-    //         if (j == pointsArray[i].length) {
-    //             log("Bramka");
-    //             break;
-    //         }
-    //         nowGhost.pointsTab.push(new Point(pointsArray[i][j].x, pointsArray[i][j].y))
-    //         nowGhost.gateDistance = Math.abs(gatePoint.y - pointsArray[i][j].y) + (gatePoint.x - pointsArray[i][j].x);
-    //         pointsArray[i][j].ghostWall = true;
-    //         pointsArray[tmpPoint.y][tmpPoint.x].ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 1;
-    //         pointsArray[i][j].ghostTable[2 - (i - tmpPoint.y + 1)][2 - (j - tmpPoint.x + 1)] = 1;
-    //         if (pointsArray[i][j].wall) {
-    //             let newPoint = JSON.parse(JSON.stringify(pointsArray[i][j]));
-    //             let newGhost = JSON.parse(JSON.stringify(nowGhost));
-    //             botTry(newGhost, newPoint)
-    //         }
-    //         else
-    //             if (nowGhost.gateDistance < bestGhost.gateDistance)
-    //                 bestGhost = JSON.parse(JSON.stringify(nowGhost));
-    //         pointsArray[i][j].ghostWall = false;
-    //         pointsArray[tmpPoint.y][tmpPoint.x].ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 0;
-    //         pointsArray[i][j].ghostTable[2 - (i - tmpPoint.y + 1)][2 - (j - tmpPoint.x + 1)] = 0;
-    //     }
-
-    // ctx.beginPath();
-    // ctx.moveTo(posX, posY);
-    // ctx.lineTo(pointsArray[i][j].x * scale + scale + wallWidth / 2 + marginXY / 3, pointsArray[i][j].y * scale + wallWidth / 2 + marginXY / 3)
-    // ctx.stroke();
-    // ctx.closePath();
-
-}
-
-function mouseMoveEvent(evt) {
-    var mousePos = getMousePos(canvas, evt);
-    var przelicznik_na_x = canvasWidthResolution / boardWidth;
-    var przelicznik_na_y = canvasHeightResolution / boardHeight;
-    var cord_X = mousePos.x * przelicznik_na_x;
-    var cord_Y = mousePos.y * przelicznik_na_y;
-
-    ///PUNKTY MAPY///
-    for (let i = 0; i < pointsArray.length; i++)
-        for (let j = 0; j < pointsArray[i].length; j++)
-            if ((pointsArray[i][j].x * scale + scale + wallWidth / 2 <= cord_X + scale / 2 && pointsArray[i][j].y * scale + wallWidth / 2 <= cord_Y + scale / 2)
-                && (pointsArray[i][j].x * scale + scale + wallWidth / 2 >= cord_X - scale / 2 && pointsArray[i][j].y * scale + wallWidth / 2 >= cord_Y - scale / 2))
-                if ((i >= middleHeight - 1 && i <= middleHeight + 1) && (j >= middleWidth - 1 && j <= middleWidth + 1))
-                    if (curPoint.moveTable[i - middleHeight + 1][j - middleWidth + 1] == 0) {
-                        loadBoardState();
-                        ctx.beginPath();
-                        ctx.fillStyle = color;
-                        ctx.arc(pointsArray[i][j].x * scale + scale + wallWidth / 2 + marginXY / 3, pointsArray[i][j].y * scale + wallWidth / 2 + marginXY / 3, 15, 0, Math.PI * 2, false);
-                        ctx.fill();
-                        ctx.closePath();
-                    }
-
-    ///PUNKTY BRAMEK///
-    for (let i = 0; i < gatewayArray.length; i++)
-        for (let j = 0; j < gatewayArray[i].length; j++)
-            if ((gatewayArray[i][j].x * scale + wallWidth / 2 <= cord_X + scale / 2 && gatewayArray[i][j].y * scale + wallWidth / 2 <= cord_Y + scale / 2)
-                && (gatewayArray[i][j].x * scale + wallWidth / 2 >= cord_X - scale / 2 && gatewayArray[i][j].y * scale + wallWidth / 2 >= cord_Y - scale / 2))
-                if (((posX + scale == gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3) || (posX - scale == gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3))
-                    && ((posY - scale * 2 < gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3) && (posY + scale * 2 > gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3))) {
-                    let value;
-                    if (middleWidth == 10) value = 2;
-                    else value = 0;
-                    if ((curPoint.moveTable[j + 1 - (middleHeight - 3)][value] == 0)) {
-                        loadBoardState();
-                        ctx.beginPath();
-                        ctx.fillStyle = color;
-                        ctx.arc(gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3, gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3, 15, 0, Math.PI * 2, false);
-                        ctx.fill();
-                        ctx.closePath();
-                    }
-                }
-}
-
-function clickEvent(evt) {
-    var mousePos = getMousePos(canvas, evt);
-    var przelicznik_na_x = canvasWidthResolution / boardWidth;
-    var przelicznik_na_y = canvasHeightResolution / boardHeight;
-    var cord_X = mousePos.x * przelicznik_na_x;
-    var cord_Y = mousePos.y * przelicznik_na_y;
-    let wallmove = false;
-
-    ///PUNKTY MAPY///
-    if(playerTurn)
-    {
-        for (let i = 0; i < pointsArray.length; i++)
-        for (let j = 0; j < pointsArray[i].length; j++)
-            if ((pointsArray[i][j].x * scale + scale + wallWidth / 2 <= cord_X + scale / 2 && pointsArray[i][j].y * scale + wallWidth / 2 <= cord_Y + scale / 2)
-                && (pointsArray[i][j].x * scale + scale + wallWidth / 2 >= cord_X - scale / 2 && pointsArray[i][j].y * scale + wallWidth / 2 >= cord_Y - scale / 2))
-                {
-                    if ((i >= middleHeight - 1 && i <= middleHeight + 1) && (j >= middleWidth - 1 && j <= middleWidth + 1))
-                    {
-                        if (curPoint.moveTable[i - middleHeight + 1][j - middleWidth + 1] == 0) {
-                            ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
-                            ctx.putImageData(myImgData, 0, 0);
-                            ctx.strokeStyle = "blue";
-                            ctx.beginPath();
-                            ctx.moveTo(posX, posY);
-                            ctx.lineTo(pointsArray[i][j].x * scale + scale + wallWidth / 2 + marginXY / 3, pointsArray[i][j].y * scale + wallWidth / 2 + marginXY / 3)
-                            ctx.stroke();
-                            ctx.closePath();
-                            saveBoardState(i, j, true);
-                            loadBoardState();
-                            if (pointsArray[i][j].wall)
-                                wallmove = true;
-                            pointsArray[i][j].wall = true;
-                            pointsArray[i][j].ghostWall = true;
-
-                            if (!wallmove) {
-                                changePlayer();
-                                let newGhost = new ghostMoves();
-                                tmpPoint = JSON.parse(JSON.stringify(curPoint));
-                                botTry(newGhost, tmpPoint)
-                                log(bestGhost);
-                                startDrawGhost = setInterval(function () { ghostDraw(); }, 400);
-                                bestGhost.enemyGateX = 100;
-                                bestGhost.enemyGateY = 100;
-                            }
-                        }
-                    }
-                }
-
-    ///PUNKTY BRAMEK///
-    for (let i = 0; i < gatewayArray.length; i++)
-        for (let j = 0; j < gatewayArray[i].length; j++)
-            if ((gatewayArray[i][j].x * scale + wallWidth / 2 <= cord_X + scale / 2 && gatewayArray[i][j].y * scale + wallWidth / 2 <= cord_Y + scale / 2)
-                && (gatewayArray[i][j].x * scale + wallWidth / 2 >= cord_X - scale / 2 && gatewayArray[i][j].y * scale + wallWidth / 2 >= cord_Y - scale / 2))
-                if (((posX + scale == gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3) || (posX - scale == gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3))
-                    && ((posY - scale * 2 < gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3) && (posY + scale * 2 > gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3))) {
-                    let value;
-                    if (middleWidth == 10) value = 2;
-                    else value = 0;
-                    if ((curPoint.moveTable[j + 1 - (middleHeight - 3)][value] == 0)) {
-                        ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
-                        ctx.putImageData(myImgData, 0, 0);
-                        ctx.strokeStyle = "blue";
-                        ctx.beginPath();
-                        ctx.moveTo(posX, posY);
-                        ctx.lineTo(gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3, gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3);
-                        ctx.stroke();
-                        ctx.closePath();
-                        saveBoardState(i, j, false);
-                        loadBoardState();
-                        endGame(i + 1);
-                        return;
-                    }
-                }
-    }
-}
-
-canvas.addEventListener('mousemove', mouseMoveEvent, false);
-
-canvas.addEventListener('click', clickEvent, false);
+let btn = document.querySelector(".btn");
+// btn.addEventListener("click", game.debug);
