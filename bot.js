@@ -68,6 +68,7 @@ function Game() {
         }
 
         this.curPoint = new Coordinates(this.rows / 2, this.columns / 2)
+        graph.get(`${this.curPoint.x}_${this.curPoint.y}`).wallValue = 0;
         this.myImgData = this.ctx.getImageData(0, 0, this.canvasWidth, this.canvasHeight);
         this.curPoint = new Coordinates(this.rows / 2, this.columns / 2)
         this.drawPoint(this.curPoint.x, this.curPoint.y);
@@ -385,13 +386,17 @@ function Game() {
         }
         this.canvas.removeEventListener('mousemove', this.mouseMoveEvent);
         this.canvas.removeEventListener('click', this.clickEvent);
-        const paths = findMultiplyPaths(`4_${enemyGatePoint}`, `${this.curPoint.x}_${this.curPoint.y}`, graph, ownGatePoint);
+        // const paths = findMultiplyPaths(`4_${enemyGatePoint}`, `${this.curPoint.x}_${this.curPoint.y}`, graph, ownGatePoint);
 
-        if (paths != false) {
-            const bestPath = findBestPath(paths, ownGatePoint, enemyGatePoint);
+        // if (paths != false) {
+        //     const bestPath = findBestPath(paths, ownGatePoint, enemyGatePoint);
 
-        }
+        // }
 
+        // let ownDistance = getDistance(`4_${enemyGatePoint}`, `${this.curPoint.x}_${this.curPoint.y}`, graph); //ile nam zostało do bramki
+        // let enemyDistance = getDistance(`4_${ownGatePoint}`, `${this.curPoint.x}_${this.curPoint.y}`, graph); //ile przeciwnikowi zostało do bramki
+
+        let selectedPoint = checkAllPaths(`${this.curPoint.x}_${this.curPoint.y}`, `4_${enemyGatePoint}`, `4_${ownGatePoint}`, graph);
 
         // findSinglePath(`4_${enemyGatePoint}`, `${this.curPoint.x}_${this.curPoint.y}`, graph)
         // let bestTable = new Array();
