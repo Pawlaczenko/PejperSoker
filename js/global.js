@@ -298,6 +298,109 @@ const findSinglePath = (startNodeName, endNodeName, graph) => {
     return results;
 };
 
+const checkAllPaths = (source, target, ownGate, graph) => {
+    const queue = [source];
+    const visited = new Set();
+    const path = new Map();
+    let bestPath = { point: null, sumDistance: 100 };
+    let enemyWinPoint = null;
+
+    while (queue.length > 0) {
+        const start = queue.pop();
+
+        if (start == target) {
+            bestPath.point = start;
+            return bestPath;
+        }
+
+        if (visited.has(start)) {
+            continue;
+        }
+
+        if (graph.get(start).wallValue == 1) {
+            let ownDistance = getDistance(start, target); //ile nam zostało do bramki
+            let enemyDistance = getDistance(start, ownGate); //ile przeciwnikowi zostało do bramki
+            if (enemyDistance == -1) {
+                return false;
+                //!MAMY PROBLEM BLEBLEBLELBLEBLBELBEL
+            }
+            let sumDistance = ownDistance - enemyDistance;
+
+            if (bestPath.sumDistance > sumDistance) {
+                if (enemyDistance > 0) {
+                    bestPath.sumDistance = sumDistance;
+                    bestPath.point = start;
+                }
+                else {
+                    if (bestPath.sumDistance == 100) {
+                        enemyWinPoint = start;
+                    }
+                }
+            }
+
+            visited.add(start);
+            continue;
+        }
+
+        for (const next of graph.get(start).out) {
+            if (visited.has(next)) {
+                continue;
+            }
+
+            if (!queue.includes(next)) {
+                path.set(next, start);
+                queue.push(next);
+            }
+        }
+
+        visited.add(start);
+    }
+
+    if (bestPath.distance == 100) {
+        bestPath.sumDistance = sumDistance;
+        bestPath.point = enemyWinPath;
+        return bestPath;
+    }
+
+};
+
+const findPath = (source, target, graph) => {
+    if (!graph.has(source)) {
+        throw new Error('Unknown source.');
+    }
+
+    if (!graph.has(target)) {
+        throw new Error('Unknown target.');
+    }
+
+    const queue = [source];
+    const visited = new Set();
+    const path = new Map();
+
+    while (queue.length > 0) {
+        const start = queue.shift();
+
+        if (start === target) {
+            return buildPath(start, path);
+        }
+
+        for (const next of graph.get(start).out) {
+            if (visited.has(next)) {
+                continue;
+            }
+
+            if (!queue.includes(next)) {
+                path.set(next, start);
+                queue.push(next);
+            }
+        }
+
+        visited.add(start);
+    }
+
+    return null;
+};
+
 const checkPath = function (enemyGatePoint, ownGatePoint, path) {
     for (let i = 1; i < path.length; i++) {
         if (graph.get(path[i]).wallValue == 1) {
@@ -440,6 +543,30 @@ function findBestPath(paths, ownGatePoint, enemyGatePoint) {
     let ownDistance = null;
     let enemyDistance = null;
     let enemyWinPath = null;
+
+    //TODO
+
+    // enemyDistance = distance(point, enemyGatePoint);
+    // ownDistance = distance(point, ownGatePoint);
+    // sumDistance = enemyDistance - ownDistance;
+    // path.push(point);
+
+    //TODO
+
+    //TODO
+
+    /* if(point.wallValue == 0){
+        if(point.point != enemyGatePoint){
+
+        }
+        else
+            return {path: path, status: true};
+    }
+    else{
+        return {path: path, status: false, distance: sumDistance};
+    } */
+
+    //TODO
 
     //?
 
