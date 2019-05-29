@@ -395,6 +395,6 @@ function genereteCreator() {
         `);
         $('.color #id'+i+' + label').css("background-color", colors[i]);
     });
-}
+};
 
 genereteCreator();

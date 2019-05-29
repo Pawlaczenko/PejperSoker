@@ -8,8 +8,8 @@ var Player = function(name,color,id) {
     this.id = id;
 }
 
-//! this.player == TRUE => Tura player1
-//! this.player == FALSE => Tura player2 //BOT TO DOMYŚLNIE PLAYER2
+//! this.player == TRUE => Tura player2
+//! this.player == FALSE => Tura player1 //BOT TO DOMYŚLNIE PLAYER2
 
 var players = [];
 
@@ -197,6 +197,12 @@ function Game() {
         this.gameOn = true;
         this.suicideGate = 0;
         this.suicideWall = 0;
+
+        players[0] = new Player("Kudłaty","pink");
+        players[1] = new Player("Shrek","orange");
+        $('.name[data-id="0"]').html(players[0].name);
+        $('.name[data-id="1"]').html(players[1].name);
+
         this.player = false;
         this.curPoint.wall = true;
     }
@@ -215,12 +221,14 @@ function Game() {
             return;
         };
 
-        if (this.player) {
-            this.color = "blue";
-        }
-        else {
-            this.color = "red";
-        }
+        this.color = players[+this.player].color;
+
+        // if (this.player) {
+        //     this.color = player[0].color;
+        // }
+        // else {
+        //     this.color = "red";
+        // }
 
         let mousePos = getMousePos(this.canvas, event);
         let przelicznik_na_x = this.canvasWidth / this.boardWidth;
@@ -284,8 +292,9 @@ function Game() {
                                     this.gameEnd(false);
                                     return;
                                 }
-                                if (!wallHit)
-                                    this.player = !this.player;
+                                if (!wallHit){
+                                    this.player = changeRound(this.player);
+                                }
 
                                 for (let k = 0; k < this.curPoint.moveTable.length; k++) {
                                     for (let l = 0; l < this.curPoint.moveTable.length; l++) {
@@ -312,7 +321,7 @@ function Game() {
                                                 this.bestGhost.awayGateX = 100;
                                                 this.canvas.addEventListener('mousemove', this.mouseMoveEvent);
                                                 this.canvas.addEventListener('click', this.clickEvent);
-                                                this.player = !this.player;
+                                                this.player = changeRound(this.player);
                                             }
                                             return;
                                         }
@@ -563,6 +572,14 @@ function ghostMoves() {
     this.enemyGateX = 100;
     this.enemyGateY = 100;
     this.awayGateX = 100;
+}
+
+function changeRound(player) {
+    $('.name').each(i => {
+        $(this).toggleClass('active');
+    });
+
+    return !player;
 }
 
 
