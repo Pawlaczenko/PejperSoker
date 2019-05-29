@@ -188,7 +188,7 @@ function Game() {
     }
 
     this.gameStart = function () {
-        this.botGame = true;
+        this.botGame = false;
         if(this.botGame) {
             players[1] = new Player("Andrzej","red");
         }
