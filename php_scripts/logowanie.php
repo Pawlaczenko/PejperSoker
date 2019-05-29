@@ -12,7 +12,7 @@ session_start();
 require_once "./utilities_php/connect.php";
 require_once "./utilities_php/usefull_function.php";
 
- $connect = @new mysqli($db_location, $db_user , $db_password,$db_name);
+ $connect = @new mysqli($host, $db_user , $db_password,$db_name);
  if ($connect->errno) {
      echo "wystapil blad" . $connect->errno . "----" . $connect->error;
  } 
@@ -32,12 +32,15 @@ require_once "./utilities_php/usefull_function.php";
                if ($iluUzytkownikow == 1) {
                    $row = $result->fetch_assoc();
                    $hash_z_bazy = $row['password'];
+                   $user_id  = $row['id_user'];
+
                     
                    if (password_verify($haslo,$row['password']))
                    {
                       echo "logowanie ... ";
                       $_SESSION['is__logged'] = true;
                       $_SESSION['login'] = $login;
+                      $_SESSION['id'] = $user_id;
                       $result->free_result();
                       update_logged_flag($connect,$_SESSION['login'],1);
                       header('Location:lobby.php');

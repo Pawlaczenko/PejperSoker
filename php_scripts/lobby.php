@@ -13,6 +13,7 @@
         echo  "zalogowano<br>";
         echo $_SESSION['login'];
         
+        
     }
     else
     {
@@ -21,7 +22,11 @@
     
     
     ?>
-    <br>
+<br><br><br>
+    <a href="./join_to_game.php">dołacz do gry</a><br>
+    <a href="./generate_link.php">stworz gre</a>
+
+    <br><br><br>
     <a href="utilities_php/logout.php">[wyloguj sie]</a>
 </body>
 </html>
