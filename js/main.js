@@ -198,8 +198,8 @@ function Game() {
         this.suicideGate = 0;
         this.suicideWall = 0;
 
-        players[0] = new Player("Kudłaty","pink");
-        players[1] = new Player("Shrek","orange");
+        players[0] = new Player("Gracz1","yellow");
+        players[1] = new Player("Gracz2","black");
         $('.name[data-id="0"]').html(players[0].name);
         $('.name[data-id="1"]').html(players[1].name);
 
@@ -575,9 +575,9 @@ function ghostMoves() {
 }
 
 function changeRound(player) {
-    $('.name').each(i => {
+    $('.name').each(function(i){
         $(this).toggleClass('active');
-    });
+    }); //działa lokalnie, do zmiany przy grze online
 
     return !player;
 }
