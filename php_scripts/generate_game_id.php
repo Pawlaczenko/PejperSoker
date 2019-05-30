@@ -13,12 +13,9 @@
         else 
         {   
             $logged_user_id = $_SESSION['id'];
+            // $color = $_POST['color'];
 
-
-            
-
-            $color = $_POST['color'];
-            // $checkHost = "SELECT * FROM session WHERE user2=$logged_user_id";
+            // $query_set_color1 = "UPDATE session SET player1_color='$game_id' WHERE id_session=$session_id";
 
             //sprawdz czy taka sesia juz istnieje (to jest zabezpiecznie eprzed f5 - obrona przed retundancja)
             $query_check_session = "SELECT * FROM session WHERE user1=$logged_user_id";

@@ -5,12 +5,21 @@ function getGameId(color){
     $.ajax({
         url:'php_scripts/generate_game_id.php',
         type:'POST',
-        data: {
-            color: color
-        },
         success: function(results) {
+            
+            $.ajax({
+                url:'php_scripts/semdColors.php',
+                type:'POST',
+                data: {
+                    color: color
+                },
+                success:function(results) {
+                    
+                }
+            });
+
             if(!results) {
-                console.log('i here');
+
                 return;
             }
             $('.loader').css('display','flex').find('.game_id').html(results);
@@ -77,9 +86,6 @@ $("#creator").submit(function(e){
     let color = $(".colorInput[name=color]:checked").val();
     e.preventDefault();
     getGameId(color);
-
-
-
 });
 
 $("#join_form").submit(function(e){
