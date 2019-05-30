@@ -151,102 +151,17 @@ const findMultiplyPaths = (startNodeName, endNodeName, graph, blockNodeName) => 
         node = findLowestCostNode(costs, processed);
     }
 
-    // let optimalPathArray = new Array();
-    // let flag = { rounds: [] };
-    // let keyRepeat = { key: "", counter: 0 };
-    // break2:
-    // while (true) {
-    //     let optimalPath = [endNodeName];
-    //     let parent = parents[endNodeName];
-    //     let counter = 0;
-    //     break1:
-    //     while (parent) {
-    //         for (let j = 0; j < parent.length; j++) {
-    //             for (let i in parent[j]) {
-    //                 if (i == startNodeName) {
-    //                     optimalPath.push(i);
-    //                     if (flag.rounds.length > 0) {
-    //                         if (flag.rounds[flag.rounds.length - 1] + 1 <= counter) {
-    //                             flag.rounds[flag.rounds.length - 1]++;
-    //                         }
-    //                         else {
-    //                             flag.rounds[flag.rounds.length - 1] = flag.rounds.length - 1;
-    //                             flag.rounds.push(flag.rounds.length)
-
-    //                         }
-    //                     }
-    //                     if (optimalPathArray.length == 0) {
-    //                         flag.rounds.push(0);
-    //                     }
-    //                     break break1;
-    //                 }
-    //             }
-    //         }
-    //         let key;
-    //         let x = 0;
-    //         for (const i of flag.rounds) {
-    //             if (counter == i) {
-    //                 x = 1;
-    //                 break;
-    //             }
-    //         }
-    //         if (parent[x] != undefined && (Object.values(parent[x])[0] == Object.values(parent[0])[0] || Object.values(parent[x])[0] == Object.values(parent[0])[0] + 1) && !optimalPath.includes(Object.keys(parent[x])[0]) && parent[x] != blockNodeName) {
-    //             key = Object.keys(parent[x])[0];
-    //             counter++;
-    //         }
-    //         else {
-    //             if (flag.rounds[flag.rounds.length - 1] + 1 < parents[optimalPath[optimalPath.length - 1]].length) {
-    //                 flag.rounds[flag.rounds.length - 1]++;
-    //             }
-    //             else {
-    //                 flag.rounds[flag.rounds.length - 1] = flag.rounds.length - 1;
-    //                 flag.rounds.push(flag.rounds.length)
-    //             }
-    //             break;
-    //         }
-
-    //         if (keyRepeat.counter == 4) {
-    //             break break2;
-    //         }
-    //         if (keyRepeat.key == key) {
-    //             keyRepeat.counter++;
-    //         }
-    //         else {
-    //             keyRepeat.key = key;
-    //             keyRepeat.counter = 0;;
-    //         }
-
-    //         optimalPath.push(key);
-    //         parent = parents[key];
-    //     }
-    //     if (optimalPathArray[0] != undefined) {
-    //         if (arraysEqual(optimalPathArray[0], optimalPath)) {
-    //             break;
-    //         }
-    //     }
-
-
-
-    //     if (optimalPath[optimalPath.length - 1] == `${startNodeName}`)
-    //         optimalPathArray.push(optimalPath)
-    //     if (optimalPathArray.length == 10) {
-    //         break;
-    //     }
-
-    // }
-
     const results = {
         distance: costs[endNodeName],
         path: parents
     };
-    // console.log(results.distance);
+
     if (results.distance === "Infinity") return false
     return results;
 };
 
 const findSinglePath = (startNodeName, endNodeName, graph) => {
 
-    // track the lowest cost to reach each node
     let costs = {};
     let makeCostObject = new Object();
     for (const child of graph.get(startNodeName).out) {
@@ -255,7 +170,6 @@ const findSinglePath = (startNodeName, endNodeName, graph) => {
     costs = Object.assign(costs, makeCostObject);
     costs[endNodeName] = "Infinity";
 
-    // track paths
     const parents = { endNodeName: null };
     for (let child of graph.get(startNodeName).out) {
         parents[child] = startNodeName;
@@ -271,7 +185,6 @@ const findSinglePath = (startNodeName, endNodeName, graph) => {
     }
 
 
-    // track nodes that have already been processed
     const processed = [];
 
     let node = findLowestCostNode(costs, processed, endNodeName);
@@ -305,7 +218,6 @@ const findSinglePath = (startNodeName, endNodeName, graph) => {
         optimalPath.push(parent);
         parent = parents[parent];
     }
-    // optimalPath.reverse();
 
     const results = {
         distance: costs[endNodeName],
@@ -353,7 +265,6 @@ const findAllSinglePath = (startNodeName, graph) => {
 
 const getDistance = (startNodeName, endNodeName, graph) => {
 
-    // track the lowest cost to reach each node
     let costs = {};
     let makeCostObject = new Object();
     for (const child of graph.get(startNodeName).out) {
@@ -368,7 +279,6 @@ const getDistance = (startNodeName, endNodeName, graph) => {
         parents[child] = startNodeName;
     }
 
-    // track nodes that have already been processed
     const processed = [];
 
     let node = findLowestCostNode(costs, processed);
@@ -391,14 +301,6 @@ const getDistance = (startNodeName, endNodeName, graph) => {
         processed.push(node);
         node = findLowestCostNode(costs, processed);
     }
-
-    // let optimalPath = [endNodeName];
-    // let parent = parents[endNodeName];
-    // while (parent) {
-    //     optimalPath.push(parent);
-    //     parent = parents[parent];
-    // }
-    // optimalPath.reverse();
 
     let distance = costs[endNodeName]
 
@@ -450,8 +352,8 @@ const checkAllPaths = (source, target, ownGate, graph) => {
                 graph.get(optimalPath[i + 1]).out.delete(optimalPath[i]);
             }
             graph.get(start).wallValue = 0;
-            let ownDistance = getDistance(start, target, graph); //ile nam zostało do bramki
-            let enemyDistance = getDistance(start, ownGate, graph); //ile przeciwnikowi zostało do bramki
+            let ownDistance = getDistance(start, target, graph);
+            let enemyDistance = getDistance(start, ownGate, graph);
             graph.get(start).wallValue = 1;
 
             for (let i = 0; i < optimalPath.length - 1; i++) {
@@ -547,7 +449,6 @@ const checkPath = function (enemyGatePoint, ownGatePoint, path) {
         if (graph.get(path[i]).wallValue == 1) {
             let ownDistance = findSinglePath(`4_${enemyGatePoint}`, `${path[i]}`, graph).distance;
             let enemyDistance = findSinglePath(`4_${ownGatePoint}`, `${path[i]}`, graph).distance;
-            // console.log(ownDistance);
             let obj = {};
             obj[i] = [ownDistance, enemyDistance]
             return obj
@@ -685,31 +586,6 @@ function findBestPath(paths, ownGatePoint, enemyGatePoint) {
     let enemyDistance = null;
     let enemyWinPath = null;
 
-    //TODO
-
-    // enemyDistance = distance(point, enemyGatePoint);
-    // ownDistance = distance(point, ownGatePoint);
-    // sumDistance = enemyDistance - ownDistance;
-    // path.push(point);
-
-    //TODO
-
-    //TODO
-
-    /* if(point.wallValue == 0){
-        if(point.point != enemyGatePoint){
-
-        }
-        else
-            return {path: path, status: true};
-    }
-    else{
-        return {path: path, status: false, distance: sumDistance};
-    } */
-
-    //TODO
-
-    //?
 
     if (ownDistance > 0) {
         if (bestPath.sumDistance > sumDistance) {
