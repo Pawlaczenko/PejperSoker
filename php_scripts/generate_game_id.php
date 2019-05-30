@@ -13,6 +13,10 @@
         else 
         {   
             $logged_user_id = $_SESSION['id'];
+
+
+            
+
             $color = $_POST['color'];
             // $checkHost = "SELECT * FROM session WHERE user2=$logged_user_id";
 
@@ -41,6 +45,7 @@
                 //generownie id gry i aktualizacja recordu w bazie 
                 $game_id = password_hash($session_id,PASSWORD_DEFAULT);
                 $query_set_game_id = "UPDATE session SET game_id='$game_id' WHERE id_session=$session_id";
+                
                 $connect->query($query_set_game_id);
                 echo $game_id;
 

@@ -37,13 +37,16 @@ require_once "./utilities_php/usefull_function.php";
                     
                    if (password_verify($haslo,$row['password']))
                    {
-                      echo "logowanie ... ";
-                      $_SESSION['is__logged'] = true;
-                      $_SESSION['login'] = $login;
-                      $_SESSION['id'] = $user_id;
-                      $result->free_result();
-                      update_logged_flag($connect,$_SESSION['login'],1);
-                      header('Location:lobby.php');
+                        echo "logowanie ... ";
+                        $_SESSION['is__logged'] = true;
+                        $_SESSION['login'] = $login;
+                        $_SESSION['id'] = $user_id;
+                        $result->free_result();
+                        
+                        ping($connect,$_SESSION['login']);
+                        
+                        update_logged_flag($connect,$_SESSION['login'],1);
+                        header('Location:lobby.php');
    
                    }
                    else

@@ -8,4 +8,35 @@ function update_logged_flag($connect,$user_login,$flag)
         mysqli_real_escape_string($connect,$user_login)
     ));
 }
+
+function ping($connect,$user_login)
+{
+    $curr_unix_time = strtotime("now");
+    $result = @$connect->query(sprintf("UPDATE users SET date_last_login=%s WHERE login = '%s'",
+        mysqli_real_escape_string($connect,  $curr_unix_time),
+        mysqli_real_escape_string($connect,$user_login)
+    ));
+   
+}
+
+function check_is_logged($connect,$login)
+{
+    $max_ping_time_answer = 1 ;// w sekundach
+    $query_check_ping = "SELECT date_last_login FROM users WHERE login = '$login';";
+    $result = $connect->query($query_check_ping);
+    $row = $result->fetch_assoc();
+    $unix_time_from_base = $row['date_last_login'];
+    // echo $unix_time_from_base,"<-- czas z bazy";
+    if(strtotime("now")-$unix_time_from_base>$max_ping_time_answer)
+    {
+        update_logged_flag($connect,$login,0);
+        return false;
+    }
+    else
+    {
+        return true;
+    }
+
+}
+
 ?>

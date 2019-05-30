@@ -81,3 +81,9 @@ $('.copy').on('click',function(e){
     $temp.remove();
 });
 
+$(window).on('unload', function() {
+    
+    var fd = new FormData();
+    fd.append('ajax_data', 22);
+    navigator.sendBeacon('php_scripts/delete_session.php', fd);
+});
