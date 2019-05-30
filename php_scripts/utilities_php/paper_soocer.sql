@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 29 Maj 2019, 11:28
+-- Czas generowania: 30 Maj 2019, 20:00
 -- Wersja serwera: 10.1.40-MariaDB
 -- Wersja PHP: 7.3.5
 
@@ -31,17 +31,12 @@ SET time_zone = "+00:00";
 CREATE TABLE `session` (
   `id_session` int(11) NOT NULL,
   `user1` int(11) NOT NULL,
+  `player1_color` int(1) NOT NULL,
   `user2` int(11) NOT NULL,
+  `player2_color` int(1) NOT NULL,
   `game_data` varchar(255) COLLATE utf8_polish_ci NOT NULL,
   `game_id` varchar(255) COLLATE utf8_polish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
-
---
--- Zrzut danych tabeli `session`
---
-
-INSERT INTO `session` (`id_session`, `user1`, `user2`, `game_data`, `game_id`) VALUES
-(34, 10, 9, 'json_string_data', '$2y$10$vQ4V3CqlM7GEp/5hascaKOYTCWMWd8c/rCEsn1yj6JCClknuDfYo6');
 
 -- --------------------------------------------------------
 
@@ -53,16 +48,17 @@ CREATE TABLE `users` (
   `id_user` int(11) NOT NULL,
   `login` varchar(30) COLLATE utf8_polish_ci NOT NULL,
   `password` varchar(255) COLLATE utf8_polish_ci NOT NULL,
-  `is_logged` tinyint(1) NOT NULL
+  `is_logged` tinyint(1) NOT NULL,
+  `date_last_login` int(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
 --
 -- Zrzut danych tabeli `users`
 --
 
-INSERT INTO `users` (`id_user`, `login`, `password`, `is_logged`) VALUES
-(9, 'dejw', '$2y$10$iH5/RLfQ93xz.cbajQf6i.fcZVazfCoiiNBs5SK/P0M46fXHUwmrO', 1),
-(10, 'bartek', '$2y$10$R39U2VBLpggi93xXTS45XevVjPGqywBlO1DcSeiC7GGMzG.TeEcsO', 1);
+INSERT INTO `users` (`id_user`, `login`, `password`, `is_logged`, `date_last_login`) VALUES
+(9, 'dejw', '$2y$10$iH5/RLfQ93xz.cbajQf6i.fcZVazfCoiiNBs5SK/P0M46fXHUwmrO', 1, 1559230678),
+(10, 'bartek', '$2y$10$R39U2VBLpggi93xXTS45XevVjPGqywBlO1DcSeiC7GGMzG.TeEcsO', 1, 1559230684);
 
 --
 -- Indeksy dla zrzutów tabel
@@ -90,7 +86,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT dla tabeli `session`
 --
 ALTER TABLE `session`
-  MODIFY `id_session` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY `id_session` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT dla tabeli `users`
