@@ -358,10 +358,10 @@ function Game() {
         this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
         this.ctx.putImageData(this.myImgData, 0, 0);
         if (this.player == true) {
-            this.color = "blue";
+            this.color = "red";
         }
         else {
-            this.color = "red";
+            this.color = "blue";
         }
         this.ctx.strokeStyle = this.color;
         this.drawLine(this.curPoint.x, this.curPoint.y, Number(element.substring(0, 1)), Number(element.substring(2, element.length)))
