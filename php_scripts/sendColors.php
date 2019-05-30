@@ -9,8 +9,8 @@
             $logged_user_id = $_SESSION['id'];
             $color = $_POST['color'];
 
-            $query_set_color1 = "UPDATE session SET player1_color='$game_id' WHERE user1=$logged_user_id";
-            $query_set_color2 = "UPDATE session SET player2_color='$game_id' WHERE user2=$logged_user_id";
+            $query_set_color1 = "UPDATE session SET player1_color='$color' WHERE user1=$logged_user_id";
+            $query_set_color2 = "UPDATE session SET player2_color='$color' WHERE user2=$logged_user_id";
 
             $connect->query($query_set_color1);
             $connect->query($query_set_color2);

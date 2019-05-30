@@ -8,13 +8,16 @@ function getGameId(color){
         success: function(results) {
             
             $.ajax({
-                url:'php_scripts/semdColors.php',
+                url:'php_scripts/sendColors.php',
                 type:'POST',
                 data: {
                     color: color
                 },
-                success:function(results) {
-                    
+                success:function(result) {
+                    console.log(result);
+                },
+                error:function(r) {
+                    console.log(r);
                 }
             });
 
