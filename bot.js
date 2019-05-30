@@ -215,7 +215,7 @@ function Game() {
                                         if (selectedPoint != false) {
                                             let pathToDraw = findSinglePath(selectedPoint.point, `${this.curPoint.x}_${this.curPoint.y}`, graph);
 
-                                            let stopper = setInterval(() => { this.rysuj(stopper, pathToDraw.path) }, 100)
+                                            let stopper = setInterval(() => { this.rysuj(stopper, pathToDraw.path) }, 400)
                                         }
                                         else {
 
