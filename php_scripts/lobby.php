@@ -24,7 +24,20 @@
                 echo  "zalogowano<br>";
                 echo $_SESSION['login'];
                 // echo convert_date_to_int();
-                
+                if(check_is_session($connect,$_SESSION['id']))
+                {
+                    echo " sessja trwa";
+                }
+                else
+                {
+                    echo " moze dołaczyc badz stworzyc sesje";
+                    
+                    echo <<< content
+                    <a href="./join_to_game.html">dołacz do gry</a><br>
+                    <a href="../index2.html">stworz gre</a>
+
+content;
+                }
                 
         
             }
@@ -42,8 +55,7 @@
     
     ?>
 <br><br><br>
-    <a href="./join_to_game.html">dołacz do gry</a><br>
-    <a href="../index2.html">stworz gre</a>
+   
 
     <br><br><br>
     <a href="utilities_php/logout.php">[wyloguj sie]</a>

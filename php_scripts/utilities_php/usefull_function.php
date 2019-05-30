@@ -38,5 +38,20 @@ function check_is_logged($connect,$login)
     }
 
 }
+function check_is_session($connect, $id)
+{
+    $query_check_session = "SELECT * FROM session WHERE user1=$id OR user2=$id";
+    
+    $result = $connect->query($query_check_session);
+    
+    if($result->num_rows==0)
+    {
+        return false; 
+    }
+    else
+    {
+        return true; //sesja trwa
+    }
+}
 
 ?>

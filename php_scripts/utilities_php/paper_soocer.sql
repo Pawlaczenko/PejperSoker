@@ -38,7 +38,7 @@ CREATE TABLE `session` (
   `game_id` varchar(255) COLLATE utf8_polish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
--- --------------------------------------------------------
+-- -------------------------------------------------------- 
 
 --
 -- Struktura tabeli dla tabeli `users`
