@@ -30,7 +30,7 @@
                 // echo "sesja stworzona<br>";
 
                 // tworzenie sesji
-                $query_create_session = "INSERT INTO session(user1,user2,game_data,game_id) VALUES ('$logged_user_id',-1,'json_string_data',-1)";
+                $query_create_session = "INSERT INTO session(user1,user2,game_data,game_id,player1_color,player2_color) VALUES ('$logged_user_id',-1,'json_string_data',-1,-1,-1)";
                 $connect->query($query_create_session);
 
                 // pozyskiwanie id sesji po to aby wygenerowac id gry 

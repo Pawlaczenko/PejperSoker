@@ -14,7 +14,6 @@ function getGameId(color){
                     color: color
                 },
                 success:function(result) {
-                    console.log(result);
                 },
                 error:function(r) {
                     console.log(r);
