@@ -168,6 +168,8 @@ function Game() {
                         && (x * this.scale + this.wallLineWidth / 2 >= cord_X - this.scale / 2 && y * this.scale + this.wallLineWidth / 2 >= cord_Y - this.scale / 2)) {
                         if ((x >= this.curPoint.x - 1 && x <= this.curPoint.x + 1) && (y >= this.curPoint.y - 1 && y <= this.curPoint.y + 1)) {
                             if (graph.get(`${this.curPoint.x}_${this.curPoint.y}`).out.has(`${x}_${y}`)) {
+                                if (graph.get(`${x}_${y}`).wallValue == 0)
+                                    wallHit = true;
                                 this.ctx.fillStyle = "blue";
                                 this.drawPoint(x, y)
                                 this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
@@ -177,9 +179,7 @@ function Game() {
                                 this.saveBoardState(x, y);
                                 this.loadBoardState();
 
-                                if (graph.get(`${x}_${y}`).wallValue == 0)
-                                    wallHit = true;
-                                graph.get(`${x}_${y}`).wallValue = 0;
+
 
                                 if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == this.columns) {
                                     console.log("Wygrywa gracz niebieski");
