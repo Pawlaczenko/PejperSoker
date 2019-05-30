@@ -19,7 +19,7 @@
     {
         
         
-            if((isset($_SESSION['is__logged']))&&($_SESSION['is__logged']==true)&&check_is_logged($connect,$_SESSION['login']))
+            if((isset($_SESSION['is__logged']))&&($_SESSION['is__logged']==true))
             {
                 echo  "zalogowano<br>";
                 echo $_SESSION['login'];
@@ -61,6 +61,6 @@ content;
     <a href="utilities_php/logout.php">[wyloguj sie]</a>
 
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    <script src="../js/ajax_ping.js"></script>
+  
 </body>
 </html>

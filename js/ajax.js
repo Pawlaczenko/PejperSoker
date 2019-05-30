@@ -1,5 +1,5 @@
-var t; //interval
-
+var interval_is_join_player; //interval
+var interval_check_is_session;
 function getGameId(color){
     $('.creator--box').css('display','none');
     $.ajax({
@@ -14,10 +14,22 @@ function getGameId(color){
                 return;
             }
             $('.loader').css('display','flex').find('.game_id').html(results);
-            t = setInterval(listenForPlayers,1000);
+            interval_check_is_session = setInterval(simple_check,200);
+            interval_is_join_player = setInterval(listenForPlayers,1000);
         },
         error: function() {
 
+        }
+    });
+}
+
+function simple_check() {
+    jQuery.ajax({
+        url:'php_scripts/utilities_php/check_session.php',
+        type:'POST',
+        success:function(results) {
+            console.log('check  interveal');
+            console.log(results); //! obsługa valcovera
         }
     });
 }
@@ -30,7 +42,7 @@ function listenForPlayers() {
             if(results){
                 console.log('true');
                 $('.loader').css('display','none');
-                clearInterval(t);
+                clearInterval(interval_is_join_player);
             } else {
                 console.log('false');
             }
@@ -65,6 +77,9 @@ $("#creator").submit(function(e){
     let color = $(".colorInput[name=color]:checked").val();
     e.preventDefault();
     getGameId(color);
+
+
+
 });
 
 $("#join_form").submit(function(e){
