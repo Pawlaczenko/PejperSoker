@@ -80,6 +80,7 @@ function Game() {
         this.myImgData = this.ctx.getImageData(0, 0, this.canvasWidth, this.canvasHeight);
         graph.get(`${this.curPoint.x}_${this.curPoint.y}`).out.delete(`${x}_${y}`);
         graph.get(`${this.curPoint.x}_${this.curPoint.y}`).wallValue = 0;
+        graph.get(`${x}_${y}`).wallValue = 0;
         graph.get(`${x}_${y}`).out.delete(`${this.curPoint.x}_${this.curPoint.y}`);
         this.curPoint.x = x;
         this.curPoint.y = y;
@@ -108,7 +109,7 @@ function Game() {
         this.gameOn = true;
         // this.suicideGate = 0;
         // this.suicideWall = 0;
-        this.player = Boolean(Math.floor(Math.random() * 2));
+        this.player = 0;
     }
 
     this.gameEnd = function (bool) {
@@ -353,25 +354,26 @@ function Game() {
     this.rysuj = function (stopper, path) {
         this.loadBoardState();
         const element = path[this.con]
-        if (graph.get(element).wallValue == 1 || this.con == (path.length - 1)) {
-            this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-            this.ctx.putImageData(this.myImgData, 0, 0);
-            this.ctx.strokeStyle = "black";
-            this.drawLine(this.curPoint.x, this.curPoint.y, Number(element.substring(0, 1)), Number(element.substring(2, element.length)))
-            this.saveBoardState(Number(element.substring(0, 1)), Number(element.substring(2, element.length)));
-            this.loadBoardState();
-            clearInterval(stopper)
-            return;
-        }
+
         this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
         this.ctx.putImageData(this.myImgData, 0, 0);
-        this.ctx.strokeStyle = "black";
+        if (this.player == true) {
+            this.color = "blue";
+        }
+        else {
+            this.color = "red";
+        }
+        this.ctx.strokeStyle = this.color;
         this.drawLine(this.curPoint.x, this.curPoint.y, Number(element.substring(0, 1)), Number(element.substring(2, element.length)))
         this.saveBoardState(Number(element.substring(0, 1)), Number(element.substring(2, element.length)));
         this.loadBoardState();
         this.con++;
-    }
 
+        if (this.con == (path.length)) {
+            clearInterval(stopper);
+            return;
+        }
+    }
 
 
     this.debug = () => {
@@ -398,6 +400,9 @@ function Game() {
 
         let selectedPoint = checkAllPaths(`${this.curPoint.x}_${this.curPoint.y}`, `4_${enemyGatePoint}`, `4_${ownGatePoint}`, graph);
 
+        let pathToDraw = findSinglePath(selectedPoint.point, `${this.curPoint.x}_${this.curPoint.y}`, graph);
+
+        let stopper = setInterval(() => { this.rysuj(stopper, pathToDraw.path) }, 100)
         // findSinglePath(`4_${enemyGatePoint}`, `${this.curPoint.x}_${this.curPoint.y}`, graph)
         // let bestTable = new Array();
         // for (let i = 0; i < paths.path.length; i++) {
