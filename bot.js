@@ -109,7 +109,7 @@ function Game() {
         this.gameOn = true;
         // this.suicideGate = 0;
         // this.suicideWall = 0;
-        this.player = 0;
+        this.player = 1;
     }
 
     this.gameEnd = function (bool) {
@@ -221,8 +221,6 @@ function Game() {
 
                                         }
 
-                                        this.canvas.addEventListener('mousemove', this.mouseMoveEvent);
-                                        this.canvas.addEventListener('click', this.clickEvent);
                                         this.player = !this.player;
                                     }
                                     return;
@@ -281,6 +279,8 @@ function Game() {
 
         if (this.con == (path.length)) {
             clearInterval(stopper);
+            this.canvas.addEventListener('mousemove', this.mouseMoveEvent);
+            this.canvas.addEventListener('click', this.clickEvent);
             return;
         }
     }
@@ -310,8 +310,7 @@ function Game() {
 
         }
 
-        this.canvas.addEventListener('mousemove', this.mouseMoveEvent);
-        this.canvas.addEventListener('click', this.clickEvent);
+
         this.player = !this.player;
 
     }
