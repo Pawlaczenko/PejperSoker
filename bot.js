@@ -197,40 +197,33 @@ function Game() {
 
                                 if (graph.get(`${x}_${y}`).out.size > 0) {
                                     if (this.botGame == true && !wallHit) {
-                                        // this.canvas.removeEventListener('mousemove', this.mouseMoveEvent);
-                                        // this.canvas.removeEventListener('click', this.clickEvent);
-                                        // const path = dijkstra(`${this.curPoint.x}_${this.curPoint.y}`, "4_12", graph);
-                                        // for (const element of path.path) {
-                                        //     this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-                                        //     this.ctx.putImageData(this.myImgData, 0, 0);
-                                        //     this.ctx.strokeStyle = "black";
-                                        //     this.drawLine(this.curPoint.x, this.curPoint.y, Number(element.substring(0, 1)), Number(element.substring(2, element.length)))
 
+                                        this.con = 0;
+                                        let enemyGatePoint = 0;
+                                        let ownGatePoint = 0;
+                                        if (this.player == true) {
+                                            enemyGatePoint = this.columns;
+                                        }
+                                        else {
+                                            ownGatePoint = this.columns;
+                                        }
+                                        this.canvas.removeEventListener('mousemove', this.mouseMoveEvent);
+                                        this.canvas.removeEventListener('click', this.clickEvent);
 
-                                        //     this.saveBoardState(Number(element.substring(0, 1)), Number(element.substring(2, element.length)));
-                                        //     this.loadBoardState();
-                                        //     this.curPoint.x = Number(element.substring(0, 1));
-                                        //     this.curPoint.y = Number(element.substring(2, element.length))
-                                        // };
-                                        // let newGhost = new ghostMoves();
-                                        // this.checkBotMoves(newGhost, this.curPoint);
-                                        // if (this.bestGhost.pointsTab.length == 0) {
-                                        //     if (this.suicideWall != 0) {
-                                        //         this.bestGhost = this.suicideWall;
-                                        //         this.suicideWall = 1;
-                                        //     }
+                                        let selectedPoint = checkAllPaths(`${this.curPoint.x}_${this.curPoint.y}`, `4_${enemyGatePoint}`, `4_${ownGatePoint}`, graph);
 
-                                        //     if (this.suicideGate != 0) {
-                                        //         this.bestGhost = this.suicideGate;
-                                        //     }
-                                        // }
-                                        // let startDrawGhost = setInterval(() => { this.botDraw(startDrawGhost); }, 400);
-                                        // this.bestGhost.enemyGateX = 100;
-                                        // this.bestGhost.enemyGateY = 100;
-                                        // this.bestGhost.awayGateX = 100;
+                                        if (selectedPoint != false) {
+                                            let pathToDraw = findSinglePath(selectedPoint.point, `${this.curPoint.x}_${this.curPoint.y}`, graph);
+
+                                            let stopper = setInterval(() => { this.rysuj(stopper, pathToDraw.path) }, 100)
+                                        }
+                                        else {
+
+                                        }
+
                                         this.canvas.addEventListener('mousemove', this.mouseMoveEvent);
                                         this.canvas.addEventListener('click', this.clickEvent);
-                                        // this.player = !this.player;
+                                        this.player = !this.player;
                                     }
                                     return;
                                 }
@@ -266,89 +259,6 @@ function Game() {
         this.ctx.lineTo(x2 * this.scale + this.scale + this.wallLineWidth / 2 + this.marginXY / 3, y2 * this.scale + this.wallWidth / 2 + this.marginXY / 3)
         this.ctx.stroke();
         this.ctx.closePath();
-    }
-    //*Metody bota
-    this.botDraw = function (startDrawGhost) {
-        this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-        this.ctx.putImageData(this.myImgData, 0, 0);
-        this.ctx.strokeStyle = "black";
-        this.drawLine(this.curPoint.x, this.curPoint.y, this.bestGhost.pointsTab[counter].x, this.bestGhost.pointsTab[counter].y)
-
-
-        this.saveBoardState(this.bestGhost.pointsTab[counter].x, this.bestGhost.pointsTab[counter].y);
-        this.loadBoardState();
-        this.pointsArray[this.bestGhost.pointsTab[counter].x][this.bestGhost.pointsTab[counter].y].wall = true;
-        // this.pointsArray[this.bestGhost.pointsTab[counter].y][this.bestGhost.pointsTab[counter].x].ghostWall = true;
-        counter++;
-        if (counter == this.bestGhost.pointsTab.length) {
-            counter = 0;
-            if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == this.columns) {
-                console.log("Wygrywa gracz niebieski");
-                this.gameEnd(false);
-            }
-
-            if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == 0) {
-                console.log("Wygrywa gracz czerwony");
-                this.gameEnd(false);
-            }
-
-            if (this.suicideWall == 1) {
-                this.gameEnd(true);
-            }
-            this.bestGhost.pointsTab = [];
-
-            clearInterval(startDrawGhost);
-        }
-
-    }
-
-    this.checkPlayerMoves = function (nowGhost, tmpPoint) {
-        let enemyGatePoint = 0;
-        let ownGatePoint = 0;
-        this.bestPlayer.enemyGateX = 0;
-        if (this.player == false) {
-            enemyGatePoint = this.columns;
-        }
-        else {
-            ownGatePoint = 10;
-        }
-
-        for (let i = tmpPoint.x - 1; i <= tmpPoint.x + 1; i++)
-            for (let j = tmpPoint.y - 1; j <= tmpPoint.y + 1; j++)
-                if (this.pointsArray[i] != undefined && this.pointsArray[i][j] != undefined) {
-                    if (tmpPoint.moveTable[i - tmpPoint.x + 1][j - tmpPoint.y + 1] == 0) {
-                        if (j == enemyGatePoint) {
-                            nowGhost.enemyGateX = this.pointsArray[i].length;
-                            this.bestPlayer = Object.assign({}, nowGhost);
-                            return true;
-                        }
-                        nowGhost.enemyGateX = Math.abs(ownGatePoint - this.pointsArray[i][j].y);
-                        nowGhost.enemyGateY = Math.abs(this.rows / 2 - this.pointsArray[i][j].x);
-                        this.pointsArray[tmpPoint.x][tmpPoint.y].moveTable[i - tmpPoint.x + 1][j - tmpPoint.y + 1] = 1;
-                        this.pointsArray[i][j].moveTable[2 - (i - tmpPoint.x + 1)][2 - (j - tmpPoint.y + 1)] = 1;
-
-                        if (this.pointsArray[i][j].wall) {// && !(i == tmpPoint.y && j == tmpPoint.x + 1)) {
-                            let newGhost = Object.assign({}, nowGhost);
-
-                            if (this.checkPlayerMoves(newGhost, this.pointsArray[i][j]) == true) {
-                                this.pointsArray[tmpPoint.x][tmpPoint.y].moveTable[i - tmpPoint.x + 1][j - tmpPoint.y + 1] = 0;
-                                this.pointsArray[i][j].moveTable[2 - (i - tmpPoint.x + 1)][2 - (j - tmpPoint.y + 1)] = 0;
-                                return true;
-                            }
-                        }
-                        else
-                            if (nowGhost.enemyGateX > this.bestPlayer.enemyGateX) {
-                                this.bestPlayer = Object.assign({}, nowGhost);
-                            }
-                            else {
-                                if (nowGhost.enemyGateX == this.bestPlayer.enemyGateX)
-                                    if (nowGhost.enemyGateY < this.bestPlayer.enemyGateY)
-                                        this.bestPlayer = Object.assign({}, nowGhost);
-                            }
-                        this.pointsArray[tmpPoint.x][tmpPoint.y].moveTable[i - tmpPoint.x + 1][j - tmpPoint.y + 1] = 0;
-                        this.pointsArray[i][j].moveTable[2 - (i - tmpPoint.x + 1)][2 - (j - tmpPoint.y + 1)] = 0;
-                    }
-                }
     }
 
     this.rysuj = function (stopper, path) {
@@ -388,151 +298,22 @@ function Game() {
         }
         this.canvas.removeEventListener('mousemove', this.mouseMoveEvent);
         this.canvas.removeEventListener('click', this.clickEvent);
-        // const paths = findMultiplyPaths(`4_${enemyGatePoint}`, `${this.curPoint.x}_${this.curPoint.y}`, graph, ownGatePoint);
-
-        // if (paths != false) {
-        //     const bestPath = findBestPath(paths, ownGatePoint, enemyGatePoint);
-
-        // }
-
-        // let ownDistance = getDistance(`4_${enemyGatePoint}`, `${this.curPoint.x}_${this.curPoint.y}`, graph); //ile nam zostało do bramki
-        // let enemyDistance = getDistance(`4_${ownGatePoint}`, `${this.curPoint.x}_${this.curPoint.y}`, graph); //ile przeciwnikowi zostało do bramki
 
         let selectedPoint = checkAllPaths(`${this.curPoint.x}_${this.curPoint.y}`, `4_${enemyGatePoint}`, `4_${ownGatePoint}`, graph);
 
-        let pathToDraw = findSinglePath(selectedPoint.point, `${this.curPoint.x}_${this.curPoint.y}`, graph);
+        if (selectedPoint != false) {
+            let pathToDraw = findSinglePath(selectedPoint.point, `${this.curPoint.x}_${this.curPoint.y}`, graph);
 
-        let stopper = setInterval(() => { this.rysuj(stopper, pathToDraw.path) }, 100)
-        // findSinglePath(`4_${enemyGatePoint}`, `${this.curPoint.x}_${this.curPoint.y}`, graph)
-        // let bestTable = new Array();
-        // for (let i = 0; i < paths.path.length; i++) {
-        //     bestTable.push(checkPath(enemyGatePoint, ownGatePoint, paths.path[i]));
+            let stopper = setInterval(() => { this.rysuj(stopper, pathToDraw.path) }, 100)
+        }
+        else {
 
-        // }
-        // let bestSummaryDistance = new Array();
-        // for (let i = 0; i < bestTable.length; i++) {
-        //     for (let element in bestTable[i]) {
-        //         if (bestTable[i][element][0] != 0)
-        //             bestSummaryDistance.push(bestTable[i][element][0] - bestTable[i][element][1]);
-        //         else {
-        //             bestSummaryDistance.push(bestTable[i][element][0])
-        //         }
-        //     }
-        // }
-        // let chosenPath = paths.path[bestSummaryDistance.indexOf(Math.min(...bestSummaryDistance))];
-        // chosenPath.shift();
-
-        // if (paths == false) {
-        //     console.log("Nie znaleziono drogi"); //!Ogarnąć gdy nie ma ruchu
-        //     return;
-        // }
-        // else {
-        //     let stopper = setInterval(() => { this.rysuj(stopper, chosenPath) }, 500)
-
-        // }
-
-
-        // for (let i = 0; i < 4; i++) {
-        //     for (const element of path.path[i]) {
-        //         // this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-        //         // this.ctx.putImageData(this.myImgData, 0, 0);
-        //         this.ctx.strokeStyle = "black";
-        //         this.drawLine(this.curPoint.x, this.curPoint.y, Number(element.substring(0, 1)), Number(element.substring(2, element.length)))
-        //         this.curPoint.x = Number(element.substring(0, 1));
-        //         this.curPoint.y = Number(element.substring(2, element.length));
-
-        //         // this.saveBoardState(Number(element.substring(0, 1)), Number(element.substring(2, element.length)));
-        //         // this.loadBoardState();
-        //         graph.get(element).wallValue = 0;
-
-        //     }
-        //     this.loadBoardState();
-        //     this.curPoint.x = 4;
-        //     this.curPoint.y = 6;
-
-        // }
+        }
 
         this.canvas.addEventListener('mousemove', this.mouseMoveEvent);
         this.canvas.addEventListener('click', this.clickEvent);
         this.player = !this.player;
 
-    }
-
-    this.checkBotMoves = function (nowGhost, tmpPoint) {
-        let enemyGatePoint = 0;
-        let ownGatePoint = 0;
-        let isMovePossible = 0;
-        if (this.player == true) {
-            enemyGatePoint = this.columns;
-        }
-        else {
-            ownGatePoint = 10;
-        }
-
-        for (let i = tmpPoint.x - 1; i <= tmpPoint.x + 1; i++) {
-            for (let j = tmpPoint.y - 1; j <= tmpPoint.y + 1; j++) {
-                if (this.pointsArray[i] != undefined && this.pointsArray[i][j] != undefined) {
-                    if (tmpPoint.moveTable[i - tmpPoint.x + 1][j - tmpPoint.y + 1] == 0) {
-                        isMovePossible = 1;
-                        if (j == enemyGatePoint) {
-                            nowGhost.pointsTab.push(new Coordinates(this.pointsArray[i][j].x, this.pointsArray[i][j].y))
-                            nowGhost.enemyGateX = 0;
-                            this.bestGhost = JSON.parse(JSON.stringify(nowGhost));
-                            return true;
-                        }
-                        if (j == ownGatePoint) {
-                            nowGhost.pointsTab.push(new Coordinates(this.pointsArray[i][j].x, this.pointsArray[i][j].y))
-                            this.suicideGate = JSON.parse(JSON.stringify(nowGhost));
-                            nowGhost.pointsTab.pop();
-                            continue;
-                        }
-
-                        nowGhost.pointsTab.push(new Coordinates(this.pointsArray[i][j].x, this.pointsArray[i][j].y))
-                        nowGhost.enemyGateX = Math.abs(enemyGatePoint - this.pointsArray[i][j].y);
-                        nowGhost.enemyGateY = Math.abs(this.rows / 2 - this.pointsArray[i][j].x);
-                        this.pointsArray[tmpPoint.x][tmpPoint.y].moveTable[i - tmpPoint.x + 1][j - tmpPoint.y + 1] = 1;
-                        this.pointsArray[i][j].moveTable[2 - (i - tmpPoint.x + 1)][2 - (j - tmpPoint.y + 1)] = 1;
-                        let newGhost = Object.assign({}, nowGhost);
-                        if (this.pointsArray[i][j].wall) {
-                            if (this.checkBotMoves(newGhost, this.pointsArray[i][j]) == true)
-                                return true;
-                        }
-                        else {
-                            this.checkPlayerMoves(newGhost, this.pointsArray[i][j])
-                            if (nowGhost.enemyGateX < this.bestGhost.enemyGateX) {
-                                if (this.bestPlayer.enemyGateX <= this.bestGhost.awayGateX) {
-                                    this.bestGhost = JSON.parse(JSON.stringify(nowGhost));
-                                    this.bestGhost.awayGateX = this.bestPlayer.enemyGateX;
-                                }
-                            }
-                            else {
-                                if (nowGhost.enemyGateX == this.bestGhost.enemyGateX) {
-                                    if (this.bestPlayer.enemyGateX < this.bestGhost.awayGateX) {
-                                        this.bestGhost = JSON.parse(JSON.stringify(nowGhost));
-                                        this.bestGhost.awayGateX = this.bestPlayer.enemyGateX;
-                                    }
-                                    else
-                                        if (nowGhost.enemyGateY < this.bestGhost.enemyGateY)
-                                            this.bestGhost = JSON.parse(JSON.stringify(nowGhost));
-                                }
-
-                            }
-                            this.bestPlayer.enemyGateX = 0;
-                            this.bestPlayer.enemyGateY = 0;
-                            this.bestPlayer.awayGateX = 100;
-
-                        }
-                        this.pointsArray[tmpPoint.x][tmpPoint.y].moveTable[i - tmpPoint.x + 1][j - tmpPoint.y + 1] = 0;
-                        this.pointsArray[i][j].moveTable[2 - (i - tmpPoint.x + 1)][2 - (j - tmpPoint.y + 1)] = 0;
-                        nowGhost.pointsTab.pop();
-
-                    }
-                }
-            }
-        }
-        if (isMovePossible == 0) {
-            this.suicideWall = JSON.parse(JSON.stringify(nowGhost));
-        }
     }
 }
 
