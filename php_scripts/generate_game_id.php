@@ -38,7 +38,7 @@
                 $result = $connect->query($query_get_session_id);
                 $row = $result->fetch_assoc();
                 $session_id = $row['id_session'];
-                
+                $_SESSION['session_id'] = $session_id;
                 //generownie id gry i aktualizacja recordu w bazie 
                 $game_id = password_hash($session_id,PASSWORD_DEFAULT);
                 $query_set_game_id = "UPDATE session SET game_id='$game_id' WHERE id_session=$session_id";

@@ -23,9 +23,21 @@ canvas{
     justify-content: center;
 }
 
+.header_no{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+}
+
 .img--box,
 .img--box * {
     height: 200px;
+}
+
+.header_no .img--box,
+.header_no .img--box *{
+    height: 150px;
 }
 
 .name {
@@ -225,15 +237,123 @@ canvas{
 .button {
     background-color: #84b369;
     color: white;
-    border: none;
+    border: 2px solid #84b369;
     font-weight: bold;
     transition: all .2s ease;
-    clip-path: polygon(30% 0%, 70% 0%, 100% 29%, 100% 70%, 85% 100%, 7% 100%, 0 85%, 0 53%);
+    /* clip-path: polygon(30% 0%, 70% 0%, 100% 29%, 100% 70%, 85% 100%, 7% 100%, 0 85%, 0 53%); */
 }
 
 .button:hover{
-    /* border-color: #84b369; */
-    /* color: #84b369; */
-    /* background-color: white; */
+    border-color: #84b369;
+    color: #84b369;
+    background-color: white;
     clip-path: none;
+}
+
+.buttons--box {
+    display: flex;
+    width: auto;
+    margin: auto;
+    justify-content: center;
+    flex-direction: row;
+    align-items: center;
+}
+
+.type {
+    display: block;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    font-size: 25px;
+    padding: 10px;
+    text-align: center;
+    margin: 10px;
+    box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+}
+
+.paper_h1 {
+    text-align: center;
+    letter-spacing: 4px;
+    font-size: 42px;
+    font-weight: bold;
+    border-bottom: 5px solid #84b369;
+}
+
+.type:hover{
+    transform: translate(4px,4px);
+    box-shadow: none;
+}
+
+.menu {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+
+.info{
+    font-weight: lighter;
+    text-align: center;
+}
+
+.login_form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+    padding: 20px;
+    box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+    border: 1px dotted black;
+
+}
+
+.login_form input {
+    margin: 5px;
+}
+
+.login_form label{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.login_form input[type=text],
+.login_form input[type=password]{
+    border: none;
+    border-bottom: 1px solid #84b369;
+    font-size: 24px;
+}
+
+.login_button {
+    cursor: pointer;
+}
+
+.join_game {
+    flex-direction: column !important;
+}
+
+.logged_user {
+    position: absolute;
+    right: 10px;
+    top:10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    background-color: white;
+    padding: 10px;
+    box-shadow: 0px 0px 11px 0px rgba(0,0,0,0.67);
+}
+
+.logged_user .user_login {
+    font-size: 20px;
+}
+
+.logged_user .logout {
+    color: #84b369 !important;
+}
+
+#id_input{
+    font-size: 16px !important;
+    width: 80%;
 }

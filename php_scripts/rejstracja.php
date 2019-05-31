@@ -33,9 +33,9 @@
             if ($haslo1 == $haslo2)
             {
                 $hash = password_hash($haslo1,PASSWORD_DEFAULT);
-                echo $hash;
                 $query_add = "INSERT INTO users(login,password,is_logged) VALUES('$login','$hash',0)";
                 $connect->query($query_add);
+                header('Location: ../multi.html');
             }
             else 
             {
