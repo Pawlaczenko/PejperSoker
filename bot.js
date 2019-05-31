@@ -101,7 +101,8 @@ function Game() {
 
         this.botGame = false;
         this.gameOn = true;
-        this.player = 1;
+        this.player = true;
+        // this.player = false;
     }
 
     this.gameEnd = function (bool) {
@@ -184,6 +185,7 @@ function Game() {
                                 }
                                 if (!wallHit)
                                     this.player = !this.player;
+                                // this.player = false;
 
                                 if (graph.get(`${x}_${y}`).out.size > 0) {
                                     // if (this.botGame == true && !wallHit) {
@@ -317,3 +319,8 @@ game.gameStart();
 
 let btn = document.querySelector(".btn");
 btn.addEventListener("click", game.debug);
+
+
+// if (zmienna == 1) {
+//     this.player = true;
+// }

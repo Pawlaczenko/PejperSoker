@@ -171,6 +171,10 @@ const getDistance = (startNodeName, endNodeName, graph) => {
     const parents = { endNodeName: null };
     for (let child of graph.get(startNodeName).out) {
         parents[child] = startNodeName;
+        if (child == endNodeName) {
+            let distance = 0;
+            return distance;
+        }
     }
 
     const processed = [];
@@ -296,7 +300,14 @@ const checkAllPaths = (source, target, ownGate, graph) => {
         }
         else {
             if (getDistance(source, ownGate, graph) == -1) {
-                bestPath.point = ownGate;
+                let lastVisit;
+                visited.forEach(function (value) {
+                    console.log(graph.get(value).out.size);
+                    if (graph.get(value).out.size == 1)
+                        lastVisit = value;
+                })
+                bestPath.point = lastVisit;
+                bestPath.sumDistance = 101;
                 return bestPath;
             }
             else {
