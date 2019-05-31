@@ -1,9 +1,6 @@
 
 const graph = createGraph(8, 12);
 
-
-let counter = 0;
-//! przeżucić counter
 function Game() {
     this.boardWidth = 600;
     this.boardHeight = 400;
@@ -37,7 +34,6 @@ function Game() {
         this.scale = 147;
         this.color = 'blue';
 
-        //? this.curPoint = this.pointsArray[this.halfRows][this.halfColumns];
         for (let x = 0; x <= this.rows; x++) {
             for (let y = 0; y <= this.columns; y++) {
                 if (graph.has(`${x}_${y}`)) {
@@ -46,7 +42,7 @@ function Game() {
                             this.ctx.lineWidth = this.noLineWidth;
                             this.drawLine(x, y, Number(next.substring(0, 1)), Number(next.substring(2, next.length)));
                         }
-                    }//graph.get(`${x}_${y}`).out.has(`${x}_${y + 1}`)
+                    }
                     if (!(graph.get(`${x}_${y}`).out.has(`${x + 1}_${y}`)) && graph.has(`${x + 1}_${y}`)) {
                         this.ctx.lineWidth = this.wallLineWidth;
                         this.drawLine(x, y, x + 1, y);
@@ -67,10 +63,10 @@ function Game() {
 
         }
 
-        this.curPoint = new Coordinates(this.rows / 2, this.columns / 2)
+        this.curPoint = new Point(this.rows / 2, this.columns / 2)
         graph.get(`${this.curPoint.x}_${this.curPoint.y}`).wallValue = 0;
         this.myImgData = this.ctx.getImageData(0, 0, this.canvasWidth, this.canvasHeight);
-        this.curPoint = new Coordinates(this.rows / 2, this.columns / 2)
+        this.curPoint = new Point(this.rows / 2, this.columns / 2)
         this.drawPoint(this.curPoint.x, this.curPoint.y);
         this.gameOn = false;
 
@@ -103,12 +99,8 @@ function Game() {
         this.canvas.addEventListener('mousemove', this.mouseMoveEvent);
         this.canvas.addEventListener('click', this.clickEvent);
 
-        this.botGame = true;
-        // this.bestGhost = new ghostMoves();
-        // this.bestPlayer = new ghostMoves();
+        this.botGame = false;
         this.gameOn = true;
-        // this.suicideGate = 0;
-        // this.suicideWall = 0;
         this.player = 1;
     }
 
@@ -179,8 +171,6 @@ function Game() {
                                 this.saveBoardState(x, y);
                                 this.loadBoardState();
 
-
-
                                 if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == this.columns) {
                                     console.log("Wygrywa gracz niebieski");
                                     this.gameEnd(false);
@@ -196,36 +186,36 @@ function Game() {
                                     this.player = !this.player;
 
                                 if (graph.get(`${x}_${y}`).out.size > 0) {
-                                    if (this.botGame == true && !wallHit) {
+                                    // if (this.botGame == true && !wallHit) {
 
-                                        this.con = 0;
-                                        let enemyGatePoint = 0;
-                                        let ownGatePoint = 0;
-                                        if (this.player == true) {
-                                            enemyGatePoint = this.columns;
-                                        }
-                                        else {
-                                            ownGatePoint = this.columns;
-                                        }
-                                        this.canvas.removeEventListener('mousemove', this.mouseMoveEvent);
-                                        this.canvas.removeEventListener('click', this.clickEvent);
+                                    //     this.con = 0;
+                                    //     let enemyGatePoint = 0;
+                                    //     let ownGatePoint = 0;
+                                    //     if (this.player == true) {
+                                    //         enemyGatePoint = this.columns;
+                                    //     }
+                                    //     else {
+                                    //         ownGatePoint = this.columns;
+                                    //     }
+                                    //     this.canvas.removeEventListener('mousemove', this.mouseMoveEvent);
+                                    //     this.canvas.removeEventListener('click', this.clickEvent);
 
-                                        let selectedPoint = checkAllPaths(`${this.curPoint.x}_${this.curPoint.y}`, `4_${enemyGatePoint}`, `4_${ownGatePoint}`, graph);
+                                    //     let selectedPoint = checkAllPaths(`${this.curPoint.x}_${this.curPoint.y}`, `4_${enemyGatePoint}`, `4_${ownGatePoint}`, graph);
 
-                                        if (selectedPoint != false) {
-                                            let pathToDraw = findSinglePath(selectedPoint.point, `${this.curPoint.x}_${this.curPoint.y}`, graph);
+                                    //     if (selectedPoint != false) {
+                                    //         let pathToDraw = findSinglePath(selectedPoint.point, `${this.curPoint.x}_${this.curPoint.y}`, graph);
 
-                                            let stopper = setInterval(() => { this.rysuj(stopper, pathToDraw.path) }, 400)
-                                        }
-                                        else {
+                                    //         let stopper = setInterval(() => { this.rysuj(stopper, pathToDraw.path) }, 400)
+                                    //     }
+                                    //     else {
 
-                                        }
+                                    //     }
 
-                                        this.player = !this.player;
-                                    }
+                                    //     this.player = !this.player;
+                                    // }
                                     return;
                                 }
-                                this.gameEnd(true);
+                                // this.gameEnd(true);
                             }
                         }
                     }
@@ -319,32 +309,11 @@ function Game() {
 function Point(x, y) {
     this.x = x;
     this.y = y;
-    this.moveTable =
-        [
-            [0, 0, 0],
-            [0, 2, 0],
-            [0, 0, 0]
-        ];
-    this.wall = false;
 }
-
-function Coordinates(x, y) {
-    this.x = x;
-    this.y = y;
-}
-
-function ghostMoves() {
-    this.pointsTab = [];
-    this.enemyGateX = 100;
-    this.enemyGateY = 100;
-    this.awayGateX = 100;
-}
-
 
 let game = new Game();
 game.gamePrepare();
 game.gameStart();
-
 
 let btn = document.querySelector(".btn");
 btn.addEventListener("click", game.debug);
