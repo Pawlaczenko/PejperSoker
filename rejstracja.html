@@ -14,11 +14,14 @@
         </div>
     </header>
     <div class="menu">
-        <h1 class="paper_h1">Wybierz tryb gry</h1>
-        <div class="buttons--box">
-            <a href="single.html" class="type button">singleplayer</a>
-            <a href="multi.html" class="type button">multiplayer</a>
-        </div>
+        <h1 class="paper_h1">Tryb Multiplayer</h1>
+        <h2 class="info">Zarejestruj się w PejperSoker</h2>
+        <form action="./php_scripts/rejstracja.php" method="POST" class="login_form">
+            <label>LOGIN:           <input name="login" type="text" required></label>
+            <label>HASŁO:           <input name="haslo1" type="password" required></label>
+            <label>POWTÓRZ HASŁO:   <input name="haslo2" type="password" required></label>
+            <input type="submit" value="ZAREJESTRUJ" class="button login_button">
+        </form>
     </div>
 </body>
 </html>

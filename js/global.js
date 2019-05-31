@@ -385,16 +385,31 @@ var colors = [
     "blue","yellow","cyan","pink","green","orange"
 ];
 
-function genereteCreator() {
-    colors.forEach(function(color,i){
-        $(".creator .colors").append(`
-            <div class="color">
-                <input type="radio" name="color" value=${i} class="colorInput" id="id${i}">
-                <label for="id${i}"></label>
-            </div>
-        `);
-        $('.color #id'+i+' + label').css("background-color", colors[i]);
-    });
+function genereteCreator(lock) {
+
+    $.ajax({
+        url:'php_scripts/checkColors.php',
+        type:'POST',
+        success: function(results) {
+            console.log(results);
+            colors.forEach(function(color,i){
+                $(".creator .colors").append(`
+                    <div class="color">
+                        <input type="radio" name="color" value=${i} class="colorInput" id="id${i}" required>
+                        <label for="id${i}"></label>
+                    </div>
+                `);
+                if(results==i){
+                    console.log('aaaaa');
+                    $('.color #id'+i).prop('disabled', true);
+                }
+                $('.color #id'+i+' + label').css("background-color", colors[i]);
+            });
+        },
+        error: function(err) {
+            console.log(err);
+        }
+    })
 };
 
 genereteCreator();
