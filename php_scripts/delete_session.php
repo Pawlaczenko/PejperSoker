@@ -17,7 +17,7 @@ else
     $result = $connect->query($query_sesja);
     $row = $result->fetch_assoc();
     $session_id = $row['id_session'];
-
+    session_destroy();
 
     $query1 ="DELETE FROM session WHERE id_session = $session_id";
     $connect->query($query1);
