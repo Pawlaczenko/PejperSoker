@@ -299,7 +299,19 @@ function Game() {
             let stopper = setInterval(() => { this.rysuj(stopper, pathToDraw.path) }, 100)
         }
         else {
+            let selectedPoint = findBlockPoint(`${this.curPoint.x}_${this.curPoint.y}`, `4_${ownGatePoint}`, graph);
 
+            if (selectedPoint != false) {
+                let pathToDraw = findSinglePath(selectedPoint.point, `${this.curPoint.x}_${this.curPoint.y}`, graph);
+
+                let stopper = setInterval(() => { this.rysuj(stopper, pathToDraw.path) }, 100)
+            }
+            else {
+                let selectedPoint = findAnyPoint(`${this.curPoint.x}_${this.curPoint.y}`, graph);
+                let pathToDraw = findSinglePath(selectedPoint.point, `${this.curPoint.x}_${this.curPoint.y}`, graph);
+
+                let stopper = setInterval(() => { this.rysuj(stopper, pathToDraw.path) }, 100)
+            }
         }
 
 
