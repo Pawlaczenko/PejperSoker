@@ -391,7 +391,6 @@ function genereteCreator(lock) {
         url:'php_scripts/checkColors.php',
         type:'POST',
         success: function(results) {
-            console.log(results);
             colors.forEach(function(color,i){
                 $(".creator .colors").append(`
                     <div class="color">

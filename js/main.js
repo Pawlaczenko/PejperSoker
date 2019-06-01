@@ -1,6 +1,7 @@
 let counter = 0;
 let tour = false;
 let ball = document.getElementById('ball');
+var personalBool; //różny dla 2 graczy
 //! przeżucić counter
 var Player = function(name,color,id) {
     this.name = name;
@@ -198,10 +199,10 @@ function Game() {
         this.suicideGate = 0;
         this.suicideWall = 0;
 
-        players[0] = new Player("oscarxd","cyan");
-        players[1] = new Player("lorem12","blue");
-        $('.name[data-id="0"]').html(`${players[0].name}`).css("background-color",`${players[0].color}`);
-        $('.name[data-id="1"]').html(`${players[1].name}`).css("background-color",`${players[1].color}`);
+        // players[0] = new Player("oscarxd","cyan");
+        // players[1] = new Player("lorem12","blue");
+        $('.name[data-id="0"]').html(`${players[0].name}`);//.css("background-color",`${players[0].color}`);
+        $('.name[data-id="1"]').html(`${players[1].name}`);//.css("background-color",`${players[1].color}`);
 
         this.player = false;
         this.curPoint.wall = true;
@@ -223,13 +224,6 @@ function Game() {
         };
 
         this.color = players[+this.player].color;
-
-        // if (this.player) {
-        //     this.color = player[0].color;
-        // }
-        // else {
-        //     this.color = "red";
-        // }
 
         let mousePos = getMousePos(this.canvas, event);
         let przelicznik_na_x = this.canvasWidth / this.boardWidth;
@@ -588,11 +582,6 @@ function changeRound(player) {
 
     return !player;
 }
-
-
-let game = new Game();
-game.gamePrepare();
-game.gameStart();
 
 
 let btn = document.querySelector(".btn");

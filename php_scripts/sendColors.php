@@ -6,14 +6,17 @@
     {
         $connect = @new mysqli($db_location, $db_user , $db_password,$db_name);
   
-            $logged_user_id = $_SESSION['id'];
+            $session = $_SESSION['session_id'];
             $color = $_POST['color'];
+            $player = $_SESSION['player'];
 
-            $query_set_color1 = "UPDATE session SET player1_color='$color' WHERE user1=$logged_user_id";
-            $query_set_color2 = "UPDATE session SET player2_color='$color' WHERE user2=$logged_user_id";
+            if(!$player) {
+                $query_set_color = "UPDATE session SET player1_color='$color' WHERE id_session = $session";
+            } else{
+                $query_set_color = "UPDATE session SET player2_color='$color' WHERE id_session = $session";
+            }
 
-            $connect->query($query_set_color1);
-            $connect->query($query_set_color2);
+            $connect->query($query_set_color);
     }
     else
     {

@@ -51,11 +51,12 @@ EOT;
     <div class="menu">
         <h1 class="paper_h1">Tyb multiplayer</h1>
         <div class="buttons--box">
-            <a href="../index2.html" class="type button">Stwórz grę</a>
+            <a href="../index2.html" class="type button" id="createGame">Stwórz grę</a>
             <a href="./join_to_game.html" class="type button">Dołącz do gry</a><br>
         </div>
     </div>
    
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="../js/ajax.js"></script>
 </body>
 </html>

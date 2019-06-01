@@ -26,11 +26,8 @@ else
         $current_user_id = $_SESSION['id'];
         $session = $result->fetch_assoc();
         $_SESSION['session_id'] = $session['id_session'];
-        $result = $connect->query(sprintf("UPDATE session SET user2='%s' WHERE game_id = '%s'",
-            mysqli_real_escape_string($connect,  $current_user_id),
-            mysqli_real_escape_string($connect,$game_id)
-        ));
 
+        $_SESSION['player'] = TRUE;
         echo true;
     }
 }

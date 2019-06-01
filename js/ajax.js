@@ -5,33 +5,41 @@ function getGameId(color){
     $.ajax({
         url:'php_scripts/generate_game_id.php',
         type:'POST',
+        data: {
+            color: color
+        },
         success: function(results) {
-            
-            $.ajax({
-                url:'php_scripts/sendColors.php',
-                type:'POST',
-                data: {
-                    color: color
-                },
-                success:function(result) {
-                },
-                error:function(r) {
-                    console.log(r);
-                }
-            });
-
             if(!results) {
-
+                fillObjects();
                 return;
             }
             $('.loader').css('display','flex').find('.game_id').html(results);
             interval_check_is_session = setInterval(simple_check,200);
             interval_is_join_player = setInterval(listenForPlayers,1000);
         },
-        error: function() {
-
+        error: function(r) {
+            console.log(r);
         }
     });
+}
+
+function fillObjects() {
+    $.ajax({
+        url: 'php_scripts/fill_objects.php',
+        method: 'POST',
+        success: function(result) {
+            let res = JSON.parse(result);
+            players[0] = new Player(res.login1,colors[parseInt(res.color1)]);
+            players[1] = new Player(res.login2,colors[parseInt(res.color2)]);
+
+            let game = new Game();
+            game.gamePrepare();
+            game.gameStart();
+        },
+        error: function(er) {
+            console.log(er);
+        }
+    })
 }
 
 function simple_check() {
@@ -39,8 +47,8 @@ function simple_check() {
         url:'php_scripts/utilities_php/check_session.php',
         type:'POST',
         success:function(results) {
-            console.log('check  interveal');
-            console.log(results); //! obsługa valcovera
+            // console.log('check  interveal');
+            // console.log(results); //! obsługa valcovera
         }
     });
 }
@@ -51,11 +59,12 @@ function listenForPlayers() {
         type:'POST',
         success: function(results) {
             if(results){
-                console.log('true');
+                // console.log('true');
                 $('.loader').css('display','none');
                 clearInterval(interval_is_join_player);
+                fillObjects();
             } else {
-                console.log('false');
+                // console.log('false');
             }
         },
         error: function(err) {
@@ -96,6 +105,17 @@ $("#join_form").submit(function(e){
     joinTheGame(game_id);
 });
 
+$("#createGame").on('click',function(e){
+    e.preventDefault();
+    $.ajax({
+        url: 'createGame.php',
+        type: 'POST',
+        success : function(result) {
+            window.location.href="../index2.html";
+        }
+    })
+});
+
 $('.copy').on('click',function(e){
     let $temp = $("<input>");
     $("body").append($temp);
@@ -110,3 +130,10 @@ $(window).on('unload', function() {
     fd.append('ajax_data', 22);
     navigator.sendBeacon('php_scripts/delete_session.php', fd);
 });
+
+// window.onbeforeunload = function() { 
+//     window.setTimeout(function () { 
+//         window.location = 'php_scripts/lobby.php';
+//     }, 0); 
+//     window.onbeforeunload = null; // necessary to prevent infinite loop, that kills your browser 
+// }
