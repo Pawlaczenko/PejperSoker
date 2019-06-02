@@ -188,8 +188,7 @@ function Game() {
                                 // this.player = false;
 
                                 if (graph.get(`${x}_${y}`).out.size > 0) {
-                                    // if (this.botGame == true && !wallHit) {
-
+                                    // if (!wallHit) {
                                     //     this.con = 0;
                                     //     let enemyGatePoint = 0;
                                     //     let ownGatePoint = 0;
@@ -207,17 +206,30 @@ function Game() {
                                     //     if (selectedPoint != false) {
                                     //         let pathToDraw = findSinglePath(selectedPoint.point, `${this.curPoint.x}_${this.curPoint.y}`, graph);
 
-                                    //         let stopper = setInterval(() => { this.rysuj(stopper, pathToDraw.path) }, 400)
+                                    //         let stopper = setInterval(() => { this.draw(stopper, pathToDraw.path) }, 100)
                                     //     }
                                     //     else {
+                                    //         let selectedPoint = findBlockPoint(`${this.curPoint.x}_${this.curPoint.y}`, `4_${ownGatePoint}`, graph);
 
+                                    //         if (selectedPoint != false) {
+                                    //             let pathToDraw = findSinglePath(selectedPoint.point, `${this.curPoint.x}_${this.curPoint.y}`, graph);
+
+                                    //             let stopper = setInterval(() => { this.draw(stopper, pathToDraw.path) }, 100)
+                                    //         }
+                                    //         else {
+                                    //             let selectedPoint = findAnyPoint(`${this.curPoint.x}_${this.curPoint.y}`, graph);
+                                    //             let pathToDraw = findSinglePath(selectedPoint.point, `${this.curPoint.x}_${this.curPoint.y}`, graph);
+
+                                    //             let stopper = setInterval(() => { this.draw(stopper, pathToDraw.path) }, 100)
+                                    //         }
                                     //     }
 
                                     //     this.player = !this.player;
                                     // }
+
                                     return;
                                 }
-                                // this.gameEnd(true);
+                                this.gameEnd(true);
                             }
                         }
                     }
@@ -251,7 +263,7 @@ function Game() {
         this.ctx.closePath();
     }
 
-    this.rysuj = function (stopper, path) {
+    this.draw = function (stopper, path) {
         this.loadBoardState();
         const element = path[this.con]
 
@@ -271,6 +283,17 @@ function Game() {
 
         if (this.con == (path.length)) {
             clearInterval(stopper);
+            if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == this.columns) {
+                console.log("Wygrywa gracz niebieski");
+                this.gameEnd(false);
+                return;
+            }
+
+            if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == 0) {
+                console.log("Wygrywa gracz czerwony");
+                this.gameEnd(false);
+                return;
+            }
             this.canvas.addEventListener('mousemove', this.mouseMoveEvent);
             this.canvas.addEventListener('click', this.clickEvent);
             return;
@@ -296,7 +319,7 @@ function Game() {
         if (selectedPoint != false) {
             let pathToDraw = findSinglePath(selectedPoint.point, `${this.curPoint.x}_${this.curPoint.y}`, graph);
 
-            let stopper = setInterval(() => { this.rysuj(stopper, pathToDraw.path) }, 100)
+            let stopper = setInterval(() => { this.draw(stopper, pathToDraw.path) }, 100)
         }
         else {
             let selectedPoint = findBlockPoint(`${this.curPoint.x}_${this.curPoint.y}`, `4_${ownGatePoint}`, graph);
@@ -304,13 +327,13 @@ function Game() {
             if (selectedPoint != false) {
                 let pathToDraw = findSinglePath(selectedPoint.point, `${this.curPoint.x}_${this.curPoint.y}`, graph);
 
-                let stopper = setInterval(() => { this.rysuj(stopper, pathToDraw.path) }, 100)
+                let stopper = setInterval(() => { this.draw(stopper, pathToDraw.path) }, 100)
             }
             else {
                 let selectedPoint = findAnyPoint(`${this.curPoint.x}_${this.curPoint.y}`, graph);
                 let pathToDraw = findSinglePath(selectedPoint.point, `${this.curPoint.x}_${this.curPoint.y}`, graph);
 
-                let stopper = setInterval(() => { this.rysuj(stopper, pathToDraw.path) }, 100)
+                let stopper = setInterval(() => { this.draw(stopper, pathToDraw.path) }, 100)
             }
         }
 

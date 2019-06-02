@@ -332,40 +332,6 @@ const getDistance = (startNodeName, endNodeName, graph) => {
     return distance;
 };
 
-const getNonWeightDistance = (source, target, graph) => {
-    const queue = [source];
-    const visited = new Set();
-    const path = {};
-
-    while (queue.length > 0) {
-        const start = queue.shift();
-
-        if (start === target) {
-            let optimalPath = [target];
-            let parent = path[target];
-            while (parent) {
-                optimalPath.push(parent);
-                parent = path[parent];
-            }
-            return optimalPath.length;
-        }
-
-        for (const next of graph.get(start).out) {
-            if (visited.has(next)) {
-                continue;
-            }
-
-            if (!queue.includes(next)) {
-                path[next] = start;
-                queue.push(next);
-            }
-        }
-
-        visited.add(start);
-    }
-
-};
-
 const checkAllPaths = (source, target, ownGate, graph) => {
     const queue = [source];
     const visited = new Set();
@@ -408,20 +374,8 @@ const checkAllPaths = (source, target, ownGate, graph) => {
             graph.get(start).wallValue = 0;
             let ownDistance = getDistance(start, target, graph);
             let enemyDistance = getDistance(start, ownGate, graph);
-            graph.get(start).wallValue = 1;
 
-            for (let i = 0; i < optimalPath.length - 1; i++) {
-                graph.get(optimalPath[i]).out.add(optimalPath[i + 1]);
-                graph.get(optimalPath[i + 1]).out.add(optimalPath[i]);
-            }
-
-            if (ownDistance == -1) {
-                return false;
-                //!MAMY PROBLEM
-            }
-            // if (ownDistance == -1) {
             let sumDistance = ownDistance - enemyDistance;
-            // }
             if (bestPath.sumDistance > sumDistance) {
                 if (enemyDistance > 0) {
                     bestPath.sumDistance = sumDistance;
@@ -432,6 +386,17 @@ const checkAllPaths = (source, target, ownGate, graph) => {
                         enemyWinPoint = start;
                     }
                 }
+            }
+            graph.get(start).wallValue = 1;
+
+            for (let i = 0; i < optimalPath.length - 1; i++) {
+                graph.get(optimalPath[i]).out.add(optimalPath[i + 1]);
+                graph.get(optimalPath[i + 1]).out.add(optimalPath[i]);
+            }
+
+            if (ownDistance == -1) {
+                return false;
+
             }
 
             visited.add(start);
@@ -444,7 +409,6 @@ const checkAllPaths = (source, target, ownGate, graph) => {
             }
 
             if (!queue.includes(next)) {
-                // path.set(next, start);
                 queue.push(next);
             }
         }
