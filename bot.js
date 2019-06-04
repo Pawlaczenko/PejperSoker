@@ -58,9 +58,7 @@ function Game() {
                         graph.get(`${x}_${y}`).wallValue = 1;
                     }
                 }
-
             }
-
         }
 
         this.curPoint = new Point(this.rows / 2, this.columns / 2)
@@ -102,7 +100,6 @@ function Game() {
         this.botGame = false;
         this.gameOn = true;
         this.player = true;
-        // this.player = false;
     }
 
     this.gameEnd = function (bool) {
@@ -185,47 +182,45 @@ function Game() {
                                 }
                                 if (!wallHit)
                                     this.player = !this.player;
-                                // this.player = false;
 
                                 if (graph.get(`${x}_${y}`).out.size > 0) {
-                                    // if (!wallHit) {
-                                    //     this.con = 0;
-                                    //     let enemyGatePoint = 0;
-                                    //     let ownGatePoint = 0;
-                                    //     if (this.player == true) {
-                                    //         enemyGatePoint = this.columns;
-                                    //     }
-                                    //     else {
-                                    //         ownGatePoint = this.columns;
-                                    //     }
-                                    //     this.canvas.removeEventListener('mousemove', this.mouseMoveEvent);
-                                    //     this.canvas.removeEventListener('click', this.clickEvent);
+                                    if (!wallHit) {
+                                        this.con = 0;
+                                        let enemyGatePoint = 0;
+                                        let ownGatePoint = 0;
+                                        if (this.player == true) {
+                                            enemyGatePoint = this.columns;
+                                        }
+                                        else {
+                                            ownGatePoint = this.columns;
+                                        }
+                                        this.canvas.removeEventListener('mousemove', this.mouseMoveEvent);
+                                        this.canvas.removeEventListener('click', this.clickEvent);
 
-                                    //     let selectedPoint = checkAllPaths(`${this.curPoint.x}_${this.curPoint.y}`, `4_${enemyGatePoint}`, `4_${ownGatePoint}`, graph);
+                                        let selectedPoint = checkAllPaths(`${this.curPoint.x}_${this.curPoint.y}`, `4_${enemyGatePoint}`, `4_${ownGatePoint}`, graph);
 
-                                    //     if (selectedPoint != false) {
-                                    //         let pathToDraw = findSinglePath(selectedPoint.point, `${this.curPoint.x}_${this.curPoint.y}`, graph);
+                                        if (selectedPoint != false) {
+                                            let pathToDraw = findSinglePath(selectedPoint.point, `${this.curPoint.x}_${this.curPoint.y}`, graph);
 
-                                    //         let stopper = setInterval(() => { this.draw(stopper, pathToDraw.path) }, 100)
-                                    //     }
-                                    //     else {
-                                    //         let selectedPoint = findBlockPoint(`${this.curPoint.x}_${this.curPoint.y}`, `4_${ownGatePoint}`, graph);
+                                            let stopper = setInterval(() => { this.draw(stopper, pathToDraw.path) }, 100)
+                                        }
+                                        else {
+                                            let selectedPoint = findBlockPoint(`${this.curPoint.x}_${this.curPoint.y}`, `4_${ownGatePoint}`, graph);
 
-                                    //         if (selectedPoint != false) {
-                                    //             let pathToDraw = findSinglePath(selectedPoint.point, `${this.curPoint.x}_${this.curPoint.y}`, graph);
+                                            if (selectedPoint != false) {
+                                                let pathToDraw = findSinglePath(selectedPoint.point, `${this.curPoint.x}_${this.curPoint.y}`, graph);
 
-                                    //             let stopper = setInterval(() => { this.draw(stopper, pathToDraw.path) }, 100)
-                                    //         }
-                                    //         else {
-                                    //             let selectedPoint = findAnyPoint(`${this.curPoint.x}_${this.curPoint.y}`, graph);
-                                    //             let pathToDraw = findSinglePath(selectedPoint.point, `${this.curPoint.x}_${this.curPoint.y}`, graph);
+                                                let stopper = setInterval(() => { this.draw(stopper, pathToDraw.path) }, 100)
+                                            }
+                                            else {
+                                                let selectedPoint = findAnyPoint(`${this.curPoint.x}_${this.curPoint.y}`, graph);
+                                                let pathToDraw = findSinglePath(selectedPoint.point, `${this.curPoint.x}_${this.curPoint.y}`, graph);
 
-                                    //             let stopper = setInterval(() => { this.draw(stopper, pathToDraw.path) }, 100)
-                                    //         }
-                                    //     }
-
-                                    //     this.player = !this.player;
-                                    // }
+                                                let stopper = setInterval(() => { this.draw(stopper, pathToDraw.path) }, 100)
+                                            }
+                                        }
+                                        this.player = !this.player;
+                                    }
 
                                     return;
                                 }
@@ -299,48 +294,6 @@ function Game() {
             return;
         }
     }
-
-
-    this.debug = () => {
-        this.con = 0;
-        let enemyGatePoint = 0;
-        let ownGatePoint = 0;
-        if (this.player == true) {
-            enemyGatePoint = this.columns;
-        }
-        else {
-            ownGatePoint = this.columns;
-        }
-        this.canvas.removeEventListener('mousemove', this.mouseMoveEvent);
-        this.canvas.removeEventListener('click', this.clickEvent);
-
-        let selectedPoint = checkAllPaths(`${this.curPoint.x}_${this.curPoint.y}`, `4_${enemyGatePoint}`, `4_${ownGatePoint}`, graph);
-
-        if (selectedPoint != false) {
-            let pathToDraw = findSinglePath(selectedPoint.point, `${this.curPoint.x}_${this.curPoint.y}`, graph);
-
-            let stopper = setInterval(() => { this.draw(stopper, pathToDraw.path) }, 100)
-        }
-        else {
-            let selectedPoint = findBlockPoint(`${this.curPoint.x}_${this.curPoint.y}`, `4_${ownGatePoint}`, graph);
-
-            if (selectedPoint != false) {
-                let pathToDraw = findSinglePath(selectedPoint.point, `${this.curPoint.x}_${this.curPoint.y}`, graph);
-
-                let stopper = setInterval(() => { this.draw(stopper, pathToDraw.path) }, 100)
-            }
-            else {
-                let selectedPoint = findAnyPoint(`${this.curPoint.x}_${this.curPoint.y}`, graph);
-                let pathToDraw = findSinglePath(selectedPoint.point, `${this.curPoint.x}_${this.curPoint.y}`, graph);
-
-                let stopper = setInterval(() => { this.draw(stopper, pathToDraw.path) }, 100)
-            }
-        }
-
-
-        this.player = !this.player;
-
-    }
 }
 
 function Point(x, y) {
@@ -351,11 +304,3 @@ function Point(x, y) {
 let game = new Game();
 game.gamePrepare();
 game.gameStart();
-
-let btn = document.querySelector(".btn");
-btn.addEventListener("click", game.debug);
-
-
-// if (zmienna == 1) {
-//     this.player = true;
-// }
