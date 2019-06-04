@@ -392,7 +392,6 @@ const checkAllPaths = (source, target, ownGate, graph) => {
 
             if (ownDistance == -1) {
                 return false;
-
             }
 
             visited.add(start);

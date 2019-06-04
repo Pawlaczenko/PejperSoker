@@ -1,6 +1,3 @@
-
-const graph = createGraph(8, 12);
-
 function Game() {
     this.boardWidth = 600;
     this.boardHeight = 400;
@@ -221,10 +218,11 @@ function Game() {
                                         }
                                         this.player = !this.player;
                                     }
-
                                     return;
                                 }
-                                this.gameEnd(true);
+                                else {
+                                    this.gameEnd(true);
+                                }
                             }
                         }
                     }
@@ -232,6 +230,7 @@ function Game() {
             }
         }
     }
+
     //* Metody pomocnicze
     this.drawPoint = function (x, y) {
         this.ctx.beginPath();
@@ -301,6 +300,7 @@ function Point(x, y) {
     this.y = y;
 }
 
+const graph = createGraph(8, 12);
 let game = new Game();
 game.gamePrepare();
 game.gameStart();
