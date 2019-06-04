@@ -24,7 +24,7 @@ if ($connect->errno) {
 
     // $whose_move = !(boolval($row['whose_move']));
 
-    $connect->query("UPDATE session SET whose_move=$whose_move WHERE id_session = $session");
     $connect->query("UPDATE session SET game_data='$game_data' WHERE id_session = $session");
+    $connect->query("UPDATE session SET whose_move=$whose_move WHERE id_session = $session"); //!ZMIENIĆ ŻEBY DOPIERO PO WYSŁANIU DANYCH ZMIENIAŁ SIĘ GRACZ
     echo "UPDATE session SET game_data='$game_data' WHERE id_session = $session";
 }

@@ -79,23 +79,23 @@ function listenForPlayers() {
 function start_check_for_round() {
     console.log('shrek');
     $.ajax({
-        url:'php_scripts/utilities_php/check_for_round.php',
-        type:'POST',
-        success: (results)  => {
+        url: 'php_scripts/utilities_php/check_for_round.php',
+        type: 'POST',
+        success: (results) => {
 
             let res = JSON.parse(results);
             let move = Boolean(Number(res.move));
             let data = JSON.parse(res.data);
             console.log(data);
-            if(personalBool==move){
+            if (personalBool == move) {
                 clearInterval(move_interval);
                 $('.name').each(function (i) {
                     $(this).toggleClass('active');
                 });
-                let draw = setInterval(() => { game.rysuj(draw, data) }, 500);
+                let draw = setInterval(() => { game.draw(draw, data.moveArray, data.gameStatus) }, 500);
             }
         },
-        error: function(err) {
+        error: function (err) {
             console.log(err);
         }
     })
@@ -165,9 +165,9 @@ $(window).on('unload', function () {
     navigator.sendBeacon('php_scripts/delete_session.php', fd);
 });
 
-// window.onbeforeunload = function() { 
-//     window.setTimeout(function () { 
+// window.onbeforeunload = function() {
+//     window.setTimeout(function () {
 //         window.location = 'php_scripts/lobby.php';
-//     }, 0); 
-//     window.onbeforeunload = null; // necessary to prevent infinite loop, that kills your browser 
+//     }, 0);
+//     window.onbeforeunload = null; // necessary to prevent infinite loop, that kills your browser
 // }
