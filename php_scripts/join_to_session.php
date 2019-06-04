@@ -27,7 +27,7 @@ else
         $session = $result->fetch_assoc();
         $_SESSION['session_id'] = $session['id_session'];
 
-        $_SESSION['player'] = TRUE;
+        $_SESSION['player'] = TRUE; //klient
         echo true;
     }
 }

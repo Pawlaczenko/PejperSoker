@@ -162,7 +162,7 @@ canvas{
 }
 
 .endgame {
-    display: none;
+    display: flex;
     z-index: 10000;
 
     flex-direction: column;
@@ -172,7 +172,7 @@ canvas{
     height: 100%;
     padding: 50px;
     font-size: 50px;
-    background-image: url("../img/loose.gif"); /* Tutaj leci bckimg z ajaxa */
+    background-image: url("../img/win.gif"); /* Tutaj leci bckimg z ajaxa */
     background-size: cover;
     color: white;
     box-shadow: 0px 0px 18px 0px rgba(0,0,0,0.75);

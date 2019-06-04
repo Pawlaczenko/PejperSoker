@@ -1,10 +1,6 @@
-let ball = document.getElementById('ball');
-var personalBool; //różny dla 2 graczy
-var move_interval;
-var player;
-let counterShrek = 0;
-
-let dataForSend = new Array();
+var currPlayer = false;
+var players = [];
+const graph = createGraph(8, 12);
 
 var Player = function (name, color, role) {
     this.name = name;
@@ -12,21 +8,11 @@ var Player = function (name, color, role) {
     this.role = role;
 }
 
-const graph = createGraph(8, 12);
-
-//! player == TRUE => Tura player2
-//! player == FALSE => Tura player1 //BOT TO DOMYŚLNIE PLAYER2
-
-var players = [];
-
 function Game() {
-
     this.boardWidth = 600;
     this.boardHeight = 400;
     this.canvasWidth = 1800;
     this.canvasHeight = 1210;
-    this.columnsNumber = 12;
-    this.rowsNumber = 8;
 
     //* Metody przygotowania gry
     this.createBoard = function (rows, columns) {
@@ -53,12 +39,7 @@ function Game() {
         this.noLineWidth = 5;
 
         this.scale = 147;
-
-        this.ctx.fillStyle = "#84b369";
-        this.fillWidth = this.canvasWidth / this.columnsNumber + this.marginXY;
-        this.ctx.fillRect(this.fillWidth, this.marginXY, this.canvasWidth - 2 * this.fillWidth, this.canvasHeight - this.marginXY * 2);
-        this.ctx.fillRect(this.marginXY, 3 * (this.canvasHeight / this.rowsNumber), this.fillWidth, 2 * (this.canvasHeight / this.rowsNumber) - this.marginXY);
-        this.ctx.fillRect(this.canvasWidth - 2 * this.fillWidth, 3 * (this.canvasHeight / this.rowsNumber), this.fillWidth * 2 - this.marginXY, 2 * (this.canvasHeight / this.rowsNumber) - this.marginXY);
+        this.color = 'blue';
 
         for (let x = 0; x <= this.rows; x++) {
             for (let y = 0; y <= this.columns; y++) {
@@ -84,40 +65,16 @@ function Game() {
                         graph.get(`${x}_${y}`).wallValue = 1;
                     }
                 }
-
             }
-
         }
 
         this.curPoint = new Point(this.rows / 2, this.columns / 2)
         graph.get(`${this.curPoint.x}_${this.curPoint.y}`).wallValue = 0;
         this.myImgData = this.ctx.getImageData(0, 0, this.canvasWidth, this.canvasHeight);
         this.curPoint = new Point(this.rows / 2, this.columns / 2)
-        this.drawPoint(this.curPoint.x, this.curPoint.y, 1);
+        this.drawPoint(this.curPoint.x, this.curPoint.y);
         this.gameOn = false;
 
-    }
-
-    this.rysuj = function (stopper, path) {
-        this.loadBoardState();
-        console.log(path);
-        const element = path[counterShrek];
-
-        this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
-        this.ctx.putImageData(this.myImgData, 0, 0);
-
-        this.color = players[+(!personalBool)].color;
-        this.ctx.strokeStyle = this.color;
-        this.drawLine(this.curPoint.x, this.curPoint.y, Number(element.substring(0, 1)), Number(element.substring(2, element.length)));
-        this.saveBoardState(Number(element.substring(0, 1)), Number(element.substring(2, element.length)));
-        this.loadBoardState();
-        counterShrek++;
-
-        if (counterShrek == (path.length)) {
-            player = true;
-            clearInterval(stopper);
-            return;
-        }
     }
 
     this.saveBoardState = function (x, y) {
@@ -134,7 +91,7 @@ function Game() {
         this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
         this.ctx.putImageData(this.myImgData, 0, 0);
         this.ctx.fillStyle = "black";
-        this.drawPoint(this.curPoint.x, this.curPoint.y, 1);
+        this.drawPoint(this.curPoint.x, this.curPoint.y);
     }
 
     //* Metody gry
@@ -144,43 +101,31 @@ function Game() {
     }
 
     this.gameStart = function () {
-        // if (this.botGame) {
-        //     players[1] = new Player("Andrzej", "red");
-        // }
-        this.gameOn = true;
+        this.canvas.addEventListener('mousemove', this.mouseMoveEvent);
+        this.canvas.addEventListener('click', this.clickEvent);
 
         $('.name[data-id="0"]').html(`${players[0].name}`).css("background-color", `${players[0].color}`);
         $('.name[data-id="1"]').html(`${players[1].name}`).css("background-color", `${players[1].color}`);
-        console.log(personalBool);
-        if (personalBool == false) {
-            player = true;
-        }
-        else {
-            console.log('osioł');
-            player = false;
-            move_interval = setInterval(start_check_for_round,500);
-        }
 
-        this.canvas.addEventListener('mousemove', this.mouseMoveEvent);
-        this.canvas.addEventListener('click', this.clickEvent);
+        this.botGame = false;
+        this.gameOn = true;
+        this.player = false;
+        currPlayer = false;
     }
 
     this.gameEnd = function (bool) {
         this.gameOn = false;
-        console.log("Wygrywa " + players[+bool].name);
-        // if (player == true && bool)
-        //     console.log("Wygrywa gracz czerwony");
-        // else if (bool)
-        //     console.log("Wygrywa gracz niebieski");
+        if (this.player == true && bool)
+            console.log("Wygrywa gracz czerwony");
+        else if (bool)
+            console.log("Wygrywa gracz niebieski");
     }
 
     //* Metody do eventów
     this.mouseMoveEvent = e => {
-        if (!this.gameOn || !player) {
-            return;
-        };
+        if (!this.gameOn) return;
 
-        this.color = players[+personalBool].color;
+        this.color = players[+currPlayer].color;
 
         let mousePos = getMousePos(this.canvas, event);
         let przelicznik_na_x = this.canvasWidth / this.boardWidth;
@@ -198,17 +143,15 @@ function Game() {
                             if (graph.get(`${this.curPoint.x}_${this.curPoint.y}`).out.has(`${x}_${y}`)) {
                                 this.loadBoardState();
                                 this.ctx.fillStyle = this.color;
-                                this.drawPoint(x, y, 0.5);
+                                this.drawPoint(x, y);
                             }
                 }
             }
     }
 
     this.clickEvent = e => {
-        if (!this.gameOn  || !player){
-            return;
-        }
-        this.color = players[+personalBool].color;
+        if (!this.gameOn) return;
+
         let mousePos = getMousePos(this.canvas, event);
         let cord_X = mousePos.y * this.canvasWidth / this.boardWidth; //*Tak ma być
         let cord_Y = mousePos.x * this.canvasHeight / this.boardHeight; //*Tak ma być
@@ -221,13 +164,10 @@ function Game() {
                         && (x * this.scale + this.wallLineWidth / 2 >= cord_X - this.scale / 2 && y * this.scale + this.wallLineWidth / 2 >= cord_Y - this.scale / 2)) {
                         if ((x >= this.curPoint.x - 1 && x <= this.curPoint.x + 1) && (y >= this.curPoint.y - 1 && y <= this.curPoint.y + 1)) {
                             if (graph.get(`${this.curPoint.x}_${this.curPoint.y}`).out.has(`${x}_${y}`)) {
-                                if (graph.get(`${x}_${y}`).wallValue == 0){
+                                if (graph.get(`${x}_${y}`).wallValue == 0)
                                     wallHit = true;
-                                }
-
-                                dataForSend.push(`${x}_${y}`);
                                 this.ctx.fillStyle = "blue";
-                                this.drawPoint(x, y, 1);
+                                this.drawPoint(x, y)
                                 this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
                                 this.ctx.putImageData(this.myImgData, 0, 0);
                                 this.ctx.strokeStyle = this.color;
@@ -246,10 +186,53 @@ function Game() {
                                     this.gameEnd(false);
                                     return;
                                 }
-                                if (!wallHit) {
-                                    changeRound();
-                                }
+                                if (!wallHit)
+                                    this.player = !this.player;
 
+                                if (graph.get(`${x}_${y}`).out.size > 0) {
+                                    if (!wallHit) {
+                                        this.player = changeRound();
+                                        this.con = 0;
+                                        let enemyGatePoint = 0;
+                                        let ownGatePoint = 0;
+                                        if (this.player == true) {
+                                            enemyGatePoint = this.columns;
+                                        }
+                                        else {
+                                            ownGatePoint = this.columns;
+                                        }
+                                        this.canvas.removeEventListener('mousemove', this.mouseMoveEvent);
+                                        this.canvas.removeEventListener('click', this.clickEvent);
+
+                                        let selectedPoint = checkAllPaths(`${this.curPoint.x}_${this.curPoint.y}`, `4_${enemyGatePoint}`, `4_${ownGatePoint}`, graph);
+
+                                        if (selectedPoint != false) {
+                                            let pathToDraw = findSinglePath(selectedPoint.point, `${this.curPoint.x}_${this.curPoint.y}`, graph);
+
+                                            let stopper = setInterval(() => { this.draw(stopper, pathToDraw.path) }, 500)
+                                        }
+                                        else {
+                                            let selectedPoint = findBlockPoint(`${this.curPoint.x}_${this.curPoint.y}`, `4_${ownGatePoint}`, graph);
+
+                                            if (selectedPoint != false) {
+                                                let pathToDraw = findSinglePath(selectedPoint.point, `${this.curPoint.x}_${this.curPoint.y}`, graph);
+
+                                                let stopper = setInterval(() => { this.draw(stopper, pathToDraw.path) }, 500)
+                                            }
+                                            else {
+                                                let selectedPoint = findAnyPoint(`${this.curPoint.x}_${this.curPoint.y}`, graph);
+                                                let pathToDraw = findSinglePath(selectedPoint.point, `${this.curPoint.x}_${this.curPoint.y}`, graph);
+
+                                                let stopper = setInterval(() => { this.draw(stopper, pathToDraw.path) }, 500)
+                                            }
+                                        }
+                                        this.player = changeRound();
+                                    }
+                                    return;
+                                }
+                                else {
+                                    this.gameEnd(true);
+                                }
                             }
                         }
                     }
@@ -259,17 +242,10 @@ function Game() {
     }
 
     //* Metody pomocnicze
-    this.drawPoint = function (x, y, alpha) {
+    this.drawPoint = function (x, y) {
         this.ctx.beginPath();
-
-        this.ctx.globalAlpha = 0.5;
-        this.fillStyle = this.color;
         this.ctx.arc(y * this.scale + this.wallLineWidth / 2 + this.marginXY / 3, x * this.scale + this.wallLineWidth / 2 + this.marginXY / 3, 15, 0, Math.PI * 2, false);
         this.ctx.fill();
-
-        this.ctx.globalAlpha = alpha;
-        this.ctx.drawImage(ball, y * this.scale + this.wallLineWidth / 2 - 25, x * this.scale + this.wallLineWidth / 2 - 25);
-        this.ctx.globalAlpha = 1;
         this.ctx.closePath();
     }
 
@@ -290,6 +266,40 @@ function Game() {
         this.ctx.stroke();
         this.ctx.closePath();
     }
+
+    this.draw = function (stopper, path) {
+        this.loadBoardState();
+        const element = path[this.con];
+
+        this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+        this.ctx.putImageData(this.myImgData, 0, 0);
+
+        this.color = players[+(!currPlayer)].color;
+        this.ctx.strokeStyle = this.color;
+        this.drawLine(this.curPoint.x, this.curPoint.y, Number(element.substring(0, 1)), Number(element.substring(2, element.length)))
+        this.saveBoardState(Number(element.substring(0, 1)), Number(element.substring(2, element.length)));
+        this.loadBoardState();
+        this.con++;
+        
+
+        if (this.con == (path.length)) {
+            clearInterval(stopper);
+            if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == this.columns) {
+                console.log("Wygrywa gracz niebieski");
+                this.gameEnd(false);
+                return;
+            }
+
+            if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == 0) {
+                console.log("Wygrywa gracz czerwony");
+                this.gameEnd(false);
+                return;
+            }
+            this.canvas.addEventListener('mousemove', this.mouseMoveEvent);
+            this.canvas.addEventListener('click', this.clickEvent);
+            return;
+        }
+    }
 }
 
 function Point(x, y) {
@@ -297,30 +307,23 @@ function Point(x, y) {
     this.y = y;
 }
 
+$("#creator").submit(function(e){
+    e.preventDefault();
+    $(".creator--box").css("display","none");
+    let color = $(".colorInput[name=color]:checked").val();
+    let name = $("#name").val();
+    players[0]=new Player(name,colors[color]);
+    players[1]=new Player("Shrek",'green');
+
+    let game = new Game();
+    game.gamePrepare();
+    game.gameStart();
+});
+
 function changeRound() {
     $('.name').each(function (i) {
         $(this).toggleClass('active');
-    }); //działa lokalnie, do zmiany przy grze online
-    let json = JSON.stringify(dataForSend);
-    dataForSend = [];
-    counterShrek = 0;
-    $.ajax({
-        url: 'php_scripts/sendData.php',
-        method: 'POST',
-        data: {
-            json: json
-        },
-        success: function(result) {
-            console.log(result + " sendData succes");
-            move_interval = setInterval(start_check_for_round,500);
-            player = !player;
-        },
-        error: function(er) {
-            console.log(er);
-        }
-    })
+    });
+    currPlayer = !currPlayer;
+    return !this.player;
 }
-let game = new Game();
-
-// let btn = document.querySelector(".btn");
-// btn.addEventListener("click", game.debug);
