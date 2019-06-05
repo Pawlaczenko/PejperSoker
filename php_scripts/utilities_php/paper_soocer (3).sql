@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 04 Cze 2019, 20:51
+-- Czas generowania: 04 Cze 2019, 22:35
 -- Wersja serwera: 10.1.40-MariaDB
 -- Wersja PHP: 7.3.5
 
@@ -21,8 +21,6 @@ SET time_zone = "+00:00";
 --
 -- Baza danych: `paper_soocer`
 --
-CREATE DATABASE IF NOT EXISTS `paper_soocer` DEFAULT CHARACTER SET utf8 COLLATE utf8_polish_ci;
-USE `paper_soocer`;
 
 -- --------------------------------------------------------
 

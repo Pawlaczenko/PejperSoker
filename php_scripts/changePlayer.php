@@ -22,13 +22,6 @@ if ($connect->errno) {
         $whose_move = 1;
     }
 
-    // $whose_move = !(boolval($row['whose_move']));
-
-    $connect->query("UPDATE session SET game_data='$game_data' WHERE id_session = $session");
-<<<<<<< HEAD
-    // $connect->query("UPDATE session SET whose_move=$whose_move WHERE id_session = $session");
-=======
-    $connect->query("UPDATE session SET whose_move=$whose_move WHERE id_session = $session"); //!ZMIENIĆ ŻEBY DOPIERO PO WYSŁANIU DANYCH ZMIENIAŁ SIĘ GRACZ
->>>>>>> 5605e89414627aadc0038790ee24f06d3e67f127
-    echo "UPDATE session SET game_data='$game_data' WHERE id_session = $session";
+    $connect->query("UPDATE session SET whose_move=$whose_move WHERE id_session = $session");
+    echo "UPDATE session SET whose_move=$whose_move WHERE id_session = $session";
 }

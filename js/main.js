@@ -4,7 +4,7 @@ var move_interval;
 var player;
 let counterShrek = 0;
 
-let dataForSend = new Array();
+let dataForSend = { moveArray: [], gameStatus: -1 };
 
 var Player = function (name, color, role) {
     this.name = name;
@@ -98,7 +98,7 @@ function Game() {
 
     }
 
-    this.rysuj = function (stopper, path) {
+    this.draw = function (stopper, path, state) {
         this.loadBoardState();
         console.log(path);
         const element = path[counterShrek];
@@ -111,13 +111,18 @@ function Game() {
         this.drawLine(this.curPoint.x, this.curPoint.y, Number(element.substring(0, 1)), Number(element.substring(2, element.length)));
         this.saveBoardState(Number(element.substring(0, 1)), Number(element.substring(2, element.length)));
         this.loadBoardState();
-        counterShrek++;
 
-        if (counterShrek == (path.length)) {
+        if (counterShrek == (path.length - 1)) {
             player = true;
             clearInterval(stopper);
+            if (state != -1) {
+                this.gameOn = false;
+                this.gameEnd(state)
+            }
             return;
         }
+        counterShrek++;
+
     }
 
     this.saveBoardState = function (x, y) {
@@ -144,21 +149,23 @@ function Game() {
     }
 
     this.gameStart = function () {
-        // if (this.botGame) {
-        //     players[1] = new Player("Andrzej", "red");
-        // }
         this.gameOn = true;
+        this.enemyGate;
+        this.ownGate;
 
         $('.name[data-id="0"]').html(`${players[0].name}`).css("background-color", `${players[0].color}`);
         $('.name[data-id="1"]').html(`${players[1].name}`).css("background-color", `${players[1].color}`);
-        console.log(personalBool);
         if (personalBool == false) {
             player = true;
+            this.enemyGate = this.columns;
+            this.ownGate = 0;
         }
         else {
             console.log('osioł');
             player = false;
-            move_interval = setInterval(start_check_for_round,500);
+            this.enemyGate = 0;
+            this.ownGate = this.columns;
+            move_interval = setInterval(start_check_for_round, 500);
         }
 
         this.canvas.addEventListener('mousemove', this.mouseMoveEvent);
@@ -167,11 +174,9 @@ function Game() {
 
     this.gameEnd = function (bool) {
         this.gameOn = false;
+        dataForSend.gameStatus = bool
+        changeRound();
         console.log("Wygrywa " + players[+bool].name);
-        // if (player == true && bool)
-        //     console.log("Wygrywa gracz czerwony");
-        // else if (bool)
-        //     console.log("Wygrywa gracz niebieski");
     }
 
     //* Metody do eventów
@@ -205,7 +210,7 @@ function Game() {
     }
 
     this.clickEvent = e => {
-        if (!this.gameOn  || !player){
+        if (!this.gameOn || !player) {
             return;
         }
         this.color = players[+personalBool].color;
@@ -221,11 +226,11 @@ function Game() {
                         && (x * this.scale + this.wallLineWidth / 2 >= cord_X - this.scale / 2 && y * this.scale + this.wallLineWidth / 2 >= cord_Y - this.scale / 2)) {
                         if ((x >= this.curPoint.x - 1 && x <= this.curPoint.x + 1) && (y >= this.curPoint.y - 1 && y <= this.curPoint.y + 1)) {
                             if (graph.get(`${this.curPoint.x}_${this.curPoint.y}`).out.has(`${x}_${y}`)) {
-                                if (graph.get(`${x}_${y}`).wallValue == 0){
+                                if (graph.get(`${x}_${y}`).wallValue == 0) {
                                     wallHit = true;
                                 }
 
-                                dataForSend.push(`${x}_${y}`);
+                                dataForSend.moveArray.push(`${x}_${y}`);
                                 this.ctx.fillStyle = "blue";
                                 this.drawPoint(x, y, 1);
                                 this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
@@ -235,21 +240,27 @@ function Game() {
                                 this.saveBoardState(x, y);
                                 this.loadBoardState();
 
-                                if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == this.columns) {
-                                    console.log("Wygrywa gracz niebieski");
-                                    this.gameEnd(false);
-                                    return;
+                                if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == this.enemyGate) {
+                                    this.gameEnd(personalBool);
+<<<<<<< HEAD
+=======
+                                    // return;
+>>>>>>> 5605e89414627aadc0038790ee24f06d3e67f127
                                 }
 
-                                if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == 0) {
-                                    console.log("Wygrywa gracz czerwony");
-                                    this.gameEnd(false);
-                                    return;
+                                if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == this.ownGate) {
+                                    this.gameEnd(!personalBool);
+<<<<<<< HEAD
+=======
+                                    // return;
+>>>>>>> 5605e89414627aadc0038790ee24f06d3e67f127
                                 }
                                 if (!wallHit) {
                                     changeRound();
                                 }
-
+                            }
+                            if (graph.get(`${this.curPoint.x}_${this.curPoint.y}`).out.size == 0) {
+                                this.gameEnd(!personalBool);
                             }
                         }
                     }
@@ -302,7 +313,7 @@ function changeRound() {
         $(this).toggleClass('active');
     }); //działa lokalnie, do zmiany przy grze online
     let json = JSON.stringify(dataForSend);
-    dataForSend = [];
+    dataForSend.moveArray = [];
     counterShrek = 0;
     $.ajax({
         url: 'php_scripts/sendData.php',
@@ -310,12 +321,36 @@ function changeRound() {
         data: {
             json: json
         },
-        success: function(result) {
+        success: function (result) {
             console.log(result + " sendData succes");
-            move_interval = setInterval(start_check_for_round,500);
+<<<<<<< HEAD
+
+            $.ajax({
+                url: 'php_scripts/changePlayer.php',
+                method: 'POST',
+                data: {
+                    json: json
+                },
+                success: function (result) {
+                    console.log(result + " sendData succes");
+                    if (dataForSend.gameStatus == -1) {
+                        move_interval = setInterval(start_check_for_round, 500);
+                    }
+                    player = !player;
+                },
+                error: function (er) {
+                    console.log(er);
+                }
+            })
+
+=======
+            if (dataForSend.gameStatus == -1) {
+                move_interval = setInterval(start_check_for_round, 500);
+            }
             player = !player;
+>>>>>>> 5605e89414627aadc0038790ee24f06d3e67f127
         },
-        error: function(er) {
+        error: function (er) {
             console.log(er);
         }
     })
