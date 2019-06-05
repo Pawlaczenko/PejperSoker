@@ -112,7 +112,7 @@ function Game() {
         this.saveBoardState(Number(element.substring(0, 1)), Number(element.substring(2, element.length)));
         this.loadBoardState();
 
-        if (counterShrek == (path.length - 1)) {
+        if (counterShrek >= (path.length - 1)) {
             player = true;
             clearInterval(stopper);
             if (state != -1) {
@@ -122,7 +122,6 @@ function Game() {
             return;
         }
         counterShrek++;
-
     }
 
     this.saveBoardState = function (x, y) {
@@ -242,101 +241,108 @@ function Game() {
 
                                 if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == this.enemyGate) {
                                     this.gameEnd(personalBool);
+                                    // return;
                                 }
 
                                 if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == this.ownGate) {
                                     this.gameEnd(!personalBool);
+                                    // return;
                                 }
-                                if (graph.get(`${this.curPoint.x}_${this.curPoint.y}`).out.size == 0) {
-                                    this.gameEnd(!personalBool);
+                                if (!wallHit) {
+                                    changeRound();
                                 }
+                            }
+                            if (graph.get(`${this.curPoint.x}_${this.curPoint.y}`).out.size == 0) {
+                                this.gameEnd(!personalBool);
                             }
                         }
                     }
                 }
             }
         }
-
-        //* Metody pomocnicze
-        this.drawPoint = function (x, y, alpha) {
-            this.ctx.beginPath();
-
-            this.ctx.globalAlpha = 0.5;
-            this.fillStyle = this.color;
-            this.ctx.arc(y * this.scale + this.wallLineWidth / 2 + this.marginXY / 3, x * this.scale + this.wallLineWidth / 2 + this.marginXY / 3, 15, 0, Math.PI * 2, false);
-            this.ctx.fill();
-
-            this.ctx.globalAlpha = alpha;
-            this.ctx.drawImage(ball, y * this.scale + this.wallLineWidth / 2 - 25, x * this.scale + this.wallLineWidth / 2 - 25);
-            this.ctx.globalAlpha = 1;
-            this.ctx.closePath();
-        }
-
-        this.drawLine = function (x1, y1, x2, y2) {
-            this.ctx.lineCap = "round";
-            this.ctx.beginPath();
-            this.ctx.moveTo(y1 * this.scale + this.marginXY, (x1) * this.scale + this.marginXY);
-            this.ctx.lineTo(y2 * this.scale + this.marginXY, (x2) * this.scale + this.marginXY);
-            this.ctx.stroke();
-            this.ctx.closePath();
-        }
-
-        this.drawGameLine = function (x1, y1, x2, y2) {
-            this.ctx.lineCap = "round";
-            this.ctx.beginPath();
-            this.ctx.moveTo(y1 * this.scale + this.marginXY, x1 * this.scale + this.marginXY);
-            this.ctx.lineTo(x2 * this.scale + this.scale + this.wallLineWidth / 2 + this.marginXY / 3, y2 * this.scale + this.wallWidth / 2 + this.marginXY / 3)
-            this.ctx.stroke();
-            this.ctx.closePath();
-        }
     }
 
-    function Point(x, y) {
-        this.x = x;
-        this.y = y;
+    //* Metody pomocnicze
+    this.drawPoint = function (x, y, alpha) {
+        this.ctx.beginPath();
+
+        this.ctx.globalAlpha = 0.5;
+        this.fillStyle = this.color;
+        this.ctx.arc(y * this.scale + this.wallLineWidth / 2 + this.marginXY / 3, x * this.scale + this.wallLineWidth / 2 + this.marginXY / 3, 15, 0, Math.PI * 2, false);
+        this.ctx.fill();
+
+        this.ctx.globalAlpha = alpha;
+        this.ctx.drawImage(ball, y * this.scale + this.wallLineWidth / 2 - 25, x * this.scale + this.wallLineWidth / 2 - 25);
+        this.ctx.globalAlpha = 1;
+        this.ctx.closePath();
     }
 
-    function changeRound() {
-        $('.name').each(function (i) {
-            $(this).toggleClass('active');
-        }); //działa lokalnie, do zmiany przy grze online
-        let json = JSON.stringify(dataForSend);
-        dataForSend.moveArray = [];
-        counterShrek = 0;
-        $.ajax({
-            url: 'php_scripts/sendData.php',
-            method: 'POST',
-            data: {
-                json: json
-            },
-            success: function (result) {
-                console.log(result + " sendData succes");
+    this.drawLine = function (x1, y1, x2, y2) {
+        this.ctx.lineCap = "round";
+        this.ctx.beginPath();
+        this.ctx.moveTo(y1 * this.scale + this.marginXY, (x1) * this.scale + this.marginXY);
+        this.ctx.lineTo(y2 * this.scale + this.marginXY, (x2) * this.scale + this.marginXY);
+        this.ctx.stroke();
+        this.ctx.closePath();
+    }
 
-                $.ajax({
-                    url: 'php_scripts/changePlayer.php',
-                    method: 'POST',
-                    data: {
-                        json: json
-                    },
-                    success: function (result) {
-                        console.log(result + " sendData succes");
-                        if (dataForSend.gameStatus == -1) {
-                            move_interval = setInterval(start_check_for_round, 500);
-                        }
-                        player = !player;
-                    },
-                    error: function (er) {
-                        console.log(er);
+    this.drawGameLine = function (x1, y1, x2, y2) {
+        this.ctx.lineCap = "round";
+        this.ctx.beginPath();
+        this.ctx.moveTo(y1 * this.scale + this.marginXY, x1 * this.scale + this.marginXY);
+        this.ctx.lineTo(x2 * this.scale + this.scale + this.wallLineWidth / 2 + this.marginXY / 3, y2 * this.scale + this.wallWidth / 2 + this.marginXY / 3)
+        this.ctx.stroke();
+        this.ctx.closePath();
+    }
+}
+
+function Point(x, y) {
+    this.x = x;
+    this.y = y;
+}
+
+function changeRound() {
+    $('.name').each(function (i) {
+        $(this).toggleClass('active');
+    }); //działa lokalnie, do zmiany przy grze online
+    let json = JSON.stringify(dataForSend);
+    dataForSend.moveArray = [];
+    counterShrek = 0;
+    $.ajax({
+        url: 'php_scripts/sendData.php',
+        method: 'POST',
+        data: {
+            json: json
+        },
+        success: function (result) {
+            console.log(result + " sendData succes");
+
+            $.ajax({
+                url: 'php_scripts/changePlayer.php',
+                method: 'POST',
+                data: {
+                    json: json
+                },
+                success: function (result) {
+                    console.log(result + " sendData succes");
+                    if (dataForSend.gameStatus == -1) {
+                        move_interval = setInterval(start_check_for_round, 500);
                     }
-                })
+                    player = !player;
 
-            },
-            error: function (er) {
-                console.log(er);
-            }
-        })
-    }
-    let game = new Game();
+                },
+                error: function (er) {
+                    console.log(er);
+                }
+            })
+
+        },
+        error: function (er) {
+            console.log(er);
+        }
+    })
+}
+let game = new Game();
 
 // let btn = document.querySelector(".btn");
 // btn.addEventListener("click", game.debug);
