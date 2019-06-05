@@ -15,7 +15,7 @@ function getGameId(color) {
             } else if(results === "kick") {
                 window.location.href = "./multi.html";
             }
-            $('.loader').css('display', 'flex').find('.game_id').html(results);
+            $('.loader').css('display', 'flex');
             interval_check_is_session = setInterval(simple_check, 200);
             interval_is_join_player = setInterval(listenForPlayers, 1000);
         },
@@ -36,7 +36,6 @@ function fillObjects() {
 
             personalBool = res.role;
             console.log(res.role);
-
 
             game.gamePrepare();
             game.gameStart();
@@ -84,27 +83,22 @@ function start_check_for_round() {
         url: 'php_scripts/utilities_php/check_for_round.php',
         type: 'POST',
         success: (results) => {
-
             let res = JSON.parse(results);
             let move = Boolean(Number(res.move));
             let data = JSON.parse(res.data);
             console.log(data);
             if (personalBool == move) {
                 clearInterval(move_interval);
+                let draw = setInterval(() => { game.draw(draw, data.moveArray, data.gameStatus) }, 500);
                 $('.name').each(function (i) {
                     $(this).toggleClass('active');
                 });
-                let draw = setInterval(() => { game.draw(draw, data.moveArray, data.gameStatus) }, 500);
             }
         },
         error: function (err) {
             console.log(err);
         }
     })
-    // var source = new EventSource("php_scripts/utilities_php/whose_move.php");
-    // source.onmessage = function (event) {
-    //     console.log(event.data + "---------s");
-    // };
 }
 
 
@@ -135,11 +129,17 @@ $("#creator").submit(function (e) {
     getGameId(color)
 });
 
-$("#join_form").submit(function (e) {
-    e.preventDefault();
-    let game_id = $('#join_form input[name=game_id]').val();
+// $("#join_form").submit(function (e) {
+//     e.preventDefault();
+//     let game_id =$(this).find('input[name=session_id]').val();
+//     console.log(game_id);
+//     //joinTheGame(game_id);
+// });
+
+$('body').on('click','.join_button',function(e){
+    let game_id =$(this).prev().val();
     joinTheGame(game_id);
-});
+})
 
 $("#createGame").on('click', function (e) {
     e.preventDefault();
@@ -166,9 +166,35 @@ $(window).on('unload', function () {
     navigator.sendBeacon('php_scripts/delete_session.php', fd);
 });
 
+// $('#login_form').submit(function(e){
+//     e.preventDefault();
+//     $.ajax({
+//         url: 'php_scripts/logowanie.php', 
+//         type: 'post',
+//         data: $('#login_form').serialize(),
+//         success: function(res) {
+//             console.log('elo');
+//             switch(res){
+//                 case "logged":
+//                     window.location.href = "index2.html";
+//                     break;
+//                 case "pass":
+//                     alert("Podano złe hasło");
+//                     break;
+//                 case "login":
+//                     alert("Użytkownik nie istnieje");
+//                     break;
+//             }
+//         },
+//         error: function(e){
+//             console.log(e);
+//         }
+//     });
+// })
+
 // window.onbeforeunload = function() {
 //     window.setTimeout(function () {
 //         window.location = 'php_scripts/lobby.php';
 //     }, 0);
-//     window.onbeforeunload = null; // necessary to prevent infinite loop, that kills your browser
+//     window.onbeforeunload = null;
 // }
