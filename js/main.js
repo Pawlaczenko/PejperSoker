@@ -242,18 +242,10 @@ function Game() {
 
                                 if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == this.enemyGate) {
                                     this.gameEnd(personalBool);
-<<<<<<< HEAD
-=======
-                                    // return;
->>>>>>> 5605e89414627aadc0038790ee24f06d3e67f127
                                 }
 
                                 if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == this.ownGate) {
                                     this.gameEnd(!personalBool);
-<<<<<<< HEAD
-=======
-                                    // return;
->>>>>>> 5605e89414627aadc0038790ee24f06d3e67f127
                                 }
                                 if (!wallHit) {
                                     changeRound();
@@ -323,7 +315,6 @@ function changeRound() {
         },
         success: function (result) {
             console.log(result + " sendData succes");
-<<<<<<< HEAD
 
             $.ajax({
                 url: 'php_scripts/changePlayer.php',
@@ -343,12 +334,6 @@ function changeRound() {
                 }
             })
 
-=======
-            if (dataForSend.gameStatus == -1) {
-                move_interval = setInterval(start_check_for_round, 500);
-            }
-            player = !player;
->>>>>>> 5605e89414627aadc0038790ee24f06d3e67f127
         },
         error: function (er) {
             console.log(er);
