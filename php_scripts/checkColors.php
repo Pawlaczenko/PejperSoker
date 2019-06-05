@@ -7,7 +7,7 @@
         $connect = new mysqli($host, $db_user , $db_password,$db_name);
   
             $logged_user_id = $_SESSION['id'];
-            if( !(isset($_SESSION['wantedSession'])))
+            if(!(isset($_SESSION['wantedSession'])))
             {
                 echo "-";
                 exit;

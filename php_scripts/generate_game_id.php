@@ -15,7 +15,7 @@
             $color = $_POST['color'];
             $logged_user_id = $_SESSION['id'];
             if(!$player) {
-                $query_create_session = "INSERT INTO session(user1,user2,game_data,game_id,player1_color,player2_color,whose_move) VALUES ('$logged_user_id',-1,'json_string_data',-1,$color,-1,0)";
+                $query_create_session = "INSERT INTO session(user1,user2,game_data,player1_color,player2_color,whose_move) VALUES ('$logged_user_id',-1,'json_string_data',$color,-1,0)";
                 $connect->query($query_create_session);
 
                 // pozyskiwanie id sesji po to aby wygenerowac id gry 
@@ -25,15 +25,26 @@
                 $session_id = $row['id_session'];
                 $_SESSION['session_id'] = $session_id;
 
+                if(isset($_POST['pass'])){
+                    $pass = $_POST['pass'];
+                    $connect->query("UPDATE session SET game_password='$pass' WHERE id_session=$session_id");
+                }
+                echo "-";
                 //generownie id gry i aktualizacja recordu w bazie 
-                $game_id = password_hash($session_id,PASSWORD_DEFAULT);
-                $query_set_game_id = "UPDATE session SET game_id='$game_id' WHERE id_session=$session_id";
-                
-                $connect->query($query_set_game_id);
-                echo $game_id;
             } else {
                 $session = $_SESSION['wantedSession'];
-                $join = "UPDATE session SET user2=$logged_user_id, player2_color=$color WHERE id_session = $session";
+                $wantedPassword = $connect->query("SELECT * FROM session WHERE id_session=$session")->fetch_assoc();
+                if(is_null($wantedPassword['game_password'])){
+                    $join = "UPDATE session SET user2=$logged_user_id, player2_color=$color WHERE id_session = $session";
+                } else {
+                    $pass = $_POST['client_pass'];
+                    if($wantedPassword['game_password']==$pass) {
+                        $join = "UPDATE session SET user2=$logged_user_id, player2_color=$color WHERE id_session = $session";
+                    } else {
+                        echo 'wrong';
+                        exit;
+                    }
+                }
                 $connect->query($join);
                 $_SESSION['session_id'] = $session;
                 unset($_SESSION["wantedSession"]);

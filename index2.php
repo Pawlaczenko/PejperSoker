@@ -14,12 +14,14 @@
     
     require_once "./php_scripts/utilities_php/connect.php";
     require_once "./php_scripts/utilities_php/usefull_function.php";
+    $connect = new mysqli($host, $db_user , $db_password,$db_name);
+
     session_start();
 
         if((isset($_SESSION['is__logged']))&&($_SESSION['is__logged']==true))
         {
-            echo <<< EOT
-
+            $player = $_SESSION['player'];
+            echo '
             <div class="loader alert">
         <img src="assets/img/loader.gif">
         <h1>Waiting for opponent</h1>
@@ -46,6 +48,20 @@
                 <div class="colors">
     
                 </div>
+                ';
+                if(!$player) {
+                    echo '
+                    <label>Sesja prywatna: <input type="checkbox" name="private_session"></label>
+                    <input type="text" name="game_pass" placeholder="hasło" class="game_pass" disabled>';
+
+                } else {
+                    $session = $_SESSION['wantedSession'];
+                    $isPrivate = $connect->query("SELECT * FROM session WHERE id_session=$session")->fetch_assoc();
+                    if(!is_null($isPrivate['game_password'])){
+                        echo 'Hasło: <input type="text" name="game_pass_klient" placeholder="hasło" class="game_pass_klient" required>';
+                    }
+                }
+                echo '
                 <input class="button" type="submit" id="play" value="graj" name="graj">
             </form>
         </div>
@@ -67,9 +83,8 @@
     <script src="js/global.js"></script>
     <script src="js/main.js"></script>
     <script src="js/ajax.js"></script>
-   
     
-EOT;
+';
 
         }
          else {
@@ -78,7 +93,15 @@ EOT;
     
     
     ?>
-    
+<script>
+    $('input[name=private_session]').change(function() {
+        if (this.checked) {
+            $('.game_pass').css('display','block').prop('disabled',false).prop('required',true);
+        } else {
+            $('.game_pass').css('display','none').prop('disabled',true).prop('required',false);
+        }
+    });
+</script>    
 </body>
 
 

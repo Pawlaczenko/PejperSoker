@@ -422,7 +422,6 @@ var colors = [
 ];
 
 function genereteCreator(lock) {
-
     $.ajax({
         url:'php_scripts/checkColors.php',
         type:'POST',
@@ -447,5 +446,6 @@ function genereteCreator(lock) {
         }
     })
 };
+
 
 genereteCreator();

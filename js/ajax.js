@@ -1,20 +1,28 @@
 var interval_is_join_player; //interval
 var interval_check_is_session;
-function getGameId(color) {
-    $('.creator--box').css('display', 'none');
+function getGameId(color,pass,client_pass) {
     $.ajax({
         url: 'php_scripts/generate_game_id.php',
         type: 'POST',
         data: {
-            color: color
+            color: color,
+            pass: pass,
+            client_pass: client_pass
         },
         success: function (results) {
+            console.log(results);
             if (!results) {
+                $('.creator--box').css('display', 'none');
                 fillObjects();
                 return;
             } else if(results === "kick") {
+                $('.creator--box').css('display', 'none');
                 window.location.href = "./multi.html";
+            } else if(results == "wrong") {
+                alert("Niepoprawne hasło");
+                return;
             }
+            $('.creator--box').css('display', 'none');
             $('.loader').css('display', 'flex');
             interval_check_is_session = setInterval(simple_check, 200);
             interval_is_join_player = setInterval(listenForPlayers, 1000);
@@ -125,8 +133,14 @@ function joinTheGame(gameid) {
 
 $("#creator").submit(function (e) {
     let color = $(".colorInput[name=color]:checked").val();
+    let pass = $(".game_pass").val();
+    let client_pass;
+    if(pass == undefined){ //tylko dla klienta
+        client_pass = $(".game_pass_klient").val();
+        console.log("tylko klinet");
+    }
     e.preventDefault();
-    getGameId(color)
+    getGameId(color,pass,client_pass);
 });
 
 // $("#join_form").submit(function (e) {

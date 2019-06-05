@@ -385,3 +385,6 @@ canvas {
     text-align: center;
 }
 
+.game_pass {
+    display: none;
+}
