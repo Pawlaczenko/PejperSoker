@@ -195,7 +195,7 @@ function Game() {
                                         this.con = 0;
                                         let enemyGatePoint = 0;
                                         let ownGatePoint = 0;
-                                        if (this.player == false) {
+                                        if (this.player == true) {
                                             enemyGatePoint = this.columns;
                                         }
                                         else {
@@ -280,7 +280,7 @@ function Game() {
         this.saveBoardState(Number(element.substring(0, 1)), Number(element.substring(2, element.length)));
         this.loadBoardState();
         this.con++;
-
+        
 
         if (this.con == (path.length)) {
             clearInterval(stopper);

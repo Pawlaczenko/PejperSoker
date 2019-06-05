@@ -4,10 +4,16 @@
     require_once "./utilities_php/usefull_function.php";
     if((isset($_SESSION['is__logged']))&&($_SESSION['is__logged']==true))
     {
-        $connect = @new mysqli($db_location, $db_user , $db_password,$db_name);
+        $connect = new mysqli($host, $db_user , $db_password,$db_name);
   
             $logged_user_id = $_SESSION['id'];
-            $session_id = $_SESSION['session_id'];
+            if( !(isset($_SESSION['wantedSession'])))
+            {
+                echo "-";
+                exit;
+            }
+            
+            $session_id = $_SESSION['wantedSession'];
 
             $query_set_color1 = "SELECT player1_color FROM session WHERE id_session=$session_id";
 

@@ -3,7 +3,7 @@ require_once "./utilities_php/connect.php";
 require_once "./utilities_php/usefull_function.php";
 session_start();
 
-$connect = @new mysqli($host, $db_user , $db_password,$db_name);
+$connect = new mysqli($host, $db_user , $db_password,$db_name);
 if ($connect->errno) {
     echo "wystapil blad" . $connect->errno . "----" . $connect->error;
 } 
@@ -17,7 +17,11 @@ else
     $result = $connect->query($query_sesja);
     $row = $result->fetch_assoc();
     $session_id = $row['id_session'];
-    session_destroy();
+    
+    if (isset($_SESSION['session_id'])){  
+        unset($_SESSION["player"]);
+        unset($_SESSION["session_id"]);
+    }
 
     $query1 ="DELETE FROM session WHERE id_session = $session_id";
     $connect->query($query1);

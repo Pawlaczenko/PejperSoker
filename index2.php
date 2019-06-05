@@ -10,7 +10,17 @@
 </head>
 
 <body>
-    <div class="loader alert">
+    <?php
+    
+    require_once "./php_scripts/utilities_php/connect.php";
+    require_once "./php_scripts/utilities_php/usefull_function.php";
+    session_start();
+
+        if((isset($_SESSION['is__logged']))&&($_SESSION['is__logged']==true))
+        {
+            echo <<< EOT
+
+            <div class="loader alert">
         <img src="assets/img/loader.gif">
         <h1>Waiting for opponent</h1>
         <div class="gameid_box">
@@ -53,10 +63,24 @@
         </div>
     </header>
     <div id="board"></div>
+    
     <script src="js/global.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/ajax.js"></script>
+   
+    
+EOT;
+
+        }
+         else {
+            header("Location:./multi.html");
+        }
+    
+    
+    ?>
+
 </body>
 
-<script src="js/ajax.js"></script>
-<script src="js/ajax_check_is_session.js"></script>
+
+<!-- <script src="js/ajax_check_is_session.js"></script>/ -->
 </html>

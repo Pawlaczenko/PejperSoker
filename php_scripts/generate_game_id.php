@@ -1,11 +1,13 @@
 <?php
+
     session_start();
     require_once "./utilities_php/connect.php";
     require_once "./utilities_php/usefull_function.php";
     if((isset($_SESSION['is__logged']))&&($_SESSION['is__logged']==true))
+    // if(1)
     {
         // echo  "zalogowano ",$_SESSION['login'],"<br> - generownaie linku<br>";
-        $connect = @new mysqli($db_location, $db_user , $db_password,$db_name);
+        $connect = new mysqli($host, $db_user , $db_password,$db_name);
         if ($connect->errno) {
             // echo "wystapil blad" . $connect->errno . "----" . $connect->error;
         } else {
@@ -30,9 +32,11 @@
                 $connect->query($query_set_game_id);
                 echo $game_id;
             } else {
-                $session = $_SESSION['session_id'];
+                $session = $_SESSION['wantedSession'];
                 $join = "UPDATE session SET user2=$logged_user_id, player2_color=$color WHERE id_session = $session";
                 $connect->query($join);
+                $_SESSION['session_id'] = $session;
+                unset($_SESSION["wantedSession"]);
                 echo false;
                 // $result = $connect->query(sprintf("UPDATE session SET user2=$logged_user_id, player2_color=$color WHERE id_session = $session",
                 // mysqli_real_escape_string($connect,  $logged_user_id),
@@ -40,8 +44,17 @@
             // ));
             }
         }
+        $connect->close();
     } else {
-        header("Location:../multi.html");
+        echo 'kick';
+        //header("Location:../multi.html");
     }
-    $connect->close();
+    
+
+
+   
+
+
+
+    
     ?>

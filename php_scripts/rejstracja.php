@@ -10,7 +10,7 @@
 <body>
     <?php
     require_once "./utilities_php/connect.php";
-    $connect = @new mysqli($db_location, $db_user , $db_password,$db_name); 
+    $connect = new mysqli($db_location, $db_user , $db_password,$db_name); 
     if ($connect->errno) {
         echo "wystapil blad" . $connect->errno . "----" . $connect->error;
     } 

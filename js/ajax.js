@@ -12,6 +12,8 @@ function getGameId(color) {
             if (!results) {
                 fillObjects();
                 return;
+            } else if(results === "kick") {
+                window.location.href = "./multi.html";
             }
             $('.loader').css('display', 'flex').find('.game_id').html(results);
             interval_check_is_session = setInterval(simple_check, 200);
@@ -116,7 +118,7 @@ function joinTheGame(gameid) {
         },
         success: function (results) {
             if (results) {
-                window.location.href = "../index2.html";
+                window.location.href = "../index2.php";
             } else {
                 alert("NIE MA TAKIEJ GRY");
             }
@@ -130,7 +132,7 @@ function joinTheGame(gameid) {
 $("#creator").submit(function (e) {
     let color = $(".colorInput[name=color]:checked").val();
     e.preventDefault();
-    getGameId(color);
+    getGameId(color)
 });
 
 $("#join_form").submit(function (e) {
@@ -145,7 +147,7 @@ $("#createGame").on('click', function (e) {
         url: 'createGame.php',
         type: 'POST',
         success: function (result) {
-            window.location.href = "../index2.html";
+            window.location.href = "../index2.php";
         }
     })
 });
@@ -159,7 +161,6 @@ $('.copy').on('click', function (e) {
 });
 
 $(window).on('unload', function () {
-
     var fd = new FormData();
     fd.append('ajax_data', 22);
     navigator.sendBeacon('php_scripts/delete_session.php', fd);

@@ -4,7 +4,7 @@
     require_once "./utilities_php/usefull_function.php";
     if((isset($_SESSION['is__logged']))&&($_SESSION['is__logged']==true))
     {
-        $connect = @new mysqli($db_location, $db_user , $db_password,$db_name);
+        $connect = new mysqli($host, $db_user , $db_password,$db_name);
   
             $session = $_SESSION['session_id'];
             $color = $_POST['color'];

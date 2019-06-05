@@ -8,11 +8,12 @@
 <body>
     
 <?php
+
 session_start();
 require_once "./utilities_php/connect.php";
 require_once "./utilities_php/usefull_function.php";
 
- $connect = @new mysqli($host, $db_user , $db_password,$db_name);
+ $connect = new mysqli($host, $db_user , $db_password,$db_name);
  if ($connect->errno) {
      echo "wystapil blad" . $connect->errno . "----" . $connect->error;
  } 
@@ -45,7 +46,7 @@ require_once "./utilities_php/usefull_function.php";
                         
                         ping($connect,$_SESSION['login']);
                         
-                        update_logged_flag($connect,$_SESSION['login'],1);
+                        // update_logged_flag($connect,$_SESSION['login'],0);//! is logged is uncorrect
                         header('Location:lobby.php');
    
                    }

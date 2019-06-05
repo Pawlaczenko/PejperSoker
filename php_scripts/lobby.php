@@ -5,15 +5,17 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,700&display=swap&subset=latin-ext" rel="stylesheet"> 
     <link rel="stylesheet" href="../assets/styles/style.css">
+    <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
     <title>Document</title>
 </head>
 <body>
     <?php
+       
         require_once "./utilities_php/connect.php";
         require_once "./utilities_php/usefull_function.php";
         session_start();
         
-        $connect = @new mysqli($host, $db_user , $db_password,$db_name);
+        $connect = new mysqli($host, $db_user , $db_password,$db_name);
 
         if ($connect->errno) {
             echo "wystapil blad" . $connect->errno . "----" . $connect->error;
@@ -31,11 +33,7 @@
 
 EOT;
 
-                if(check_is_session($connect,$_SESSION['id'])){
-
-                } else {
-
-                }
+                
             } else {
                 header("Location:../multi.html");
             }
@@ -51,12 +49,12 @@ EOT;
     <div class="menu">
         <h1 class="paper_h1">Tyb multiplayer</h1>
         <div class="buttons--box">
-            <a href="../index2.html" class="type button" id="createGame">Stwórz grę</a>
+            <a href="../index2.php" class="type button" id="createGame">Stwórz grę</a>
             <a href="./join_to_game.html" class="type button">Dołącz do gry</a><br>
         </div>
     </div>
    
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    
     <script src="../js/ajax.js"></script>
 </body>
 </html>

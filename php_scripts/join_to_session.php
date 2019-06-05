@@ -25,7 +25,7 @@ else
     {
         $current_user_id = $_SESSION['id'];
         $session = $result->fetch_assoc();
-        $_SESSION['session_id'] = $session['id_session'];
+        $_SESSION['wantedSession'] = $session['id_session'];
 
         $_SESSION['player'] = TRUE; //klient
         echo true;
