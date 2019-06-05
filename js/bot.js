@@ -72,7 +72,7 @@ function Game() {
         graph.get(`${this.curPoint.x}_${this.curPoint.y}`).wallValue = 0;
         this.myImgData = this.ctx.getImageData(0, 0, this.canvasWidth, this.canvasHeight);
         this.curPoint = new Point(this.rows / 2, this.columns / 2)
-        this.drawPoint(this.curPoint.x, this.curPoint.y);
+        this.drawPoint(this.curPoint.x, this.curPoint.y,1);
         this.gameOn = false;
 
     }
@@ -91,7 +91,7 @@ function Game() {
         this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
         this.ctx.putImageData(this.myImgData, 0, 0);
         this.ctx.fillStyle = "black";
-        this.drawPoint(this.curPoint.x, this.curPoint.y);
+        this.drawPoint(this.curPoint.x, this.curPoint.y,1);
     }
 
     //* Metody gry
@@ -110,7 +110,7 @@ function Game() {
         this.botGame = false;
         this.gameOn = true;
         this.player = false;
-        currPlayer = false;
+        currPlayer = true;
     }
 
     this.gameEnd = function (bool) {
@@ -125,7 +125,7 @@ function Game() {
     this.mouseMoveEvent = e => {
         if (!this.gameOn) return;
 
-        this.color = players[+currPlayer].color;
+        this.color = players[+(!currPlayer)].color;
 
         let mousePos = getMousePos(this.canvas, event);
         let przelicznik_na_x = this.canvasWidth / this.boardWidth;
@@ -143,7 +143,7 @@ function Game() {
                             if (graph.get(`${this.curPoint.x}_${this.curPoint.y}`).out.has(`${x}_${y}`)) {
                                 this.loadBoardState();
                                 this.ctx.fillStyle = this.color;
-                                this.drawPoint(x, y);
+                                this.drawPoint(x, y,.5);
                             }
                 }
             }
@@ -167,7 +167,7 @@ function Game() {
                                 if (graph.get(`${x}_${y}`).wallValue == 0)
                                     wallHit = true;
                                 this.ctx.fillStyle = "blue";
-                                this.drawPoint(x, y)
+                                this.drawPoint(x, y,1)
                                 this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
                                 this.ctx.putImageData(this.myImgData, 0, 0);
                                 this.ctx.strokeStyle = this.color;
@@ -186,12 +186,12 @@ function Game() {
                                     this.gameEnd(false);
                                     return;
                                 }
-                                if (!wallHit)
-                                    this.player = !this.player;
+                                // if (!wallHit)
+                                //     this.player = !this.player;
 
                                 if (graph.get(`${x}_${y}`).out.size > 0) {
                                     if (!wallHit) {
-                                        this.player = changeRound();
+                                        this.player = changeRound(this.player);
                                         this.con = 0;
                                         let enemyGatePoint = 0;
                                         let ownGatePoint = 0;
@@ -226,7 +226,6 @@ function Game() {
                                                 let stopper = setInterval(() => { this.draw(stopper, pathToDraw.path) }, 500)
                                             }
                                         }
-                                        this.player = changeRound();
                                     }
                                     return;
                                 }
@@ -242,10 +241,17 @@ function Game() {
     }
 
     //* Metody pomocnicze
-    this.drawPoint = function (x, y) {
+    this.drawPoint = function (x, y, alpha) {
         this.ctx.beginPath();
+
+        this.ctx.globalAlpha = 0.5;
+        this.fillStyle = this.color;
         this.ctx.arc(y * this.scale + this.wallLineWidth / 2 + this.marginXY / 3, x * this.scale + this.wallLineWidth / 2 + this.marginXY / 3, 15, 0, Math.PI * 2, false);
         this.ctx.fill();
+
+        this.ctx.globalAlpha = alpha;
+        this.ctx.drawImage(ball, y * this.scale + this.wallLineWidth / 2 - 25, x * this.scale + this.wallLineWidth / 2 - 25);
+        this.ctx.globalAlpha = 1;
         this.ctx.closePath();
     }
 
@@ -283,6 +289,7 @@ function Game() {
 
 
         if (this.con == (path.length)) {
+           
             clearInterval(stopper);
             if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == this.columns) {
                 console.log("Wygrywa gracz niebieski");
@@ -295,6 +302,7 @@ function Game() {
                 this.gameEnd(false);
                 return;
             }
+            this.player = changeRound(this.player);
             this.canvas.addEventListener('mousemove', this.mouseMoveEvent);
             this.canvas.addEventListener('click', this.clickEvent);
             return;
@@ -320,10 +328,11 @@ $("#creator").submit(function(e){
     game.gameStart();
 });
 
-function changeRound() {
+function changeRound(plr) {
     $('.name').each(function (i) {
         $(this).toggleClass('active');
     });
+
     currPlayer = !currPlayer;
-    return !this.player;
+    return !plr;
 }
