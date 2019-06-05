@@ -1,12 +1,3 @@
-<html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
-<body>
-    
 <?php
 session_start();
 require_once "./utilities_php/connect.php";
@@ -14,7 +5,7 @@ require_once "./utilities_php/usefull_function.php";
 
  $connect = @new mysqli($host, $db_user , $db_password,$db_name);
  if ($connect->errno) {
-     echo "wystapil blad" . $connect->errno . "----" . $connect->error;
+     //echo "wystapil blad" . $connect->errno . "----" . $connect->error;
  } 
  else 
  {
@@ -34,10 +25,9 @@ require_once "./utilities_php/usefull_function.php";
                    $hash_z_bazy = $row['password'];
                    $user_id  = $row['id_user'];
 
-                    
                    if (password_verify($haslo,$row['password']))
                    {
-                        echo "logowanie ... ";
+                        //echo "logowanie ... ";
                         $_SESSION['is__logged'] = true;
                         $_SESSION['login'] = $login;
                         $_SESSION['id'] = $user_id;
@@ -47,20 +37,16 @@ require_once "./utilities_php/usefull_function.php";
                         
                         update_logged_flag($connect,$_SESSION['login'],1);
                         header('Location:lobby.php');
-   
+                        echo "logged";
                    }
                    else
                    {
-                       echo "podano złe haslo";
+                       echo "pass";
                    }
-                       
-               
-              
-   
                }
                else
                {
-                   echo "nie ma takiego usera w bazie";
+                   echo "login";
                }
            }
    }
@@ -69,5 +55,3 @@ require_once "./utilities_php/usefull_function.php";
 $connect->close();
 ?>
     
-</body>
-</html>

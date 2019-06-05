@@ -11,7 +11,20 @@ if ($connect->errno) {
 } else {
     $session = $_SESSION['session_id'];
     $game_data = $_POST['json'];
+    $query_data = "SELECT whose_move FROM session WHERE id_session =$session";
+
+    $result = $connect->query($query_data);
+    $row = $result->fetch_assoc();
+    $whose_move = ($row['whose_move']);
+    if ($whose_move == 1) {
+        $whose_move = 0;
+    } else {
+        $whose_move = 1;
+    }
+
+    // $whose_move = !(boolval($row['whose_move']));
 
     $connect->query("UPDATE session SET game_data='$game_data' WHERE id_session = $session");
+    $connect->query("UPDATE session SET whose_move=$whose_move WHERE id_session = $session"); //!ZMIENIĆ ŻEBY DOPIERO PO WYSŁANIU DANYCH ZMIENIAŁ SIĘ GRACZ
     echo "UPDATE session SET game_data='$game_data' WHERE id_session = $session";
 }

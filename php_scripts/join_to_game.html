@@ -16,13 +16,33 @@
     </header>
     <div class="menu">
         <h1 class="paper_h1">Dołącz do gry</h1>
-        <h2 class="info">Wpisz id gry, od drugiego gracza:</h2>
-        <form method="POST" id="join_form" class="login_form">
+        <table id="rooms">
+            <tr><td>ID Sesji</td><td>Player 1</td><td>Player 2</td><td></td></tr>
+            <!-- <tr>
+                <td class="session_id">
+                    24
+                </td>
+                <td>
+                   Admin 
+                </td>
+                <td>
+                    Magda
+                </td>
+                <td>
+                    <form method="POST" id="join_form">
+                        <input name="session_id" type="hidden" value="24">
+                        <input type="submit" value="DOŁĄCZ" class="button login_button">
+                    </form>
+                </td>
+            </tr> -->
+        </table>
+        <!-- <form method="POST" id="join_form" class="login_form">
             <label>ID Gry: <input name="game_id" type="text" id="id_input"></label>
             <input type="submit" value="DOŁĄCZ" class="button login_button">
-        </form>
-        <h3>Nie otrzymałeś id? Stwórz grę <a href="lobby.php">tutaj</a></h3>  
+        </form> -->
+        <h3>Brak odpowiedniego partnera? Stwórz grę <a href="lobby.php">tutaj</a></h3>  
     </div>
 <script src="../js/ajax.js"></script>
+<script src="../js/rooms.js"></script>
 </body>
 </html>

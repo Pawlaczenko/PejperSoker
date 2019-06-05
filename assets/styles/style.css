@@ -319,8 +319,20 @@ canvas {
     font-size: 24px;
 }
 
-.login_button {
+.login_button,
+.join_button {
     cursor: pointer;
+    display: block;
+}
+
+.join_button:disabled {
+    opacity: .4;
+    cursor: initial;
+}
+
+.join_button:disabled:hover {
+    background-color: #84b369 !important;
+    color: white !important;
 }
 
 .join_game {
@@ -351,3 +363,25 @@ canvas {
     font-size: 16px !important;
     width: 80%;
 }
+
+#rooms {
+    width: 100%;
+    background-color: white;
+    margin: 0 auto;
+}
+
+#rooms tr:first-child td {
+    background-color: #84b369;
+    color: white;
+}
+
+#rooms tr td:last-child input{
+    margin: 0 auto;
+}
+
+#rooms tr td {
+    border-bottom: 1px solid #84b369;
+    border-right: 2px solid #84b369;
+    text-align: center;
+}
+

@@ -111,8 +111,9 @@ function Game() {
         this.drawLine(this.curPoint.x, this.curPoint.y, Number(element.substring(0, 1)), Number(element.substring(2, element.length)));
         this.saveBoardState(Number(element.substring(0, 1)), Number(element.substring(2, element.length)));
         this.loadBoardState();
+        counterShrek++;
 
-        if (counterShrek >= (path.length - 1)) {
+        if (counterShrek == (path.length)) {
             player = true;
             clearInterval(stopper);
             if (state != -1) {
@@ -121,7 +122,6 @@ function Game() {
             }
             return;
         }
-        counterShrek++;
     }
 
     this.saveBoardState = function (x, y) {
@@ -316,26 +316,10 @@ function changeRound() {
         },
         success: function (result) {
             console.log(result + " sendData succes");
-
-            $.ajax({
-                url: 'php_scripts/changePlayer.php',
-                method: 'POST',
-                data: {
-                    json: json
-                },
-                success: function (result) {
-                    console.log(result + " sendData succes");
-                    if (dataForSend.gameStatus == -1) {
-                        move_interval = setInterval(start_check_for_round, 500);
-                    }
-                    player = !player;
-
-                },
-                error: function (er) {
-                    console.log(er);
-                }
-            })
-
+            if (dataForSend.gameStatus == -1) {
+                move_interval = setInterval(start_check_for_round, 500);
+            }
+            player = !player;
         },
         error: function (er) {
             console.log(er);

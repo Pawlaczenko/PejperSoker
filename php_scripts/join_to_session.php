@@ -14,7 +14,7 @@ else
     
     $game_id = htmlentities($game_id, ENT_QUOTES, "UTF-8");
 
-    $query_check ="SELECT * FROM session WHERE game_id='$game_id';";
+    $query_check ="SELECT * FROM session WHERE id_session='$game_id';";
 
     $result = $connect->query($query_check);
     if($result->num_rows==0)

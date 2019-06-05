@@ -29,7 +29,7 @@
                 
                 $connect->query($query_set_game_id);
                 echo $game_id;
-            } else {
+            } else { //guest
                 $session = $_SESSION['session_id'];
                 $join = "UPDATE session SET user2=$logged_user_id, player2_color=$color WHERE id_session = $session";
                 $connect->query($join);
