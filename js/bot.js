@@ -1,6 +1,7 @@
 var currPlayer = false;
 var players = [];
 const graph = createGraph(8, 12);
+let ball = document.getElementById('ball');
 
 var Player = function (name, color, role) {
     this.name = name;
@@ -13,6 +14,8 @@ function Game() {
     this.boardHeight = 400;
     this.canvasWidth = 1800;
     this.canvasHeight = 1210;
+    this.columnsNumber = 12;
+    this.rowsNumber = 8;
 
     //* Metody przygotowania gry
     this.createBoard = function (rows, columns) {
@@ -39,7 +42,12 @@ function Game() {
         this.noLineWidth = 5;
 
         this.scale = 147;
-        this.color = 'blue';
+        
+        this.ctx.fillStyle = "#84b369";
+        this.fillWidth = this.canvasWidth / this.columnsNumber + this.marginXY;
+        this.ctx.fillRect(this.fillWidth, this.marginXY, this.canvasWidth - 2 * this.fillWidth, this.canvasHeight - this.marginXY * 2);
+        this.ctx.fillRect(this.marginXY, 3 * (this.canvasHeight / this.rowsNumber), this.fillWidth, 2 * (this.canvasHeight / this.rowsNumber) - this.marginXY);
+        this.ctx.fillRect(this.canvasWidth - 2 * this.fillWidth, 3 * (this.canvasHeight / this.rowsNumber), this.fillWidth * 2 - this.marginXY, 2 * (this.canvasHeight / this.rowsNumber) - this.marginXY);
 
         for (let x = 0; x <= this.rows; x++) {
             for (let y = 0; y <= this.columns; y++) {

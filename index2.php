@@ -56,6 +56,10 @@
                     <input type="text" name="game_pass" placeholder="hasło" class="game_pass" disabled>';
 
                 } else {
+                    if($_SESSION['wantedSession']==null){
+                        header("Location: multi.html");
+                        exit;
+                    }
                     $session = $_SESSION['wantedSession'];
                     $isPrivate = $connect->query("SELECT * FROM session WHERE id_session=$session")->fetch_assoc();
                     if(empty($isPrivate['game_password'])==false){
@@ -86,11 +90,9 @@
     <script src="js/ajax.js"></script>
     
 ';
-
         } else {
             header("Location:./multi.html");
         }
-    
     ?>
 <script>
     $('input[name=private_session]').change(function() {
