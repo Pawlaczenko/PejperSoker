@@ -180,6 +180,20 @@ $(window).on('unload', function () {
     navigator.sendBeacon('php_scripts/delete_session.php', fd);
 });
 
+function showSession(){
+    $.ajax({
+        url: 'php_scripts/utilities_php/showSession.php',
+        type: 'POST',
+        success: function (result) {
+            console.log(result);
+        }
+    });
+}
+
+$(window).keypress(function(e) {
+    showSession();
+});
+
 // $('#login_form').submit(function(e){
 //     e.preventDefault();
 //     $.ajax({
