@@ -61,17 +61,15 @@
                 </div>
                 ';
                 if(!$player) {
-
                     echo '
-                    <label>Sesja prywatna: <input type="checkbox" name="private_session"></label>
-                    <input type="text" name="game_pass" placeholder="hasło" class="game_pass" disabled>';
+                    <label class="private_label">Sesja prywatna: <input type="checkbox" name="private_session"></label>
+                    <label class="pass_label">Hasło: <input type="text" name="game_pass" class="game_pass" disabled></label>';
                 } else {
                     $session = $_SESSION['wantedSession'];
                     $isPrivate = $connect->query("SELECT * FROM session WHERE id_session=$session")->fetch_assoc();
                     $test = $isPrivate['game_password'];
-                    // echo "<h1>".$test."</h1>";
                     if($isPrivate['game_password']!=""){
-                        echo 'Hasło: <input type="text" name="game_pass_klient" placeholder="hasło" class="game_pass_klient" required>';
+                        echo '<label class="private_label">Hasło: <input type="text" name="game_pass_klient" placeholder="hasło" class="game_pass_klient" required></label>';
                     }
                 }
                 echo '
@@ -98,20 +96,16 @@
     <script src="js/ajax.js"></script>
 
 ';
-
-        }
-         else {
+        } else {
             header("Location:./multi.php");
         }
-
-
     ?>
 <script>
     $('input[name=private_session]').change(function() {
         if (this.checked) {
-            $('.game_pass').css('display','block').prop('disabled',false).prop('required',true);
+            $('.game_pass').prop('disabled',false).prop('required',true).parent().css('display','block');
         } else {
-            $('.game_pass').css('display','none').prop('disabled',true).prop('required',false).val('');
+            $('.game_pass').prop('disabled',true).prop('required',false).val('').parent().css('display','none');
         }
     });
 
@@ -121,7 +115,4 @@
 </script>
 
 </body>
-
-
-
 </html>

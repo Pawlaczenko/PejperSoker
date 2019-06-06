@@ -393,6 +393,15 @@ canvas {
     text-align: center;
 }
 
-.game_pass {
+.pass_label {
     display: none;
+}
+
+.private_label {
+    width: auto;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
 }
