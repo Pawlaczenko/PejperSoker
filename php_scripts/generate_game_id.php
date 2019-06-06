@@ -45,20 +45,15 @@
                         exit;
                     }
                 }
+                unset($_SESSION["wantedSession"]);
                 $connect->query($join);
                 $_SESSION['session_id'] = $session;
-                unset($_SESSION["wantedSession"]);
                 echo false;
-                // $result = $connect->query(sprintf("UPDATE session SET user2=$logged_user_id, player2_color=$color WHERE id_session = $session",
-                // mysqli_real_escape_string($connect,  $logged_user_id),
-                // mysqli_real_escape_string($connect,$session);
-            // ));
             }
         }
         $connect->close();
     } else {
         echo 'kick';
-        //header("Location:../multi.html");
     }
     
 

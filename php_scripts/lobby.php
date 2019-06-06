@@ -53,8 +53,6 @@ EOT;
             <a href="./join_to_game.html" class="type button">Dołącz do gry</a><br>
         </div>
     </div>
-   
-    
     <script src="../js/ajax.js"></script>
 </body>
 </html>

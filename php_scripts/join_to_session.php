@@ -27,7 +27,8 @@ else
         $session = $result->fetch_assoc();
         $_SESSION['wantedSession'] = $session['id_session'];
 
-        $_SESSION['player'] = TRUE; //klient
+        $_SESSION['player'] = 1; //klient
+        $_SESSION['action'] = "stay";
         echo true;
     }
 }

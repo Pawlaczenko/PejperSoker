@@ -1,14 +1,16 @@
 <?php
 session_start();
-require_once "./utilities_php/connect.php";
-require_once "./utilities_php/usefull_function.php";
+require_once "./connect.php";
+require_once "./usefull_function.php";
 
 $connect = new mysqli($host, $db_user , $db_password,$db_name);
 if ($connect->errno) {
     // echo "wystapil blad" . $connect->errno . "----" . $connect->error;
-} else {
-    $_SESSION['player'] = 0;
-    $_SESSION['action'] = "stay";
+    echo false;
+} 
+else
+{
+    echo print_r($_SESSION, TRUE);
 }
 
 ?>

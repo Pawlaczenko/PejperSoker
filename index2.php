@@ -11,16 +11,17 @@
 
 <body>
     <?php
-    
+   
     require_once "./php_scripts/utilities_php/connect.php";
     require_once "./php_scripts/utilities_php/usefull_function.php";
     $connect = new mysqli($host, $db_user , $db_password,$db_name);
 
     session_start();
+    // echo '<pre>' . print_r($_SESSION, TRUE) . '</pre>';
+        if((isset($_SESSION['is__logged']))&&($_SESSION['is__logged']==true)){
 
-        if((isset($_SESSION['is__logged']))&&($_SESSION['is__logged']==true))
-        {
             $player = $_SESSION['player'];
+
             echo '
             <div class="loader alert">
         <img src="assets/img/loader.gif">
@@ -57,7 +58,7 @@
                 } else {
                     $session = $_SESSION['wantedSession'];
                     $isPrivate = $connect->query("SELECT * FROM session WHERE id_session=$session")->fetch_assoc();
-                    if(!is_null($isPrivate['game_password'])){
+                    if(empty($isPrivate['game_password'])==false){
                         echo 'Hasło: <input type="text" name="game_pass_klient" placeholder="hasło" class="game_pass_klient" required>';
                     }
                 }
@@ -86,11 +87,9 @@
     
 ';
 
-        }
-         else {
+        } else {
             header("Location:./multi.html");
         }
-    
     
     ?>
 <script>
@@ -98,12 +97,22 @@
         if (this.checked) {
             $('.game_pass').css('display','block').prop('disabled',false).prop('required',true);
         } else {
-            $('.game_pass').css('display','none').prop('disabled',true).prop('required',false);
+            $('.game_pass').css('display','none').prop('disabled',true).prop('required',false).val('');
         }
     });
+    
+    $.ajax({
+        url: 'php_scripts/checkAction.php',
+        type: 'POST',
+        success: function(msg){
+            if(msg=="abort"){
+                window.location.href = "multi.html";
+            }
+        },
+        error: function(err){
+            console.log(err);
+        }
+    })
 </script>    
 </body>
-
-
-<!-- <script src="js/ajax_check_is_session.js"></script>/ -->
 </html>

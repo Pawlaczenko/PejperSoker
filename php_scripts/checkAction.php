@@ -7,8 +7,11 @@ $connect = new mysqli($host, $db_user , $db_password,$db_name);
 if ($connect->errno) {
     // echo "wystapil blad" . $connect->errno . "----" . $connect->error;
 } else {
-    $_SESSION['player'] = 0;
-    $_SESSION['action'] = "stay";
+    if ($_SESSION['action'] == "run"){
+        echo 'abort';
+    }else {
+        echo 'stay';
+    }
 }
 
 ?>
