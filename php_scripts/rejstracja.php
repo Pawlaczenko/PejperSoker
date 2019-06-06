@@ -10,7 +10,7 @@
 <body>
     <?php
     require_once "./utilities_php/connect.php";
-    $connect = @new mysqli($db_location, $db_user , $db_password,$db_name); 
+    $connect = new mysqli($host, $db_user , $db_password,$db_name); 
     if ($connect->errno) {
         echo "wystapil blad" . $connect->errno . "----" . $connect->error;
     } 
@@ -26,20 +26,22 @@
         $howManyLogins = $result->num_rows;
         if ($howManyLogins > 0) {
             
-            echo "pof=dany nik juz istnieje";
+            echo "podany user juz istnije wybierz inny login";
+            // header("Location:../rejstracja.html");
         }
         else
         {
             if ($haslo1 == $haslo2)
             {
                 $hash = password_hash($haslo1,PASSWORD_DEFAULT);
-                echo $hash;
                 $query_add = "INSERT INTO users(login,password,is_logged) VALUES('$login','$hash',0)";
                 $connect->query($query_add);
+                header('Location: ../multi.html');
             }
             else 
             {
                 echo "haslo różnia sie od siebie";
+               
             }
     
             

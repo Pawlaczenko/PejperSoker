@@ -1,20 +1,12 @@
-<html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
-<body>
-    
 <?php
+
 session_start();
 require_once "./utilities_php/connect.php";
 require_once "./utilities_php/usefull_function.php";
 
- $connect = @new mysqli($host, $db_user , $db_password,$db_name);
+ $connect = new mysqli($host, $db_user , $db_password,$db_name);
  if ($connect->errno) {
-     echo "wystapil blad" . $connect->errno . "----" . $connect->error;
+     //echo "wystapil blad" . $connect->errno . "----" . $connect->error;
  } 
  else 
  {
@@ -34,30 +26,36 @@ require_once "./utilities_php/usefull_function.php";
                    $hash_z_bazy = $row['password'];
                    $user_id  = $row['id_user'];
 
-                    
                    if (password_verify($haslo,$row['password']))
                    {
-                      echo "logowanie ... ";
-                      $_SESSION['is__logged'] = true;
-                      $_SESSION['login'] = $login;
-                      $_SESSION['id'] = $user_id;
-                      $result->free_result();
-                      update_logged_flag($connect,$_SESSION['login'],1);
-                      header('Location:lobby.php');
-   
+                       if(check_is_logged($connect,$login))
+                       {
+                            echo "urzytkowkik jest juz zalogowany na innym komputerze";
+                       }
+                       else
+                       {
+                            //echo "logowanie ... ";
+                            $_SESSION['is__logged'] = true;
+                            $_SESSION['login'] = $login;
+                            $_SESSION['id'] = $user_id;
+                            $result->free_result();
+                            
+                            ping($connect,$_SESSION['login']);
+                            
+                            // update_logged_flag($connect,$_SESSION['login'],0);//! is logged is uncorrect
+                            header('Location:lobby.php');
+                            echo "logged";
+                       }
+                       
                    }
                    else
                    {
-                       echo "podano złe haslo";
+                       echo "pass";
                    }
-                       
-               
-              
-   
                }
                else
                {
-                   echo "nie ma takiego usera w bazie";
+                   echo "login";
                }
            }
    }
@@ -66,5 +64,3 @@ require_once "./utilities_php/usefull_function.php";
 $connect->close();
 ?>
     
-</body>
-</html>
