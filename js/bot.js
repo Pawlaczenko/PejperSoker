@@ -113,7 +113,7 @@ function Game() {
         this.canvas.addEventListener('click', this.clickEvent);
 
         $('.name[data-id="0"]').html(`${players[0].name}`).css("background-color", `${players[0].color}`);
-        $('.name[data-id="1"]').html(`${players[1].name}`).css("background-color", `${players[1].color}`);
+        $('.name[data-id="1"]').html(`${players[1].name}`).css("background-color", `${players[1].color}`).addClass('opponent');
 
         this.botGame = false;
         this.gameOn = true;
@@ -123,10 +123,18 @@ function Game() {
 
     this.gameEnd = function (bool) {
         this.gameOn = false;
-        if (this.player == true && bool)
-            console.log("Wygrywa gracz czerwony");
-        else if (bool)
-            console.log("Wygrywa gracz niebieski");
+        if (bool){
+            $('.endgame').css({
+                'display':'flex',
+                'background-image':'url("assets/img/win.gif")'
+            }).find('h1').html('Wygrana');
+        }
+        else{
+            $('.endgame').css({
+                'display':'flex',
+                'background-image':'url("assets/img/loose.gif")'
+            }).find('h1').html('Przegrana');
+        }
     }
 
     //* Metody do eventów
@@ -175,7 +183,7 @@ function Game() {
                                 if (graph.get(`${x}_${y}`).wallValue == 0)
                                     wallHit = true;
                                 this.ctx.fillStyle = "blue";
-                                this.drawPoint(x, y,1)
+                                this.drawPoint(x, y, 1)
                                 this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
                                 this.ctx.putImageData(this.myImgData, 0, 0);
                                 this.ctx.strokeStyle = this.color;
@@ -185,7 +193,7 @@ function Game() {
 
                                 if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == this.columns) {
                                     console.log("Wygrywa gracz niebieski");
-                                    this.gameEnd(false);
+                                    this.gameEnd(true);
                                     return;
                                 }
 
@@ -301,7 +309,7 @@ function Game() {
             clearInterval(stopper);
             if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == this.columns) {
                 console.log("Wygrywa gracz niebieski");
-                this.gameEnd(false);
+                this.gameEnd(true);
                 return;
             }
 

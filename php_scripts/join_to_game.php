@@ -14,6 +14,19 @@
             <img src="../assets/img/Logo.png" alt="logo">
         </div>
     </header>
+    <?php
+        session_start();
+        $name = $_SESSION['login'];
+echo <<< EOT
+    
+    <div class="logged_user">
+        <span class="user_login">$name</span>
+        <a href="utilities_php/logout.php" class="logout">Wyloguj się</a>
+    </div>
+    
+EOT;
+
+    ?>
     <div class="menu">
         <h1 class="paper_h1">Dołącz do gry</h1>
         <table id="rooms">
@@ -44,5 +57,6 @@
     </div>
 <script src="../js/ajax.js"></script>
 <script src="../js/rooms.js"></script>
+
 </body>
 </html>

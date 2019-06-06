@@ -6,5 +6,5 @@ $connect = new mysqli($host, $db_user , $db_password,$db_name);
 update_logged_flag($connect,$_SESSION['login'],0);
 session_unset();
 $connect->close();
-header('Location: ../../multi.html');
+header('Location: ../../multi.php');
 ?>

@@ -18,14 +18,16 @@ else
     $row = $result->fetch_assoc();
     $session_id = $row['id_session'];
     
-    if ($_SESSION['session_id'] != null){
-        unset($_SESSION['player']);
-        unset($_SESSION['session_id']);
-        $_SESSION['action'] = "run";
+    if (isset($_SESSION['session_id'])){
+        //unset($_SESSION["player"]); //! to jest chyba nie potzrebne ~Dawid
+        unset($_SESSION["session_id"]);
 
         $query1 ="DELETE FROM session WHERE id_session = $session_id";
         $connect->query($query1);
     }
+
+    
+
     
     // $connect->query("UPDATE session SET game_data=$session_id WHERE id_session=39 ");
 }

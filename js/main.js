@@ -154,6 +154,7 @@ function Game() {
 
         $('.name[data-id="0"]').html(`${players[0].name}`).css("background-color", `${players[0].color}`);
         $('.name[data-id="1"]').html(`${players[1].name}`).css("background-color", `${players[1].color}`);
+        $(`.name[data-id="${+(!personalBool)}"]`).addClass('opponent');
         if (personalBool == false) {
             player = true;
             this.enemyGate = this.columns;
@@ -174,7 +175,18 @@ function Game() {
     this.gameEnd = function (bool) {
         this.gameOn = false;
         dataForSend.gameStatus = bool
-        changeRound();
+        if(bool==personalBool){
+            $('.endgame').css({
+                'display':'flex',
+                'background-image':'url("assets/img/win.gif")'
+            }).find('h1').html('Wygrana');
+        } else {
+            $('.endgame').css({
+                'display':'flex',
+                'background-image':'url("assets/img/loose.gif")'
+            }).find('h1').html('Przegrana');
+        }
+        changeRound();changeRound
         console.log("Wygrywa " + players[+bool].name);
     }
 

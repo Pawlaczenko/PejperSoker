@@ -21,7 +21,7 @@ function ping($connect,$user_login)
 
 function check_is_logged($connect,$login)
 {
-    $max_ping_time_answer = 1 ;// w sekundach
+    $max_ping_time_answer = 5 ;// w sekundach
     $query_check_ping = "SELECT date_last_login FROM users WHERE login = '$login';";
     $result = $connect->query($query_check_ping);
     $row = $result->fetch_assoc();

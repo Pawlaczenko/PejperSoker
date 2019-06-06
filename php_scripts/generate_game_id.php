@@ -15,7 +15,7 @@
             $color = $_POST['color'];
             $logged_user_id = $_SESSION['id'];
             if(!$player) {
-                $query_create_session = "INSERT INTO session(user1,user2,game_data,player1_color,player2_color,whose_move) VALUES ('$logged_user_id',-1,'json_string_data',$color,-1,0)";
+                $query_create_session = "INSERT INTO session(user1,user2,game_data,player1_color,player2_color,whose_move) VALUES ('$logged_user_id',-1,'',$color,-1,0)";
                 $connect->query($query_create_session);
 
                 // pozyskiwanie id sesji po to aby wygenerowac id gry 
@@ -27,6 +27,7 @@
 
                 if(isset($_POST['pass'])){
                     $pass = $_POST['pass'];
+                    $pass = htmlentities($pass);
                     $connect->query("UPDATE session SET game_password='$pass' WHERE id_session=$session_id");
                 }
                 echo "-";
@@ -45,15 +46,23 @@
                         exit;
                     }
                 }
-                unset($_SESSION["wantedSession"]);
                 $connect->query($join);
                 $_SESSION['session_id'] = $session;
+                unset($_SESSION["wantedSession"]); 
                 echo false;
+                // $result = $connect->query(sprintf("UPDATE session SET user2=$logged_user_id, player2_color=$color WHERE id_session = $session",
+                // mysqli_real_escape_string($connect,  $logged_user_id),
+                // mysqli_real_escape_string($connect,$session);
+            // ));
             }
+            $_SESSION['protection_f5'] = true;
+           
         }
+
         $connect->close();
     } else {
         echo 'kick';
+        //header("Location:../multi.html");
     }
     
 

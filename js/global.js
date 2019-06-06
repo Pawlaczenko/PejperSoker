@@ -426,6 +426,7 @@ function genereteCreator(lock) {
         url:'php_scripts/checkColors.php',
         type:'POST',
         success: function(results) {
+            console.log("jestem w kolorkach" + results);
             colors.forEach(function(color,i){
                 $(".creator .colors").append(`
                     <div class="color">
@@ -434,6 +435,7 @@ function genereteCreator(lock) {
                     </div>
                 `);
                 if(results==i){
+                    console.log('aaaaa');
                     $('.color #id'+i).prop('disabled', true);
                 }
                 $('.color #id'+i+' + label').css("background-color", colors[i]);
