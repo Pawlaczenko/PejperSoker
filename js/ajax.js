@@ -1,6 +1,6 @@
 var interval_is_join_player; //interval
 var interval_check_is_session;
-function getGameId(color,pass,client_pass) {
+function getGameId(color, pass, client_pass) {
     $.ajax({
         url: 'php_scripts/generate_game_id.php',
         type: 'POST',
@@ -15,10 +15,10 @@ function getGameId(color,pass,client_pass) {
                 $('.creator--box').css('display', 'none');
                 fillObjects();
                 return;
-            } else if(results === "kick") {
+            } else if (results === "kick") {
                 $('.creator--box').css('display', 'none');
-                window.location.href = "./multi.html";
-            } else if(results == "wrong") {
+                window.location.href = "./multi.php";
+            } else if (results == "wrong") {
                 alert("Niepoprawne hasło");
                 return;
             }
@@ -135,12 +135,12 @@ $("#creator").submit(function (e) {
     let color = $(".colorInput[name=color]:checked").val();
     let pass = $(".game_pass").val();
     let client_pass;
-    if(pass == undefined){ //tylko dla klienta
+    if (pass == undefined) { //tylko dla klienta
         client_pass = $(".game_pass_klient").val();
         console.log("tylko klinet");
     }
     e.preventDefault();
-    getGameId(color,pass,client_pass);
+    getGameId(color, pass, client_pass);
 });
 
 // $("#join_form").submit(function (e) {
@@ -150,8 +150,8 @@ $("#creator").submit(function (e) {
 //     //joinTheGame(game_id);
 // });
 
-$('body').on('click','.join_button',function(e){
-    let game_id =$(this).prev().val();
+$('body').on('click', '.join_button', function (e) {
+    let game_id = $(this).prev().val();
     joinTheGame(game_id);
 })
 
@@ -180,7 +180,7 @@ $(window).on('unload', function () {
     navigator.sendBeacon('php_scripts/delete_session.php', fd);
 });
 
-function showSession(){
+function showSession() {
     $.ajax({
         url: 'php_scripts/utilities_php/showSession.php',
         type: 'POST',
@@ -190,14 +190,14 @@ function showSession(){
     });
 }
 
-$(window).keypress(function(e) {
+$(window).keypress(function (e) {
     showSession();
 });
 
 // $('#login_form').submit(function(e){
 //     e.preventDefault();
 //     $.ajax({
-//         url: 'php_scripts/logowanie.php', 
+//         url: 'php_scripts/logowanie.php',
 //         type: 'post',
 //         data: $('#login_form').serialize(),
 //         success: function(res) {

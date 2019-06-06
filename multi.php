@@ -1,9 +1,15 @@
+<?php
+
+session_start();
+
+?>
+
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,700&display=swap&subset=latin-ext" rel="stylesheet"> 
+    <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,700&display=swap&subset=latin-ext" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <link rel="stylesheet" href="assets/styles/style.css">
     <title>Document</title>
@@ -20,9 +26,10 @@
         <form action="./php_scripts/logowanie.php" method="POST" class="login_form" id="login_form">
             <label>LOGIN: <input name="login" type="text" required></label>
             <label>HASŁO: <input name="password"type="password" required></label>
+            <?php if(ISSET($_SESSION['e_logowanie'])) echo "<div class='error'>".$_SESSION['e_logowanie']."</div>"; unset($_SESSION['e_logowanie'])?>
             <input type="submit" value="ZALOGUJ" class="button login_button">
         </form>
-        <h3>Nie masz konta? Zarejstruj się <a href="./rejstracja.html">tutaj</a></h3>  
+        <h3>Nie masz konta? Zarejstruj się <a href="./rejstracja.php">tutaj</a></h3>
     </div>
 </body>
 </html>
