@@ -11,7 +11,7 @@
 
 <body>
     <?php
-    
+
     require_once "./php_scripts/utilities_php/connect.php";
     require_once "./php_scripts/utilities_php/usefull_function.php";
     $connect = new mysqli($host, $db_user , $db_password,$db_name);
@@ -21,7 +21,7 @@
         if($_SESSION['protection_f5'])
         {
             echo "test";
-            header("Location: multi.html");
+            header("Location: multi.php");
             exit;
         }
         if(check_is_session($connect,$_SESSION['id']))
@@ -58,14 +58,14 @@
     <div class="creator--box alert">
         <div class="creator">
             <h1>Stwórz postać</h1>
-            <form method="POST" id="creator">  
+            <form method="POST" id="creator">
                 <h3>Wybierz kolor</h3>
                 <div class="colors">
-    
+
                 </div>
                 ';
                 if(!$player) {
-                    
+
                     echo '
                     <label>Sesja prywatna: <input type="checkbox" name="private_session"></label>
                     <input type="text" name="game_pass" placeholder="hasło" class="game_pass" disabled>';
@@ -101,19 +101,19 @@
         </div>
     </header>
     <div id="board"></div>
-    
+
     <script src="js/global.js"></script>
     <script src="js/main.js"></script>
     <script src="js/ajax.js"></script>
-    
+
 ';
 
         }
          else {
-            header("Location:./multi.html");
+            header("Location:./multi.php");
         }
-    
-    
+
+
     ?>
 <script>
     $('input[name=private_session]').change(function() {
@@ -127,8 +127,8 @@
     window.onbeforeunload = function(e) {
         return 'Czy napewno chcesz wyjść?';
     };
-</script>   
- 
+</script>
+
 </body>
 
 
