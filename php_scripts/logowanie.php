@@ -28,12 +28,7 @@ require_once "./utilities_php/usefull_function.php";
 
                    if (password_verify($haslo,$row['password']))
                    {
-                       if(check_is_logged($connect,$login))
-                       {
-                            echo "urzytkowkik jest juz zalogowany na innym komputerze";
-                       }
-                       else
-                       {
+                       
                             //echo "logowanie ... ";
                             $_SESSION['is__logged'] = true;
                             $_SESSION['login'] = $login;
@@ -45,7 +40,7 @@ require_once "./utilities_php/usefull_function.php";
                             // update_logged_flag($connect,$_SESSION['login'],0);//! is logged is uncorrect
                             header('Location:lobby.php');
                             echo "logged";
-                       }
+                       
                        
                    }
                    else
