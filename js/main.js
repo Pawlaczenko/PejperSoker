@@ -3,6 +3,9 @@ var personalBool; //różny dla 2 graczy
 var move_interval;
 var player;
 let counterShrek = 0;
+let messanges = ['<span class="subHead"><i>"To inteligencja wygrywa wojny, a nie brutalna siła."</i></span>', '<span class="subHead"><i>"Trzeba wiedzieć, kiedy się poddać i żreć swoje gówno z godnością."</i></span>'];
+console.log(messanges[0]);
+console.log(messanges[1]);
 
 let dataForSend = { moveArray: [], gameStatus: -1 };
 
@@ -118,8 +121,10 @@ function Game() {
             clearInterval(stopper);
             if (state != -1) {
                 this.gameOn = false;
-                this.gameEnd(state)
+                (state == personalBool) ? this.gameEnd(state, messanges[0]) : this.gameEnd(state, messanges[1]);
             }
+            $(`.name[data-id="${+personalBool}"]`).toggleClass('active');
+            $(`.name[data-id="${+(!personalBool)}"]`).toggleClass('active');
             return;
         }
     }
@@ -152,15 +157,16 @@ function Game() {
         this.enemyGate;
         this.ownGate;
 
-        $('.name[data-id="0"]').html(`${players[0].name}`).css("background-color", `${players[0].color}`);
+        $('.name[data-id="0"]').html(`${players[0].name}`).css("background-color", `${players[0].color}`).addClass('active');
         $('.name[data-id="1"]').html(`${players[1].name}`).css("background-color", `${players[1].color}`);
+        $(`.name[data-id="${+(!personalBool)}"]`).addClass('opponent');
         if (personalBool == false) {
             player = true;
             this.enemyGate = this.columns;
             this.ownGate = 0;
         }
         else {
-            console.log('osioł');
+            console.log('jestem klientem');
             player = false;
             this.enemyGate = 0;
             this.ownGate = this.columns;
@@ -171,13 +177,34 @@ function Game() {
         this.canvas.addEventListener('click', this.clickEvent);
     }
 
-    this.gameEnd = function (bool) {
+    this.gameEnd = function (bool, msg) {
         this.gameOn = false;
         dataForSend.gameStatus = bool
-        if (dataForSend.moveArray.length > 0) {
-            changeRound();
+        if (bool == personalBool) {
+            $('.endgame').css({
+                'display': 'flex',
+                'background-image': 'url("assets/img/win.gif")'
+            }).find('h1').html('Wygrana' + msg);
+        } else {
+            $('.endgame').css({
+                'display': 'flex',
+                'background-image': 'url("assets/img/loose.gif")'
+            }).find('h1').html('Przegrana' + msg);
         }
-        console.log("Wygrywa " + players[+bool].name);
+        changeRound();
+        clearInterval(move_interval);
+
+        $.ajax({
+            url: 'php_scripts/quit.php',
+            method: 'POST',
+            success: function (msg) {
+                console.log(msg);
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+
     }
 
     //* Metody do eventów
@@ -242,12 +269,12 @@ function Game() {
                                 this.loadBoardState();
 
                                 if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == this.enemyGate) {
-                                    this.gameEnd(personalBool);
+                                    this.gameEnd(personalBool, messanges[0]);
                                     // return;
                                 }
 
                                 if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == this.ownGate) {
-                                    this.gameEnd(!personalBool);
+                                    this.gameEnd(!personalBool, messanges[1]);
                                     // return;
                                 }
                                 if (!wallHit) {
@@ -255,7 +282,7 @@ function Game() {
                                 }
                             }
                             if (graph.get(`${this.curPoint.x}_${this.curPoint.y}`).out.size == 0) {
-                                this.gameEnd(!personalBool);
+                                this.gameEnd(!personalBool, messanges[1]);
                             }
                         }
                     }
@@ -304,9 +331,6 @@ function Point(x, y) {
 }
 
 function changeRound() {
-    $('.name').each(function (i) {
-        $(this).toggleClass('active');
-    }); //działa lokalnie, do zmiany przy grze online
     let json = JSON.stringify(dataForSend);
     dataForSend.moveArray = [];
     counterShrek = 0;
@@ -318,7 +342,9 @@ function changeRound() {
         },
         success: function (result) {
             game.loadBoardState();
-            console.log(result + " sendData succes");
+
+            $(`.name[data-id="${+personalBool}"]`).toggleClass('active');
+            $(`.name[data-id="${+(!personalBool)}"]`).toggleClass('active');
             if (dataForSend.gameStatus == -1) {
                 move_interval = setInterval(start_check_for_round, 500);
             }

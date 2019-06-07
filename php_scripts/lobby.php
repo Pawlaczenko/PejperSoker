@@ -59,7 +59,7 @@ EOT;
         <h1 class="paper_h1">Tyb multiplayer</h1>
         <div class="buttons--box">
             <a href="../index2.php" class="type button" id="createGame">Stwórz grę</a>
-            <a href="./join_to_game.html" class="type button">Dołącz do gry</a><br>
+            <a href="./join_to_game.php" class="type button">Dołącz do gry</a><br>
         </div>
     </div>
 
