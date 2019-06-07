@@ -24,7 +24,7 @@ function getGameId(color, pass, client_pass) {
             }
             $('.creator--box').css('display', 'none');
             $('.loader').css('display', 'flex');
-            interval_check_is_session = setInterval(simple_check, 200);
+            // interval_check_is_session = setInterval(simple_check, 200);
             interval_is_join_player = setInterval(listenForPlayers, 1000);
         },
         error: function (r) {
@@ -54,16 +54,16 @@ function fillObjects() {
     })
 }
 
-function simple_check() {
-    jQuery.ajax({
-        url: 'php_scripts/utilities_php/check_session.php',
-        type: 'POST',
-        success: function (results) {
-            // console.log('check  interveal');
-            // console.log(results); //! obsługa valcovera
-        }
-    });
-}
+// function simple_check() {
+//     jQuery.ajax({
+//         url: 'php_scripts/utilities_php/check_session.php',
+//         type: 'POST',
+//         success: function (results) {
+//             // console.log('check  interveal');
+//             // console.log(results); //! obsługa valcovera
+//         }
+//     });
+// }
 
 function listenForPlayers() {
     $.ajax({

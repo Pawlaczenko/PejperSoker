@@ -174,7 +174,9 @@ function Game() {
     this.gameEnd = function (bool) {
         this.gameOn = false;
         dataForSend.gameStatus = bool
-        changeRound();
+        if (dataForSend.moveArray.length > 0) {
+            changeRound();
+        }
         console.log("Wygrywa " + players[+bool].name);
     }
 
@@ -315,6 +317,7 @@ function changeRound() {
             json: json
         },
         success: function (result) {
+            game.loadBoardState();
             console.log(result + " sendData succes");
             if (dataForSend.gameStatus == -1) {
                 move_interval = setInterval(start_check_for_round, 500);
