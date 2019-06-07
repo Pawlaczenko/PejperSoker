@@ -86,21 +86,24 @@ function listenForPlayers() {
 }
 
 function start_check_for_round() {
-    console.log('shrek');
+    console.log('Nasłuchiwanie, czy mam ruch');
     $.ajax({
         url: 'php_scripts/utilities_php/check_for_round.php',
         type: 'POST',
         success: (results) => {
             let res = JSON.parse(results);
             let move = Boolean(Number(res.move));
-            let data = JSON.parse(res.data);
-            console.log(data);
+            let data = res.data; 
+            if(data.length>1){
+                data = JSON.parse(res.data);
+            }
+            //console.log(data);
+            if (data == null){
+                game.gameEnd(personalBool,'<span class="subHead">Przeciwnik opóścił grę.</span>');
+            }
             if (personalBool == move) {
                 clearInterval(move_interval);
                 let draw = setInterval(() => { game.draw(draw, data.moveArray, data.gameStatus) }, 500);
-                $('.name').each(function (i) {
-                    $(this).toggleClass('active');
-                });
             }
         },
         error: function (err) {
@@ -108,8 +111,6 @@ function start_check_for_round() {
         }
     })
 }
-
-
 
 function joinTheGame(gameid) {
     $.ajax({

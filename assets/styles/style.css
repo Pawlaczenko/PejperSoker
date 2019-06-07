@@ -195,6 +195,18 @@ canvas {
     cursor: pointer;
 }
 
+.message {
+    text-align: center;
+}
+
+.subHead {
+    display: block;
+    font-size: 23px;
+    font-weight: lighter;
+    text-align: center;
+    text-transform: none !important;
+}
+
 .loader {
     display: none;
     width: 100%;
