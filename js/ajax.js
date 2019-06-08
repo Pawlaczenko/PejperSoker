@@ -94,12 +94,13 @@ function start_check_for_round() {
             let res = JSON.parse(results);
             let move = Boolean(Number(res.move));
             let data = res.data;
-            if (data.length > 1) {
-                data = JSON.parse(res.data);
-            }
-            //console.log(data);
+
             if (data == null) {
                 game.gameEnd(personalBool, '<span class="subHead">Przeciwnik opuścił grę.</span>');
+                return;
+            }
+            if (data.length > 1) {
+                data = JSON.parse(res.data);
             }
             if (personalBool == move) {
                 clearInterval(move_interval);
