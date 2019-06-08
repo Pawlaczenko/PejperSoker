@@ -42,7 +42,7 @@ function Game() {
         this.noLineWidth = 5;
 
         this.scale = 147;
-        
+
         this.ctx.fillStyle = "#84b369";
         this.fillWidth = this.canvasWidth / this.columnsNumber + this.marginXY;
         this.ctx.fillRect(this.fillWidth, this.marginXY, this.canvasWidth - 2 * this.fillWidth, this.canvasHeight - this.marginXY * 2);
@@ -80,7 +80,7 @@ function Game() {
         graph.get(`${this.curPoint.x}_${this.curPoint.y}`).wallValue = 0;
         this.myImgData = this.ctx.getImageData(0, 0, this.canvasWidth, this.canvasHeight);
         this.curPoint = new Point(this.rows / 2, this.columns / 2)
-        this.drawPoint(this.curPoint.x, this.curPoint.y,1);
+        this.drawPoint(this.curPoint.x, this.curPoint.y, 1);
         this.gameOn = false;
 
     }
@@ -99,7 +99,7 @@ function Game() {
         this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
         this.ctx.putImageData(this.myImgData, 0, 0);
         this.ctx.fillStyle = "black";
-        this.drawPoint(this.curPoint.x, this.curPoint.y,1);
+        this.drawPoint(this.curPoint.x, this.curPoint.y, 1);
     }
 
     //* Metody gry
@@ -113,7 +113,7 @@ function Game() {
         this.canvas.addEventListener('click', this.clickEvent);
 
         $('.name[data-id="0"]').html(`${players[0].name}`).css("background-color", `${players[0].color}`);
-        $('.name[data-id="1"]').html(`${players[1].name}`).css("background-color", `${players[1].color}`);
+        $('.name[data-id="1"]').html(`${players[1].name}`).css("background-color", `${players[1].color}`).addClass('opponent');
 
         this.botGame = false;
         this.gameOn = true;
@@ -123,14 +123,17 @@ function Game() {
 
     this.gameEnd = function (bool) {
         this.gameOn = false;
-        if (this.player == true && bool){
+        if (bool) {
             $('.endgame').css({
-                'display':'flex',
-                'background-image':'url("../img/loose.gif")'
-            }).find('h1').html('Fucking looser');
+                'display': 'flex',
+                'background-image': 'url("assets/img/win.gif")'
+            }).find('h1').html('Wygrana');
         }
-        else if (bool) {
-            //nie bot
+        else {
+            $('.endgame').css({
+                'display': 'flex',
+                'background-image': 'url("assets/img/loose.gif")'
+            }).find('h1').html('Przegrana');
         }
     }
 
@@ -156,7 +159,7 @@ function Game() {
                             if (graph.get(`${this.curPoint.x}_${this.curPoint.y}`).out.has(`${x}_${y}`)) {
                                 this.loadBoardState();
                                 this.ctx.fillStyle = this.color;
-                                this.drawPoint(x, y,.5);
+                                this.drawPoint(x, y, .5);
                             }
                 }
             }
@@ -302,7 +305,7 @@ function Game() {
 
 
         if (this.con == (path.length)) {
-           
+
             clearInterval(stopper);
             if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == this.columns) {
                 console.log("Wygrywa gracz niebieski");
@@ -328,13 +331,13 @@ function Point(x, y) {
     this.y = y;
 }
 
-$("#creator").submit(function(e){
+$("#creator").submit(function (e) {
     e.preventDefault();
-    $(".creator--box").css("display","none");
+    $(".creator--box").css("display", "none");
     let color = $(".colorInput[name=color]:checked").val();
     let name = $("#name").val();
-    players[0]=new Player(name,colors[color]);
-    players[1]=new Player("Shrek",'green');
+    players[0] = new Player(name, colors[color]);
+    players[1] = new Player("Shrek", 'green');
 
     let game = new Game();
     game.gamePrepare();

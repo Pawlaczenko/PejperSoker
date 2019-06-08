@@ -63,7 +63,7 @@
         if($allOK == true)
         {
             $hash = password_hash($haslo1,PASSWORD_DEFAULT);
-            $query_add = "INSERT INTO users(login,password,is_logged) VALUES('$login','$hash',0)";
+            $query_add = "INSERT INTO users(login,password) VALUES('$login','$hash')";
             $connect->query($query_add);
             header('Location: ../multi.php');
         }

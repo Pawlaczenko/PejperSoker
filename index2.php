@@ -18,15 +18,16 @@
 
     session_start();
 
-        if($_SESSION['protection_f5'])
-        {
+        if($_SESSION['protection_f5']){
             echo "test";
             header("Location: multi.php");
             exit;
         }
         if(check_is_session($connect,$_SESSION['id']))
         {
-            echo "urzytkownik uczestniczy juz w innnej sesji";
+            echo "<div class='alert'<h1 style='text-align: center; font-size: 32px;'>Podany użytkownik jest już zalogowany i uczestniczy w grze.</h1>";
+            echo "<img src='assets/img/spider_man.jpg'>";
+            echo "<a href='multi.php' class='button alert' style='padding:10px;text-transform: uppercase;'>Go back</div>";
             exit;
         }
 
@@ -40,11 +41,6 @@
             <div class="loader alert">
         <img src="assets/img/loader.gif">
         <h1>Waiting for opponent</h1>
-        <!-- <div class="gameid_box">
-            <h2>Game ID: </h2>
-            <span class="game_id"></span>
-            <button class="copy"><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="copy" class="svg-inline--fa fa-copy fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="white" d="M320 448v40c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V120c0-13.255 10.745-24 24-24h72v296c0 30.879 25.121 56 56 56h168zm0-344V0H152c-13.255 0-24 10.745-24 24v368c0 13.255 10.745 24 24 24h272c13.255 0 24-10.745 24-24V128H344c-13.2 0-24-10.8-24-24zm120.971-31.029L375.029 7.029A24 24 0 0 0 358.059 0H352v96h96v-6.059a24 24 0 0 0-7.029-16.97z"></path></svg></button>
-        </div> -->
     </div>
     <div style="display: none;">
         <img src="assets/img/ball.png" alt="ball" id="ball">
@@ -53,7 +49,7 @@
         <h1 class="message">
             FUCKING WINNER <!-- wiadomość z ajaxa -->
         </h1>
-        <button class="endgame--button button">GO BACK</button>
+        <a href="php_scripts/join_to_game.php" class="endgame--button button">GO BACK</a>
     </div>
     <div class="creator--box alert">
         <div class="creator">
@@ -65,22 +61,15 @@
                 </div>
                 ';
                 if(!$player) {
-
                     echo '
-                    <label>Sesja prywatna: <input type="checkbox" name="private_session"></label>
-                    <input type="text" name="game_pass" placeholder="hasło" class="game_pass" disabled>';
+                    <label class="private_label">Sesja prywatna: <input type="checkbox" name="private_session"></label>
+                    <label class="pass_label">Hasło: <input type="text" name="game_pass" class="game_pass" disabled></label>';
                 } else {
-                    // if(!isset( $_SESSION['wantedSession']))
-                    // {
-                    //     header("Location:php_scripts/multi.html");
-                    //     exit;
-                    // }
                     $session = $_SESSION['wantedSession'];
                     $isPrivate = $connect->query("SELECT * FROM session WHERE id_session=$session")->fetch_assoc();
                     $test = $isPrivate['game_password'];
-                    // echo "<h1>".$test."</h1>";
                     if($isPrivate['game_password']!=""){
-                        echo 'Hasło: <input type="text" name="game_pass_klient" placeholder="hasło" class="game_pass_klient" required>';
+                        echo '<label class="private_label">Hasło: <input type="text" name="game_pass_klient" placeholder="hasło" class="game_pass_klient" required></label>';
                     }
                 }
                 echo '
@@ -107,20 +96,16 @@
     <script src="js/ajax.js"></script>
 
 ';
-
-        }
-         else {
+        } else {
             header("Location:./multi.php");
         }
-
-
     ?>
 <script>
     $('input[name=private_session]').change(function() {
         if (this.checked) {
-            $('.game_pass').css('display','block').prop('disabled',false).prop('required',true);
+            $('.game_pass').prop('disabled',false).prop('required',true).parent().css('display','block');
         } else {
-            $('.game_pass').css('display','none').prop('disabled',true).prop('required',false).val('');
+            $('.game_pass').prop('disabled',true).prop('required',false).val('').parent().css('display','none');
         }
     });
 
@@ -130,7 +115,4 @@
 </script>
 
 </body>
-
-
-
 </html>
