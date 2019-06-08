@@ -144,10 +144,11 @@ function Game() {
         this.color = players[+(!currPlayer)].color;
 
         let mousePos = getMousePos(this.canvas, event);
+        mousePos.x = this.boardHeight - mousePos.x
         let przelicznik_na_x = this.canvasWidth / this.boardWidth;
         let przelicznik_na_y = this.canvasHeight / this.boardHeight;
-        let cord_X = mousePos.x * przelicznik_na_x;
-        let cord_Y = mousePos.y * przelicznik_na_y;
+        let cord_X = mousePos.y * przelicznik_na_x;
+        let cord_Y = mousePos.x * przelicznik_na_y;
 
         ///PUNKTY MAPY///
         for (let x = 0; x <= this.rows; x++)
@@ -169,8 +170,9 @@ function Game() {
         if (!this.gameOn) return;
 
         let mousePos = getMousePos(this.canvas, event);
-        let cord_X = mousePos.y * this.canvasWidth / this.boardWidth; //*Tak ma być
-        let cord_Y = mousePos.x * this.canvasHeight / this.boardHeight; //*Tak ma być
+        mousePos.x = this.boardHeight - mousePos.x
+        let cord_X = mousePos.x * this.canvasWidth / this.boardWidth; //*Tak ma być
+        let cord_Y = mousePos.y * this.canvasHeight / this.boardHeight; //*Tak ma być
         let wallHit = false;
 
         for (let x = 0; x <= this.rows; x++) {
