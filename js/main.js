@@ -69,14 +69,27 @@ function Game() {
                     for (const next of graph.get(`${x}_${y}`).out) {
                         if (next == `${x + 1}_${y}` || next == `${x}_${y + 1}`) {
                             this.ctx.lineWidth = this.noLineWidth;
+                            this.ctx.strokeStyle = 'black';
                             this.drawLine(x, y, Number(next.substring(0, 1)), Number(next.substring(2, next.length)));
                         }
                     }
                     if (!(graph.get(`${x}_${y}`).out.has(`${x + 1}_${y}`)) && graph.has(`${x + 1}_${y}`)) {
+                        if((x==3 || x==4)){
+                            if(y==0){
+                                this.ctx.strokeStyle = players[0].color;
+                            }
+                            if(y == 12) {
+                                this.ctx.strokeStyle = players[1].color;
+                            }
+                        } else {
+                            this.ctx.strokeStyle = 'black';
+                        }
+                        
                         this.ctx.lineWidth = this.wallLineWidth;
                         this.drawLine(x, y, x + 1, y);
                     }
                     if (!(graph.get(`${x}_${y}`).out.has(`${x}_${y + 1}`)) && graph.has(`${x}_${y + 1}`)) {
+                        this.ctx.strokeStyle = 'black';
                         this.ctx.lineWidth = this.wallLineWidth;
                         this.drawLine(x, y, x, y + 1);
                     }
