@@ -35,7 +35,7 @@ require_once "./utilities_php/usefull_function.php";
                             $_SESSION['is__logged'] = true;
                             $_SESSION['login'] = $login;
                             $_SESSION['id'] = $user_id;
-                            echo delete_session_with_me($connect,$user_id);
+                            // echo delete_session_with_me($connect,$user_id);
                             $result->free_result();
 
                             ping($connect,$_SESSION['login']);

@@ -28,9 +28,9 @@
 
         $allOK = true;
 
-        if ((strlen($login) < 3) || (strlen($login) > 20)) {
+        if ((strlen($login) < 3) || (strlen($login) > 8)) {
             $allOK = false;
-            $_SESSION['e_login'] = "Login musi posiadać od 3 do 20 znaków!";
+            $_SESSION['e_login'] = "Login musi posiadać od 3 do 8 znaków!";
         }
 
         if (ctype_alnum($login) == false) {

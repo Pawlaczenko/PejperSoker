@@ -97,6 +97,7 @@ function start_check_for_round() {
             //console.log(data);
             if (data == null) {
                 game.gameEnd(personalBool, '<span class="subHead">Przeciwnik opuścił grę.</span>');
+                return;
             }
             if (data.length > 1) {
                 data = JSON.parse(res.data);
