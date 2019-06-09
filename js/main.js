@@ -42,6 +42,12 @@ function Game() {
         this.boardContener.style.height = this.boardHeight;
         this.canvas.width = 1800;
         this.canvas.height = 1210;
+        if (personalBool == 0) {
+            this.canvas.className = "canvasSwap270";
+        }
+        else {
+            this.canvas.className = "canvasSwap90";
+        }
         this.boardContener.appendChild(this.canvas);
         this.ctx = this.canvas.getContext("2d");
     }
@@ -74,12 +80,12 @@ function Game() {
                         }
                     }
                     if (!(graph.get(`${x}_${y}`).out.has(`${x + 1}_${y}`)) && graph.has(`${x + 1}_${y}`)) {
-                        if((x==3 || x==4)){
-                            if(y==0){
+                        if ((x == 3 || x == 4)) {
+                            if (y == 0) {
                                 this.ctx.strokeStyle = players[0].color;
                             }
-                            
-                            if(y == 12) {
+
+                            if (y == 12) {
                                 this.ctx.strokeStyle = players[1].color;
                             }
                         } else {
@@ -126,7 +132,7 @@ function Game() {
         this.drawLine(this.curPoint.x, this.curPoint.y, Number(element.substring(0, 1)), Number(element.substring(2, element.length)));
         this.saveBoardState(Number(element.substring(0, 1)), Number(element.substring(2, element.length)));
         this.loadBoardState();
-        
+
 
         if (counterShrek >= (path.length - 1)) {
             player = true;
@@ -219,10 +225,16 @@ function Game() {
         this.color = players[+personalBool].color;
 
         let mousePos = getMousePos(this.canvas, event);
+        if (personalBool == 0) {
+            mousePos.y = this.boardWidth - mousePos.y;
+        }
+        else {
+            mousePos.x = this.boardHeight - mousePos.x;
+        }
         let przelicznik_na_x = this.canvasWidth / this.boardWidth;
         let przelicznik_na_y = this.canvasHeight / this.boardHeight;
-        let cord_X = mousePos.x * przelicznik_na_x;
-        let cord_Y = mousePos.y * przelicznik_na_y;
+        let cord_X = mousePos.y * przelicznik_na_x;
+        let cord_Y = mousePos.x * przelicznik_na_y;
 
         ///PUNKTY MAPY///
         for (let x = 0; x <= this.rows; x++)
@@ -246,8 +258,14 @@ function Game() {
         }
         this.color = players[+personalBool].color;
         let mousePos = getMousePos(this.canvas, event);
-        let cord_X = mousePos.y * this.canvasWidth / this.boardWidth; //*Tak ma być
-        let cord_Y = mousePos.x * this.canvasHeight / this.boardHeight; //*Tak ma być
+        if (personalBool == 0) {
+            mousePos.y = this.boardWidth - mousePos.y;
+        }
+        else {
+            mousePos.x = this.boardHeight - mousePos.x;
+        }
+        let cord_X = mousePos.x * this.canvasWidth / this.boardWidth; //*Tak ma być
+        let cord_Y = mousePos.y * this.canvasHeight / this.boardHeight; //*Tak ma być
         let wallHit = false;
 
         for (let x = 0; x <= this.rows; x++) {
@@ -352,7 +370,7 @@ function changeRound() {
             if (dataForSend.gameStatus == -1) {
                 move_interval = setInterval(start_check_for_round, 2000);
             }
-            
+
         },
         error: function (er) {
             console.log(er);
