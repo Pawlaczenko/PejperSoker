@@ -12,29 +12,31 @@ function update_logged_flag($connect,$user_login,$flag)
 function ping($connect,$user_login)
 {
     $curr_unix_time = strtotime("now");
-    $result = @$connect->query(sprintf("UPDATE users SET last_ping=%s WHERE login = '%s'",
+    $result = $connect->query(sprintf("UPDATE users SET last_ping=%s WHERE login = '%s'",
         mysqli_real_escape_string($connect,  $curr_unix_time),
         mysqli_real_escape_string($connect,$user_login)
     ));
    
 }
 
-function check_is_logged($connect,$login)
+
+function check_last_ping_user($connect,$id)
 {
-    $max_ping_time_answer = 5 ;// w sekundach
-    $query_check_ping = "SELECT date_last_login FROM users WHERE login = '$login';";
+    $max_ping_time_answer = 15 ;// w sekundach
+    $query_check_ping = "SELECT last_ping FROM users WHERE id_user = '$id';";
     $result = $connect->query($query_check_ping);
     $row = $result->fetch_assoc();
-    $unix_time_from_base = $row['date_last_login'];
+    $unix_time_from_base = $row['last_ping'];
     // echo $unix_time_from_base,"<-- czas z bazy";
     if(strtotime("now")-$unix_time_from_base>$max_ping_time_answer)
     {
-        update_logged_flag($connect,$login,0);
-        return false;
+        echo "tak";
+        return true;
     }
     else
     {
-        return true;
+        echo "nie";
+        return false;
     }
 
 }
@@ -46,21 +48,23 @@ function check_is_session($connect, $id)
     
     if($result->num_rows==0)
     {
+        
         return false; 
     }
     else
     {
+       
         return true; //sesja trwa
     }
 }
 
-function delete_old_session($connect )
+function delete_old_session($connect ,$id )
 {
 
     $max_time_for_session = 3600;
 
     $query_sesja = "SELECT * FROM session";
-    echo $query_sesja;
+    // echo $query_sesja;
     $result = $connect->query($query_sesja);
     // $row = $result->fetch_assoc();
     
@@ -72,6 +76,13 @@ function delete_old_session($connect )
         $curr_unix_time = strtotime("now");
         $unix_time_from_db = $row['ping_at_start'];
         $id_session = $row['id_session'];
+echo check_last_ping_user($connect,$id);
+        if(check_last_ping_user($connect,$id))
+        {
+            unset($_SESSION["session_id"]);
+            $query1 ="DELETE FROM session WHERE id_session = $id_session";
+            $connect->query($query1);
+        }
 
         if($curr_unix_time-$unix_time_from_db>$max_time_for_session)
         {
@@ -80,16 +91,16 @@ function delete_old_session($connect )
             $connect->query($query1);
         }
 
-        echo "<br>";
-        echo $curr_unix_time;
-        echo "<br>";
+        // echo "<br>";
+        // echo $curr_unix_time;
+        // echo "<br>";
         
-        echo $row['id_session'];
-        echo "<br>";
+        // echo $row['id_session'];
+        // echo "<br>";
         
-        echo $row['ping_at_start']."<br>";
-        echo "roznica czasu:";
-        echo $curr_unix_time-$unix_time_from_db;
+        // echo $row['ping_at_start']."<br>";
+        // echo "roznica czasu:";
+        // echo $curr_unix_time-$unix_time_from_db;
     }
 
     // if($result->num_rows)

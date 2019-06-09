@@ -37,13 +37,13 @@ require_once "./utilities_php/usefull_function.php";
                             $_SESSION['id'] = $user_id;
                             // echo delete_session_with_me($connect,$user_id);
                             $result->free_result();
-
-                            delete_old_session($connect);
+                            
+                          echo  delete_old_session($connect,$user_id);
 
                             // ping($connect,$_SESSION['login']); //! chyba nie potrzebne ~dawid
-
+                            ping($connect,$login);
                             // update_logged_flag($connect,$_SESSION['login'],0);//! is logged is uncorrect
-                            header('Location:../lobby.php'); //! pamietaj zeby to przywrucic 
+                            // header('Location:../lobby.php'); //! pamietaj zeby to przywrucic 
                             // echo "logged";
                        
                        

@@ -9,4 +9,4 @@ function simple_ping() {
     });
 }
 
-t = setInterval(simple_ping,1000);
+t = setInterval(simple_ping,10000);

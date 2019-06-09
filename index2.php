@@ -113,7 +113,7 @@
         return 'Czy napewno chcesz wyjść?';
     };
 </script>
-
+  <script src="./ping_to_active/ping.js"></script>
 
 </body>
 </html>

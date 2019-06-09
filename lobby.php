@@ -65,6 +65,7 @@ EOT;
 
 
     <script src="./js/ajax.js"></script>
+    <script src="./ping_to_active/ping.js"></script>
 
 
 </body>
