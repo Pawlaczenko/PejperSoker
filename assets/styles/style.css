@@ -389,6 +389,10 @@ canvas {
     margin: 0 auto;
 }
 
+#rooms tr {
+    position: relative;
+}
+
 #rooms tr:first-child td {
     background-color: #84b369;
     color: white;
@@ -402,6 +406,14 @@ canvas {
     border-bottom: 1px solid #84b369;
     border-right: 2px solid #84b369;
     text-align: center;
+}
+
+#rooms tr .private{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 25px;
+    height: 100%;
 }
 
 .pass_label {

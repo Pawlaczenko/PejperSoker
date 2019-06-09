@@ -3,7 +3,7 @@ var personalBool; //różny dla 2 graczy
 var move_interval;
 var player;
 let counterShrek = 0;
-let messanges = ['<span class="subHead"><i>"To inteligencja wygrywa wojny, a nie brutalna siła."</i></span>', '<span class="subHead"><i>"Trzeba wiedzieć, kiedy się poddać i żreć swoje gówno z godnością."</i></span>'];
+let messanges = ['<span class="subHead"><i>"To inteligencja wygrywa wojny, a nie brutalna siła."</i></span>', '<span class="subHead"><i>"All we had to do was follow the damn train CJ!"</i></span>'];
 console.log(messanges[0]);
 console.log(messanges[1]);
 

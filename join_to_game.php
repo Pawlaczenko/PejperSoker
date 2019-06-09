@@ -30,7 +30,7 @@ EOT;
     <div class="menu">
         <h1 class="paper_h1">Dołącz do gry</h1>
         <table id="rooms">
-            <tr><td>ID Sesji</td><td>Player 1</td><td>Player 2</td><td></td></tr>
+            <tr><td>-</td><td>ID Sesji</td><td>Player 1</td><td>Player 2</td><td>-</td></tr>
             <!-- <tr>
                 <td class="session_id">
                     24
