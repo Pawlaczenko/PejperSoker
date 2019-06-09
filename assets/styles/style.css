@@ -19,6 +19,14 @@ canvas {
     height: 100%;
 }
 
+.canvasSwap90 {
+    transform: rotate(90deg);
+}
+
+.canvasSwap270 {
+    transform: rotate(270deg);
+}
+
 .header {
     display: flex;
     flex-direction: row;
@@ -408,7 +416,7 @@ canvas {
     text-align: center;
 }
 
-#rooms tr .private{
+#rooms tr .private {
     display: flex;
     justify-content: center;
     align-items: center;
