@@ -111,7 +111,6 @@ function Game() {
         this.curPoint = new Point(this.rows / 2, this.columns / 2)
         this.drawPoint(this.curPoint.x, this.curPoint.y, 1);
         this.gameOn = false;
-
     }
 
     this.draw = function (stopper, path, state) {
@@ -129,7 +128,7 @@ function Game() {
         this.loadBoardState();
         
 
-        if (counterShrek == (path.length - 1)) {
+        if (counterShrek >= (path.length - 1)) {
             player = true;
             clearInterval(stopper);
             if (state != -1) {
@@ -138,6 +137,8 @@ function Game() {
             }
             $(`.name[data-id="${+personalBool}"]`).toggleClass('active');
             $(`.name[data-id="${+(!personalBool)}"]`).toggleClass('active');
+            // this.canvas.addEventListener('mousemove', this.mouseMoveEvent);
+            // this.canvas.addEventListener('click', this.clickEvent);
             return;
         }
         counterShrek++;
@@ -184,7 +185,7 @@ function Game() {
             player = false;
             this.enemyGate = 0;
             this.ownGate = this.columns;
-            move_interval = setInterval(start_check_for_round, 500);
+            move_interval = setInterval(start_check_for_round, 2000);
         }
 
         this.canvas.addEventListener('mousemove', this.mouseMoveEvent);
@@ -207,18 +208,6 @@ function Game() {
         }
         changeRound();
         clearInterval(move_interval);
-
-        $.ajax({
-            url: 'php_scripts/quit.php',
-            method: 'POST',
-            success: function (msg) {
-                console.log(msg);
-            },
-            error: function (err) {
-                console.log(err);
-            }
-        });
-
     }
 
     //* Metody do eventów
@@ -345,6 +334,7 @@ function Point(x, y) {
 }
 
 function changeRound() {
+    player = !player;
     let json = JSON.stringify(dataForSend);
     dataForSend.moveArray = [];
     counterShrek = 0;
@@ -360,9 +350,9 @@ function changeRound() {
             $(`.name[data-id="${+personalBool}"]`).toggleClass('active');
             $(`.name[data-id="${+(!personalBool)}"]`).toggleClass('active');
             if (dataForSend.gameStatus == -1) {
-                move_interval = setInterval(start_check_for_round, 500);
+                move_interval = setInterval(start_check_for_round, 2000);
             }
-            player = !player;
+            
         },
         error: function (er) {
             console.log(er);

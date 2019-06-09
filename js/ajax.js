@@ -103,7 +103,7 @@ function start_check_for_round() {
             }
             if (personalBool == move) {
                 clearInterval(move_interval);
-                let draw = setInterval(() => { game.draw(draw, data.moveArray, data.gameStatus) }, 500);
+                let draw = setInterval(() => { game.draw(draw, data.moveArray, data.gameStatus) }, 1000);
             }
         },
         error: function (err) {
