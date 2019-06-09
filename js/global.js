@@ -52,6 +52,91 @@ const findLowestCostNode = (costs, processed, endPoint = -1) => {
     return lowestCostNode
 };
 
+const findBlockPoint = (source, target, graph) => {
+    const queue = [source];
+    const visited = new Set();
+    let bestPath = { point: null, sumDistance: 100 };
+    let findAllShortPaths = findAllSinglePath(source, graph);
+    let worstPoint = null;
+
+    while (queue.length > 0) {
+        const start = queue.shift();
+
+        if (visited.has(start)) {
+            continue;
+        }
+
+        if (graph.get(start).wallValue == 1) {
+            let optimalPath = [start];
+            let parent = findAllShortPaths[start];
+            while (parent) {
+                optimalPath.push(parent);
+                if (parent == source) {
+                    break;
+                }
+                parent = findAllShortPaths[parent];
+
+            }
+
+            if (optimalPath.find(function (element) {
+                return element == target;
+            }) != undefined) {
+                continue;
+            }
+
+            for (let i = 0; i < optimalPath.length - 1; i++) {
+                graph.get(optimalPath[i]).out.delete(optimalPath[i + 1]);
+                graph.get(optimalPath[i + 1]).out.delete(optimalPath[i]);
+            }
+            graph.get(start).wallValue = 0;
+            let enemyDistance = getDistance(start, target, graph);
+            graph.get(start).wallValue = 1;
+
+            for (let i = 0; i < optimalPath.length - 1; i++) {
+                graph.get(optimalPath[i]).out.add(optimalPath[i + 1]);
+                graph.get(optimalPath[i + 1]).out.add(optimalPath[i]);
+            }
+            if (enemyDistance == -1) {
+                return false;
+            }
+
+            let sumDistance = enemyDistance;
+            if (enemyDistance > 0) {
+                if (bestPath.sumDistance > sumDistance) {
+                    bestPath.sumDistance = sumDistance;
+                    bestPath.point = start;
+                }
+
+            }
+            else {
+                worstPoint = start;
+            }
+
+            visited.add(start);
+            continue;
+        }
+
+        for (const next of graph.get(start).out) {
+            if (visited.has(next)) {
+                continue;
+            }
+
+            if (!queue.includes(next)) {
+                queue.push(next);
+            }
+        }
+
+        visited.add(start);
+    }
+
+    if (bestPath.point == null && worstPoint != null) {
+        bestPath.point = worstPoint;
+    }
+
+    return bestPath;
+
+}
+
 const findSinglePath = (startNodeName, endNodeName, graph) => {
 
     let costs = {};
