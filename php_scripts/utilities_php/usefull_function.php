@@ -54,20 +54,50 @@ function check_is_session($connect, $id)
     }
 }
 
-function delete_session_with_me($connect , $user_id)
+function delete_old_session($connect )
 {
-    $query_sesja = "SELECT * FROM session WHERE user1=$user_id OR user2=$user_id";
+
+    $max_time_for_session = 3600;
+
+    $query_sesja = "SELECT * FROM session";
     echo $query_sesja;
     $result = $connect->query($query_sesja);
-    $row = $result->fetch_assoc();
-    $session_id = $row['id_session'];
-
-    if($result->num_rows)
+    // $row = $result->fetch_assoc();
+    
+    while($row = $result->fetch_assoc())
     {
-        unset($_SESSION["session_id"]);
-        $query1 ="DELETE FROM session WHERE id_session = $session_id";
-        $connect->query($query1);
+
+        
+
+        $curr_unix_time = strtotime("now");
+        $unix_time_from_db = $row['ping_at_start'];
+        $id_session = $row['id_session'];
+
+        if($curr_unix_time-$unix_time_from_db>$max_time_for_session)
+        {
+            unset($_SESSION["session_id"]);
+            $query1 ="DELETE FROM session WHERE id_session = $id_session";
+            $connect->query($query1);
+        }
+
+        echo "<br>";
+        echo $curr_unix_time;
+        echo "<br>";
+        
+        echo $row['id_session'];
+        echo "<br>";
+        
+        echo $row['ping_at_start']."<br>";
+        echo "roznica czasu:";
+        echo $curr_unix_time-$unix_time_from_db;
     }
+
+    // if($result->num_rows)
+    // {
+    //     unset($_SESSION["session_id"]);
+    //     $query1 ="DELETE FROM session WHERE id_session = $session_id";
+    //     $connect->query($query1);
+    // }
 }
 
 ?>

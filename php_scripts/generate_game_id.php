@@ -15,7 +15,8 @@
             $color = $_POST['color'];
             $logged_user_id = $_SESSION['id'];
             if(!$player) {
-                $query_create_session = "INSERT INTO session(user1,user2,game_data,player1_color,player2_color,whose_move) VALUES ('$logged_user_id',-1,'',$color,-1,0)";
+                $curr_unix_time = strtotime("now");
+                $query_create_session = "INSERT INTO session(user1,user2,game_data,player1_color,player2_color,whose_move,ping_at_start) VALUES ('$logged_user_id',-1,'',$color,-1,0,$curr_unix_time)";
                 $connect->query($query_create_session);
 
                 // pozyskiwanie id sesji po to aby wygenerowac id gry

@@ -38,10 +38,12 @@ require_once "./utilities_php/usefull_function.php";
                             // echo delete_session_with_me($connect,$user_id);
                             $result->free_result();
 
-                            ping($connect,$_SESSION['login']);
+                            delete_old_session($connect);
+
+                            // ping($connect,$_SESSION['login']); //! chyba nie potrzebne ~dawid
 
                             // update_logged_flag($connect,$_SESSION['login'],0);//! is logged is uncorrect
-                            header('Location:../lobby.php');
+                            header('Location:../lobby.php'); //! pamietaj zeby to przywrucic 
                             // echo "logged";
                        
                        
