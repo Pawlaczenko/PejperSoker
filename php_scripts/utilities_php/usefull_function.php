@@ -12,7 +12,7 @@ function update_logged_flag($connect,$user_login,$flag)
 function ping($connect,$user_login)
 {
     $curr_unix_time = strtotime("now");
-    $result = @$connect->query(sprintf("UPDATE users SET date_last_login=%s WHERE login = '%s'",
+    $result = @$connect->query(sprintf("UPDATE users SET last_ping=%s WHERE login = '%s'",
         mysqli_real_escape_string($connect,  $curr_unix_time),
         mysqli_real_escape_string($connect,$user_login)
     ));
@@ -21,7 +21,7 @@ function ping($connect,$user_login)
 
 function check_is_logged($connect,$login)
 {
-    $max_ping_time_answer = 1 ;// w sekundach
+    $max_ping_time_answer = 5 ;// w sekundach
     $query_check_ping = "SELECT date_last_login FROM users WHERE login = '$login';";
     $result = $connect->query($query_check_ping);
     $row = $result->fetch_assoc();
@@ -51,6 +51,22 @@ function check_is_session($connect, $id)
     else
     {
         return true; //sesja trwa
+    }
+}
+
+function delete_session_with_me($connect , $user_id)
+{
+    $query_sesja = "SELECT * FROM session WHERE user1=$user_id OR user2=$user_id";
+    echo $query_sesja;
+    $result = $connect->query($query_sesja);
+    $row = $result->fetch_assoc();
+    $session_id = $row['id_session'];
+
+    if($result->num_rows)
+    {
+        unset($_SESSION["session_id"]);
+        $query1 ="DELETE FROM session WHERE id_session = $session_id";
+        $connect->query($query1);
     }
 }
 

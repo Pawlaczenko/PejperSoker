@@ -14,7 +14,7 @@ else
     
     $game_id = htmlentities($game_id, ENT_QUOTES, "UTF-8");
 
-    $query_check ="SELECT * FROM session WHERE game_id='$game_id';";
+    $query_check ="SELECT * FROM session WHERE id_session='$game_id';";
 
     $result = $connect->query($query_check);
     if($result->num_rows==0)
@@ -25,7 +25,7 @@ else
     {
         $current_user_id = $_SESSION['id'];
         $session = $result->fetch_assoc();
-        $_SESSION['session_id'] = $session['id_session'];
+        $_SESSION['wantedSession'] = $session['id_session'];
 
         $_SESSION['player'] = TRUE; //klient
         echo true;

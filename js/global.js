@@ -418,15 +418,15 @@ function createGraph(rows, columns) {
 }
 
 var colors = [
-    "blue","yellow","cyan","pink","green","orange"
+    "blue","yellow","cyan","pink","red","orange"
 ];
 
 function genereteCreator(lock) {
-
     $.ajax({
         url:'php_scripts/checkColors.php',
         type:'POST',
         success: function(results) {
+            console.log("jestem w kolorkach" + results);
             colors.forEach(function(color,i){
                 $(".creator .colors").append(`
                     <div class="color">
@@ -446,5 +446,6 @@ function genereteCreator(lock) {
         }
     })
 };
+
 
 genereteCreator();

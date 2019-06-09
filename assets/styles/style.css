@@ -1,8 +1,7 @@
-body{
+body {
     width: 100%;
     height: 100vh;
     overflow: hidden;
-
     background-image: url("../img/pattern.png");
     font-family: 'Nunito', sans-serif;
 }
@@ -11,7 +10,11 @@ body{
     box-sizing: border-box;
 }
 
-canvas{
+a {
+    text-decoration: none !important;
+}
+
+canvas {
     width: 100%;
     height: 100%;
 }
@@ -23,20 +26,18 @@ canvas{
     justify-content: center;
 }
 
-.header_no{
+.header_no {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
 }
 
-.img--box,
-.img--box * {
+.img--box, .img--box * {
     height: 200px;
 }
 
-.header_no .img--box,
-.header_no .img--box *{
+.header_no .img--box, .header_no .img--box * {
     height: 150px;
 }
 
@@ -50,13 +51,13 @@ canvas{
     text-align: center;
     border: 5px solid transparent;
     color: white;
-    box-shadow: inset 0px 0px 50px -7px rgba(0,0,0,0.75);
+    box-shadow: inset 0px 0px 50px -7px rgba(0, 0, 0, 0.75);
     position: relative;
 }
 
 .active {
     border: 5px solid white;
-    box-shadow: 0px 0px 29px 0px rgba(0,0,0,0.73);
+    box-shadow: 0px 0px 29px 0px rgba(0, 0, 0, 0.73);
 }
 
 .active::after {
@@ -69,23 +70,26 @@ canvas{
     font-size: 10px;
 }
 
-#board{
+.active.opponent::after {
+    content: "TURA PRZECIWNIKA";
+}
+
+#board {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%,-30%);
+    transform: translate(-50%, -30%);
 }
 
 .alert {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%, -50%);
 }
 
-.creator--box{
+.creator--box {
     display: flex;
-
     width: 100%;
     height: 100%;
     background-color: white;
@@ -94,7 +98,7 @@ canvas{
     justify-content: center;
 }
 
-.creator{
+.creator {
     width: 400px;
     background-color: white;
     display: flex;
@@ -103,7 +107,7 @@ canvas{
     flex-direction: column;
     z-index: 1000;
     border: 1px dotted black;
-    box-shadow: 10px 10px 0px 0px rgba(0,0,0,0.75);
+    box-shadow: 10px 10px 0px 0px rgba(0, 0, 0, 0.75);
 }
 
 .creator h3 {
@@ -129,21 +133,21 @@ canvas{
     white-space: nowrap;
 }
 
-.color input[type=radio] + label:before{
-  content: '';
-  display: block;
-  width: 25px;
-  height: 25px;
-  border: 2px solid black;
-  cursor: pointer;
-  background-color: inherit;
+.color input[type=radio]+label:before {
+    content: '';
+    display: block;
+    width: 25px;
+    height: 25px;
+    border: 2px solid black;
+    cursor: pointer;
+    background-color: inherit;
 }
 
-.color input[type=radio]:checked + label:before {
+.color input[type=radio]:checked+label:before {
     box-shadow: inset 0 0 0 .25em rgba(255, 255, 255, .95);
 }
 
-.color input[type=radio]:disabled + label:before {
+.color input[type=radio]:disabled+label:before {
     cursor: not-allowed;
     opacity: .2;
 }
@@ -164,7 +168,6 @@ canvas{
 .endgame {
     display: none;
     z-index: 10000;
-
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -172,10 +175,11 @@ canvas{
     height: 100%;
     padding: 50px;
     font-size: 50px;
-    background-image: url("../img/loose.gif"); /* Tutaj leci bckimg z ajaxa */
+    /* background-image: url("../img/win.gif"); */
+    /* Tutaj leci bckimg z ajaxa */
     background-size: cover;
     color: white;
-    box-shadow: 0px 0px 18px 0px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 18px 0px rgba(0, 0, 0, 0.75);
     letter-spacing: 3px;
     text-transform: uppercase;
     background-repeat: no-repeat;
@@ -191,9 +195,20 @@ canvas{
     cursor: pointer;
 }
 
+.message {
+    text-align: center;
+}
+
+.subHead {
+    display: block;
+    font-size: 23px;
+    font-weight: lighter;
+    text-align: center;
+    text-transform: none !important;
+}
+
 .loader {
     display: none;
-
     width: 100%;
     height: 100%;
     flex-direction: column;
@@ -212,7 +227,7 @@ canvas{
     padding: 15px;
 }
 
-.gameid_box h2{
+.gameid_box h2 {
     font-weight: bold;
     margin-right: 20px;
 }
@@ -230,6 +245,7 @@ canvas{
     cursor: pointer;
     margin-left: 7px;
 }
+
 .copy svg {
     width: 15px;
 }
@@ -243,7 +259,7 @@ canvas{
     /* clip-path: polygon(30% 0%, 70% 0%, 100% 29%, 100% 70%, 85% 100%, 7% 100%, 0 85%, 0 53%); */
 }
 
-.button:hover{
+.button:hover {
     border-color: #84b369;
     color: #84b369;
     background-color: white;
@@ -268,7 +284,7 @@ canvas{
     padding: 10px;
     text-align: center;
     margin: 10px;
-    box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
 }
 
 .paper_h1 {
@@ -279,8 +295,8 @@ canvas{
     border-bottom: 5px solid #84b369;
 }
 
-.type:hover{
-    transform: translate(4px,4px);
+.type:hover {
+    transform: translate(4px, 4px);
     box-shadow: none;
 }
 
@@ -288,10 +304,10 @@ canvas{
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%, -50%);
 }
 
-.info{
+.info {
     font-weight: lighter;
     text-align: center;
 }
@@ -302,31 +318,40 @@ canvas{
     align-items: center;
     background-color: white;
     padding: 20px;
-    box-shadow: 4px 4px 0px 0px rgba(0,0,0,1);
+    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
     border: 1px dotted black;
-
 }
 
 .login_form input {
     margin: 5px;
 }
 
-.login_form label{
+.login_form label {
     display: flex;
     width: 100%;
     justify-content: space-between;
     align-items: flex-end;
 }
 
-.login_form input[type=text],
-.login_form input[type=password]{
+.login_form input[type=text], .login_form input[type=password] {
     border: none;
     border-bottom: 1px solid #84b369;
     font-size: 24px;
 }
 
-.login_button {
+.login_button, .join_button {
     cursor: pointer;
+    display: block;
+}
+
+.join_button:disabled {
+    opacity: .4;
+    cursor: initial;
+}
+
+.join_button:disabled:hover {
+    background-color: #84b369 !important;
+    color: white !important;
 }
 
 .join_game {
@@ -336,13 +361,13 @@ canvas{
 .logged_user {
     position: absolute;
     right: 10px;
-    top:10px;
+    top: 10px;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
     background-color: white;
     padding: 10px;
-    box-shadow: 0px 0px 11px 0px rgba(0,0,0,0.67);
+    box-shadow: 0px 0px 11px 0px rgba(0, 0, 0, 0.67);
 }
 
 .logged_user .user_login {
@@ -353,7 +378,41 @@ canvas{
     color: #84b369 !important;
 }
 
-#id_input{
+#id_input {
     font-size: 16px !important;
     width: 80%;
+}
+
+#rooms {
+    width: 100%;
+    background-color: white;
+    margin: 0 auto;
+}
+
+#rooms tr:first-child td {
+    background-color: #84b369;
+    color: white;
+}
+
+#rooms tr td:last-child input {
+    margin: 0 auto;
+}
+
+#rooms tr td {
+    border-bottom: 1px solid #84b369;
+    border-right: 2px solid #84b369;
+    text-align: center;
+}
+
+.pass_label {
+    display: none;
+}
+
+.private_label {
+    width: auto;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
 }

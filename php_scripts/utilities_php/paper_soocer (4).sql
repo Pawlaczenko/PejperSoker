@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Czas generowania: 30 Maj 2019, 20:00
+-- Czas generowania: 06 Cze 2019, 00:20
 -- Wersja serwera: 10.1.40-MariaDB
 -- Wersja PHP: 7.3.5
 
@@ -34,11 +34,20 @@ CREATE TABLE `session` (
   `player1_color` int(1) NOT NULL,
   `user2` int(11) NOT NULL,
   `player2_color` int(1) NOT NULL,
-  `game_data` varchar(255) COLLATE utf8_polish_ci NOT NULL,
-  `game_id` varchar(255) COLLATE utf8_polish_ci NOT NULL
+  `game_data` mediumtext COLLATE utf8_polish_ci NOT NULL,
+  `whose_move` tinyint(1) NOT NULL,
+  `who_win` int(1) NOT NULL,
+  `game_password` varchar(255) COLLATE utf8_polish_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_polish_ci;
 
--- -------------------------------------------------------- 
+--
+-- Zrzut danych tabeli `session`
+--
+
+INSERT INTO `session` (`id_session`, `user1`, `player1_color`, `user2`, `player2_color`, `game_data`, `whose_move`, `who_win`, `game_password`) VALUES
+(63, 9, 0, 11, 2, 'json_string_data', 0, 0, 'ffff');
+
+-- --------------------------------------------------------
 
 --
 -- Struktura tabeli dla tabeli `users`
@@ -57,8 +66,10 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id_user`, `login`, `password`, `is_logged`, `date_last_login`) VALUES
-(9, 'dejw', '$2y$10$iH5/RLfQ93xz.cbajQf6i.fcZVazfCoiiNBs5SK/P0M46fXHUwmrO', 1, 1559230678),
-(10, 'bartek', '$2y$10$R39U2VBLpggi93xXTS45XevVjPGqywBlO1DcSeiC7GGMzG.TeEcsO', 1, 1559230684);
+(9, 'dejw', '$2y$10$iH5/RLfQ93xz.cbajQf6i.fcZVazfCoiiNBs5SK/P0M46fXHUwmrO', 0, 1559773021),
+(10, 'bartek', '$2y$10$R39U2VBLpggi93xXTS45XevVjPGqywBlO1DcSeiC7GGMzG.TeEcsO', 1, 1559772865),
+(11, 'andrzej', '$2y$10$CEF1q2m8mIwCRxVyVK1fe.0zVoJuU63JowBLGzyRomo6EWYJRnyna', 1, 1559773039),
+(12, 'shrek', '$2y$10$imxIgFDAJpDx6FKqcHV1kuV45iBArYSxKrX3ciFEm99fRuP0uerkm', 0, 0);
 
 --
 -- Indeksy dla zrzutów tabel
@@ -86,13 +97,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT dla tabeli `session`
 --
 ALTER TABLE `session`
-  MODIFY `id_session` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_session` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
 
 --
 -- AUTO_INCREMENT dla tabeli `users`
 --
 ALTER TABLE `users`
-  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id_user` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

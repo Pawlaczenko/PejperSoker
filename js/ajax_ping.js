@@ -33,4 +33,4 @@ function simple_ping() {
     });
 }
 
-t = setInterval(simple_ping,200);
+t = setInterval(simple_ping,2000);
