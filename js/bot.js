@@ -28,7 +28,7 @@ function Game() {
         this.boardContener.style.height = this.boardHeight;
         this.canvas.width = 1800;
         this.canvas.height = 1210;
-        this.canvas.className = "canvasSwap90";
+        this.canvas.className = "canvasSwap270";
         this.boardContener.appendChild(this.canvas);
         this.ctx = this.canvas.getContext("2d");
     }
@@ -158,7 +158,7 @@ function Game() {
         this.color = players[+(!currPlayer)].color;
 
         let mousePos = getMousePos(this.canvas, event);
-        mousePos.x = this.boardHeight - mousePos.x
+        mousePos.y = this.boardWidth - mousePos.y;
         let przelicznik_na_x = this.canvasWidth / this.boardWidth;
         let przelicznik_na_y = this.canvasHeight / this.boardHeight;
         let cord_X = mousePos.y * przelicznik_na_x;
@@ -184,7 +184,7 @@ function Game() {
         if (!this.gameOn) return;
 
         let mousePos = getMousePos(this.canvas, event);
-        mousePos.x = this.boardHeight - mousePos.x
+        mousePos.y = this.boardWidth - mousePos.y;
         let cord_X = mousePos.x * this.canvasWidth / this.boardWidth; //*Tak ma być
         let cord_Y = mousePos.y * this.canvasHeight / this.boardHeight; //*Tak ma być
         let wallHit = false;
