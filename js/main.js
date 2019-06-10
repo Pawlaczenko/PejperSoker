@@ -1,512 +1,403 @@
-let squaresX = 10;
-let squaresY = 8;
-let pointsArray = create2dArray(8, 10);
-let gatewayArray = create2dArray(1, 2);
-let allowPoints = create2dArray(2, 2);
-let canvas = document.createElement("canvas");
-let divBoard = document.getElementById("board");;
-let boardWidth = divBoard.offsetWidth;
-let boardHeight = divBoard.offsetHeight;
-let ctx = canvas.getContext('2d');
-let scale = 147;
-let canvasWidthResolution = 1800;
-let canvasHeightResolution = 1210;
-let wallWidth = 20;
-let fieldWidth = 5;
-let middleWidth = Math.ceil(squaresX / 2);
-let middleHeight = Math.ceil(squaresY / 2);
-let marginXY = 15;
-let curPoint;
-let myImgData;
-let posX;
-let posY;
-let PlayerColor = '#B1F8F2';
-let BotColor = '#edf40c';
-let CurrentColor = PlayerColor;
-let playerTurn = true;
-let enemyGatePoint;
-let bestGhost;
-let startDrawGhost;
-let counter = 0;
-let ballImage = new Image();
+let ball = document.getElementById('ball');
+var personalBool; //różny dla 2 graczy
+var move_interval;
+var player;
+let counterShrek = 0;
+let messanges = ['<span class="subHead"><i>"To inteligencja wygrywa wojny, a nie brutalna siła."</i></span>', '<span class="subHead"><i>"All we had to do was follow the damn train CJ!"</i></span>'];
+console.log(messanges[0]);
+console.log(messanges[1]);
 
-function Board(div_id) {
-    this.squaresX = squaresX;
-    this.squaresY = squaresY;
+let dataForSend = { moveArray: [], gameStatus: -1 };
 
-    this.draw = function () {
-        divBoard.appendChild(canvas);
-        canvas.width = canvasWidthResolution;
-        canvas.height = canvasHeightResolution;
-        ctx.fillStyle="#248232";
-        ctx.fillRect(scale+marginXY,marginXY,scale*squaresX,scale*squaresY);
-        ctx.fillRect(marginXY, (scale * (middleHeight-1))+marginXY ,scale,scale*2);
-        ctx.fillRect(scale * (squaresX+1)+marginXY, (scale * (middleHeight-1))+marginXY ,scale,scale*2);
+var Player = function (name, color, role) {
+    this.name = name;
+    this.color = color;
+    this.role = role;
+}
+
+const graph = createGraph(8, 12);
+
+//! player == TRUE => Tura player2
+//! player == FALSE => Tura player1 //BOT TO DOMYŚLNIE PLAYER2
+
+var players = [];
+
+function Game() {
+
+    this.boardWidth = 600;
+    this.boardHeight = 400;
+    this.canvasWidth = 1800;
+    this.canvasHeight = 1210;
+    this.columnsNumber = 12;
+    this.rowsNumber = 8;
+
+    //* Metody przygotowania gry
+    this.createBoard = function (rows, columns) {
+        this.rows = rows;
+        this.columns = columns;
+
+        this.boardContener = document.getElementById("board");
+        this.canvas = document.createElement("canvas");
+        this.boardContener.style.width = this.boardWidth;
+        this.boardContener.style.height = this.boardHeight;
+        this.canvas.width = 1800;
+        this.canvas.height = 1210;
+        if (personalBool == 0) {
+            $('#board').addClass('canvasSwap270');
+        }
+        else {
+            $('#board').addClass('canvasSwap90');
+        }
+        this.boardContener.appendChild(this.canvas);
+        this.ctx = this.canvas.getContext("2d");
+    }
+
+    this.createField = function () {
+
+        this.halfRows = this.rows / 2;
+        this.halfColumns = this.columns / 2;
+
+        this.marginXY = 15;
+        this.wallLineWidth = 20;
+        this.noLineWidth = 5;
+
+        this.scale = 147;
+
+        this.ctx.fillStyle = "#84b369";
+        this.fillWidth = this.canvasWidth / this.columnsNumber + this.marginXY;
+        this.ctx.fillRect(this.fillWidth, this.marginXY, this.canvasWidth - 2 * this.fillWidth, this.canvasHeight - this.marginXY * 2);
+        this.ctx.fillRect(this.marginXY, 3 * (this.canvasHeight / this.rowsNumber), this.fillWidth, 2 * (this.canvasHeight / this.rowsNumber) - this.marginXY);
+        this.ctx.fillRect(this.canvasWidth - 2 * this.fillWidth, 3 * (this.canvasHeight / this.rowsNumber), this.fillWidth * 2 - this.marginXY, 2 * (this.canvasHeight / this.rowsNumber) - this.marginXY);
+
+        for (let x = 0; x <= this.rows; x++) {
+            for (let y = 0; y <= this.columns; y++) {
+                if (graph.has(`${x}_${y}`)) {
+                    for (const next of graph.get(`${x}_${y}`).out) {
+                        if (next == `${x + 1}_${y}` || next == `${x}_${y + 1}`) {
+                            this.ctx.lineWidth = this.noLineWidth;
+                            this.ctx.strokeStyle = 'black';
+                            this.drawLine(x, y, Number(next.substring(0, 1)), Number(next.substring(2, next.length)));
+                        }
+                    }
+                    if (!(graph.get(`${x}_${y}`).out.has(`${x + 1}_${y}`)) && graph.has(`${x + 1}_${y}`)) {
+                        if ((x == 3 || x == 4)) {
+                            if (y == 0) {
+                                this.ctx.strokeStyle = players[0].color;
+                            }
+
+                            if (y == 12) {
+                                this.ctx.strokeStyle = players[1].color;
+                            }
+                        } else {
+                            this.ctx.strokeStyle = 'black';
+                        }
+                        this.ctx.lineWidth = this.wallLineWidth;
+                        this.drawLine(x, y, x + 1, y);
+                    }
+                    if (!(graph.get(`${x}_${y}`).out.has(`${x}_${y + 1}`)) && graph.has(`${x}_${y + 1}`)) {
+                        this.ctx.lineWidth = this.wallLineWidth;
+                        this.ctx.strokeStyle = 'black';
+                        this.drawLine(x, y, x, y + 1);
+                    }
+                    if (graph.get(`${x}_${y}`).out.size < 8) {
+                        graph.get(`${x}_${y}`).wallValue = 0;
+                    }
+                    else {
+                        graph.get(`${x}_${y}`).wallValue = 1;
+                    }
+                }
+
+            }
+
+        }
+
+        this.curPoint = new Point(this.rows / 2, this.columns / 2)
+        graph.get(`${this.curPoint.x}_${this.curPoint.y}`).wallValue = 0;
+        this.myImgData = this.ctx.getImageData(0, 0, this.canvasWidth, this.canvasHeight);
+        this.curPoint = new Point(this.rows / 2, this.columns / 2)
+        this.drawPoint(this.curPoint.x, this.curPoint.y, 1);
+        this.gameOn = false;
+    }
+
+    this.draw = function (stopper, path, state) {
+        this.loadBoardState();
+        console.log(path);
+        const element = path[counterShrek];
+
+        this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+        this.ctx.putImageData(this.myImgData, 0, 0);
+
+        this.color = players[+(!personalBool)].color;
+        this.ctx.strokeStyle = this.color;
+        this.drawLine(this.curPoint.x, this.curPoint.y, Number(element.substring(0, 1)), Number(element.substring(2, element.length)));
+        this.saveBoardState(Number(element.substring(0, 1)), Number(element.substring(2, element.length)));
+        this.loadBoardState();
+
+
+        if (counterShrek >= (path.length - 1)) {
+            player = true;
+            clearInterval(stopper);
+            if (state != -1) {
+                this.gameOn = false;
+                (state == personalBool) ? this.gameEnd(state, messanges[0]) : this.gameEnd(state, messanges[1]);
+            }
+            $(`.name[data-id="${+personalBool}"]`).toggleClass('active');
+            $(`.name[data-id="${+(!personalBool)}"]`).toggleClass('active');
+            return;
+        }
+        counterShrek++;
+    }
+
+    this.saveBoardState = function (x, y) {
+        this.myImgData = this.ctx.getImageData(0, 0, this.canvasWidth, this.canvasHeight);
+        graph.get(`${this.curPoint.x}_${this.curPoint.y}`).out.delete(`${x}_${y}`);
+        graph.get(`${this.curPoint.x}_${this.curPoint.y}`).wallValue = 0;
+        graph.get(`${x}_${y}`).wallValue = 0;
+        graph.get(`${x}_${y}`).out.delete(`${this.curPoint.x}_${this.curPoint.y}`);
+        this.curPoint.x = x;
+        this.curPoint.y = y;
+    }
+
+    this.loadBoardState = function () {
+        this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+        this.ctx.putImageData(this.myImgData, 0, 0);
+        this.ctx.fillStyle = "black";
+        this.drawPoint(this.curPoint.x, this.curPoint.y, 1);
+    }
+
+    //* Metody gry
+    this.gamePrepare = function () {
+        this.createBoard(8, 12);
+        this.createField();
+    }
+
+    this.gameStart = function () {
+        this.gameOn = true;
+        this.enemyGate;
+        this.ownGate;
+
+        $('.name[data-id="0"]').html(`${players[0].name}`).css("background-color", `${players[0].color}`).addClass('active');
+        $('.name[data-id="1"]').html(`${players[1].name}`).css("background-color", `${players[1].color}`);
+        $(`.name[data-id="${+(!personalBool)}"]`).addClass('opponent');
+        if (personalBool == false) {
+            player = true;
+            this.enemyGate = this.columns;
+            this.ownGate = 0;
+        }
+        else {
+            console.log('jestem klientem');
+            player = false;
+            this.enemyGate = 0;
+            this.ownGate = this.columns;
+            move_interval = setInterval(start_check_for_round, 2000);
+        }
+
+        this.canvas.addEventListener('mousemove', this.mouseMoveEvent);
+        this.canvas.addEventListener('click', this.clickEvent);
+    }
+
+    this.gameEnd = function (bool, msg) {
+        this.gameOn = false;
+        dataForSend.gameStatus = bool
+        if (bool == personalBool) {
+            $('.endgame').css({
+                'display': 'flex',
+                'background-image': 'url("assets/img/win.gif")'
+            }).find('h1').html('Wygrana' + msg);
+        } else {
+            $('.endgame').css({
+                'display': 'flex',
+                'background-image': 'url("assets/img/loose.gif")'
+            }).find('h1').html('Przegrana' + msg);
+        }
+        changeRound();
+        clearInterval(move_interval);
+    }
+
+    //* Metody do eventów
+    this.mouseMoveEvent = e => {
+        if (!this.gameOn || !player) {
+            return;
+        };
+
+        this.color = players[+personalBool].color;
+
+        let mousePos = getMousePos(this.canvas, event);
+        if (personalBool == 0) {
+            mousePos.y = this.boardWidth - mousePos.y;
+        }
+        else {
+            mousePos.x = this.boardHeight - mousePos.x;
+        }
+        let przelicznik_na_x = this.canvasWidth / this.boardWidth;
+        let przelicznik_na_y = this.canvasHeight / this.boardHeight;
+        let cord_X = mousePos.y * przelicznik_na_x;
+        let cord_Y = mousePos.x * przelicznik_na_y;
+
+        ///PUNKTY MAPY///
+        for (let x = 0; x <= this.rows; x++)
+            for (let y = 0; y <= this.columns; y++) {
+                if (graph.has(`${x}_${y}`)) {
+                    if ((y * this.scale + this.wallLineWidth / 2 <= cord_X + this.scale / 2 && x * this.scale + this.wallLineWidth / 2 <= cord_Y + this.scale / 2)
+                        && (y * this.scale + this.wallLineWidth / 2 >= cord_X - this.scale / 2 && x * this.scale + this.wallLineWidth / 2 >= cord_Y - this.scale / 2))
+                        if ((x >= this.curPoint.x - 1 && x <= this.curPoint.x + 1) && (y >= this.curPoint.y - 1 && y <= this.curPoint.y + 1))
+                            if (graph.get(`${this.curPoint.x}_${this.curPoint.y}`).out.has(`${x}_${y}`)) {
+                                this.loadBoardState();
+                                this.ctx.fillStyle = this.color;
+                                this.drawPoint(x, y, 0.5);
+                            }
+                }
+            }
+    }
+
+    this.clickEvent = e => {
+        if (!this.gameOn || !player) {
+            return;
+        }
+        this.color = players[+personalBool].color;
+        let mousePos = getMousePos(this.canvas, event);
+        if (personalBool == 0) {
+            mousePos.y = this.boardWidth - mousePos.y;
+        }
+        else {
+            mousePos.x = this.boardHeight - mousePos.x;
+        }
+        let cord_X = mousePos.x * this.canvasWidth / this.boardWidth; //*Tak ma być
+        let cord_Y = mousePos.y * this.canvasHeight / this.boardHeight; //*Tak ma być
+        let wallHit = false;
+
+        for (let x = 0; x <= this.rows; x++) {
+            for (let y = 0; y <= this.columns; y++) {
+                if (graph.has(`${x}_${y}`)) {
+                    if ((x * this.scale + this.wallLineWidth / 2 <= cord_X + this.scale / 2 && y * this.scale + this.wallLineWidth / 2 <= cord_Y + this.scale / 2)
+                        && (x * this.scale + this.wallLineWidth / 2 >= cord_X - this.scale / 2 && y * this.scale + this.wallLineWidth / 2 >= cord_Y - this.scale / 2)) {
+                        if ((x >= this.curPoint.x - 1 && x <= this.curPoint.x + 1) && (y >= this.curPoint.y - 1 && y <= this.curPoint.y + 1)) {
+                            if (graph.get(`${this.curPoint.x}_${this.curPoint.y}`).out.has(`${x}_${y}`)) {
+                                if (graph.get(`${x}_${y}`).wallValue == 0) {
+                                    wallHit = true;
+                                }
+
+                                dataForSend.moveArray.push(`${x}_${y}`);
+                                this.ctx.fillStyle = "blue";
+                                this.drawPoint(x, y, 1);
+                                this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+                                this.ctx.putImageData(this.myImgData, 0, 0);
+                                this.ctx.strokeStyle = this.color;
+                                this.drawLine(this.curPoint.x, this.curPoint.y, x, y)
+                                this.saveBoardState(x, y);
+                                this.loadBoardState();
+
+                                if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == this.enemyGate) {
+                                    this.gameEnd(personalBool, messanges[0]);
+                                    // return;
+                                }
+
+                                if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == this.ownGate) {
+                                    this.gameEnd(!personalBool, messanges[1]);
+                                    // return;
+                                }
+                                if (!wallHit) {
+                                    changeRound();
+                                }
+                            }
+                            if (graph.get(`${this.curPoint.x}_${this.curPoint.y}`).out.size == 0) {
+                                this.gameEnd(!personalBool, messanges[1]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    //* Metody pomocnicze
+    this.drawPoint = function (x, y, alpha) {
+        this.ctx.beginPath();
+
+        this.ctx.globalAlpha = 0.5;
+        this.fillStyle = this.color;
+        this.ctx.arc(y * this.scale + this.wallLineWidth / 2 + this.marginXY / 3, x * this.scale + this.wallLineWidth / 2 + this.marginXY / 3, 15, 0, Math.PI * 2, false);
+        this.ctx.fill();
+
+        this.ctx.globalAlpha = alpha;
+        this.ctx.drawImage(ball, y * this.scale + this.wallLineWidth / 2 - 25, x * this.scale + this.wallLineWidth / 2 - 25);
+        this.ctx.globalAlpha = 1;
+        this.ctx.closePath();
+    }
+
+    this.drawLine = function (x1, y1, x2, y2) {
+        this.ctx.lineCap = "round";
+        this.ctx.beginPath();
+        this.ctx.moveTo(y1 * this.scale + this.marginXY, (x1) * this.scale + this.marginXY);
+        this.ctx.lineTo(y2 * this.scale + this.marginXY, (x2) * this.scale + this.marginXY);
+        this.ctx.stroke();
+        this.ctx.closePath();
+    }
+
+    this.drawGameLine = function (x1, y1, x2, y2) {
+        this.ctx.lineCap = "round";
+        this.ctx.beginPath();
+        this.ctx.moveTo(y1 * this.scale + this.marginXY, x1 * this.scale + this.marginXY);
+        this.ctx.lineTo(x2 * this.scale + this.scale + this.wallLineWidth / 2 + this.marginXY / 3, y2 * this.scale + this.wallWidth / 2 + this.marginXY / 3)
+        this.ctx.stroke();
+        this.ctx.closePath();
     }
 }
 
 function Point(x, y) {
     this.x = x;
     this.y = y;
-    this.moveTable =
-        [
-            [0, 0, 0],
-            [0, 2, 0],
-            [0, 0, 0]
-        ];
-    this.ghostTable =
-        [
-            [0, 0, 0],
-            [0, 2, 0],
-            [0, 0, 0]
-        ];
-    this.wall = false;
-    this.ghostWall = false;
 }
 
-function ghostMoves() {
-    this.pointsTab = [];
-    this.enemyGateX = 100;
-    this.enemyGateY = 100;
-}
+function changeRound() {
+    player = !player;
+    let json = JSON.stringify(dataForSend);
+    dataForSend.moveArray = [];
+    counterShrek = 0;
+    $.ajax({
+        url: 'php_scripts/sendData.php',
+        method: 'POST',
+        data: {
+            json: json
+        },
+        success: function (result) {
+            game.loadBoardState();
 
-function drawLine(x1, y1, x2, y2) {
-    ctx.lineCap = "round";
-    ctx.beginPath();
-    ctx.moveTo((x1 + 1) * scale + marginXY, y1 * scale + marginXY);// to plus marginXY to ustawnia marginsow
-    ctx.lineTo((x2 + 1) * scale + marginXY, y2 * scale + marginXY);
-    ctx.stroke();
-    ctx.closePath();
-}
-
-function drawGate(x1, y1, x2, y2) {
-    ctx.lineCap = "round";
-    ctx.beginPath();
-    ctx.moveTo((x1) * scale + marginXY, y1 * scale + marginXY);// to plus marginXY to ustawnia marginsow
-    ctx.lineTo((x2) * scale + marginXY, y2 * scale + marginXY);
-    ctx.stroke();
-    ctx.closePath();
-}
-
-function drawField() {
-    for (let i = 0; i <= squaresY; i++) {
-        for (let j = 0; j <= squaresX; j++) {
-            if (pointsArray[i][j].moveTable[2][1] == 0) {
-                ctx.lineWidth = fieldWidth;
-                drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i + 1][j].x, pointsArray[i + 1][j].y);
+            $(`.name[data-id="${+personalBool}"]`).toggleClass('active');
+            $(`.name[data-id="${+(!personalBool)}"]`).toggleClass('active');
+            if (dataForSend.gameStatus == -1) {
+                move_interval = setInterval(start_check_for_round, 2000);
             }
-            if (pointsArray[i][j].moveTable[2][1] == 1) {
-                ctx.lineWidth = wallWidth;
-                drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i + 1][j].x, pointsArray[i + 1][j].y);
-            }
-            if (j != squaresX) {
-                if (pointsArray[i][j].moveTable[1][2] == 0) {
-                    ctx.lineWidth = fieldWidth;
-                    drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i][j + 1].x, pointsArray[i][j + 1].y);
-                }
-                if (pointsArray[i][j].moveTable[1][2] == 1) {
-                    ctx.lineWidth = wallWidth;
-                    drawLine(pointsArray[i][j].x, pointsArray[i][j].y, pointsArray[i][j + 1].x, pointsArray[i][j + 1].y);
-                }
-            }
+
+        },
+        error: function (er) {
+            console.log(er);
         }
-    }
+    })
 }
+let game = new Game();
+checkPosition();
 
-function drawGateway() {
-    for (let i = 0; i <= 1; i++) {
-        for (let j = 0; j <= 2; j++) {
-            ctx.lineWidth = wallWidth;
-            if (j < 2)
-                drawGate(gatewayArray[i][j].x, gatewayArray[i][j].y, gatewayArray[i][j + 1].x, gatewayArray[i][j + 1].y);
-            if (j == 0 || j == 2) {
-                if (i == 1)
-                    drawGate(gatewayArray[i][j].x, gatewayArray[i][j].y, gatewayArray[i][j].x - 1, gatewayArray[i][j].y);
-                else
-                    drawGate(gatewayArray[i][j].x, gatewayArray[i][j].y, gatewayArray[i][j].x + 1, gatewayArray[i][j].y);
-            }
-            else {
-                ctx.lineWidth = fieldWidth;
-                if (i == 1)
-                    drawGate(gatewayArray[i][j].x, gatewayArray[i][j].y, gatewayArray[i][j].x - 1, gatewayArray[i][j].y);
-                else
-                    drawGate(gatewayArray[i][j].x, gatewayArray[i][j].y, gatewayArray[i][j].x + 1, gatewayArray[i][j].y);
-            }
+function checkPosition() {
+    if (window.matchMedia('(max-width: 420px)').matches) {
+        game.boardWidth = 480;
+        game.boardHeight = 320;
+        console.log('420');
+        if(window.matchMedia('(max-width: 360px)').matches){
+            game.boardWidth = 450;
+            game.boardHeight = 300;
+            console.log('360');
         }
-    }
-}
-
-function pointsApply() {
-    // WYPELNIANIE TABLICY SPECJALNYMI PKT
-    for (let i = 0; i <= squaresY; i++) {
-        for (let j = 0; j <= squaresX; j++) {
-            pointsArray[i][j] = new Point(j, i);
-            if (i == 0) {
-                pointsArray[i][j].moveTable = [[2, 2, 2], [1, 2, 1], [0, 0, 0]];
-                pointsArray[i][j].ghostTable = [[2, 2, 2], [1, 2, 1], [0, 0, 0]];
-                pointsArray[i][j].wall = true;
-            }
-            if (j == 0) {
-                pointsArray[i][j].moveTable = [[2, 1, 0], [2, 2, 0], [2, 1, 0]];
-                pointsArray[i][j].ghostTable = [[2, 1, 0], [2, 2, 0], [2, 1, 0]];
-                pointsArray[i][j].wall = true;
-            }
-            if (i == squaresY) {
-                pointsArray[i][j].moveTable = [[0, 0, 0], [1, 2, 1], [2, 2, 2]];
-                pointsArray[i][j].ghostTable = [[0, 0, 0], [1, 2, 1], [2, 2, 2]];
-                pointsArray[i][j].wall = true;
-            }
-            if (j == squaresX) {
-                pointsArray[i][j].moveTable = [[0, 1, 2], [0, 2, 2], [0, 1, 2]];
-                pointsArray[i][j].ghostTable = [[0, 1, 2], [0, 2, 2], [0, 1, 2]];
-                pointsArray[i][j].wall = true;
-            }
-        }
-    }
-
-    ///ROGI///
-    pointsArray[0][0].moveTable = [[2, 2, 2], [2, 2, 1], [2, 1, 0]];
-    pointsArray[0][0].ghostTable = [[2, 2, 2], [2, 2, 1], [2, 1, 0]];
-    pointsArray[0][0].wall = true;
-    pointsArray[0][squaresX].moveTable = [[2, 2, 2], [1, 2, 2], [0, 1, 2]];
-    pointsArray[0][squaresX].ghostTable = [[2, 2, 2], [1, 2, 2], [0, 1, 2]];
-    pointsArray[0][squaresX].wall = true;
-    pointsArray[squaresY][squaresX].moveTable = [[0, 1, 2], [1, 2, 2], [2, 2, 2]];
-    pointsArray[squaresY][squaresX].ghostTable = [[0, 1, 2], [1, 2, 2], [2, 2, 2]];
-    pointsArray[squaresY][squaresX].wall = true;
-    pointsArray[squaresY][0].moveTable = [[2, 1, 0], [2, 2, 1], [2, 2, 2]];
-    pointsArray[squaresY][0].ghostTable = [[2, 1, 0], [2, 2, 1], [2, 2, 2]];
-    pointsArray[squaresY][0].wall = true;
-
-    ///BRAMKI///
-    var side = ((squaresY - 2) / 2); //odleglosc_rogu_planszy_do_bramki
-    pointsArray[side][0].moveTable = [[2, 1, 0], [1, 2, 0], [0, 0, 0]];
-    pointsArray[side][0].ghostTable = [[2, 1, 0], [1, 2, 0], [0, 0, 0]];
-    pointsArray[side][0].wall = true;
-    pointsArray[side + 1][0].moveTable = [[0, 0, 0], [0, 2, 0], [0, 0, 0]];
-    pointsArray[side + 1][0].ghostTable = [[0, 0, 0], [0, 2, 0], [0, 0, 0]];
-    pointsArray[side + 1][0].wall = false;
-    pointsArray[side + 2][0].moveTable = [[0, 0, 0], [1, 2, 0], [2, 1, 0]];
-    pointsArray[side + 2][0].ghostTable = [[0, 0, 0], [1, 2, 0], [2, 1, 0]];
-    pointsArray[side + 2][0].wall = true;
-    pointsArray[side][squaresX].moveTable = [[0, 1, 2], [0, 2, 1], [0, 0, 0]];
-    pointsArray[side][squaresX].ghostTable = [[0, 1, 2], [0, 2, 1], [0, 0, 0]];
-    pointsArray[side][squaresX].wall = true;
-    pointsArray[side + 1][squaresX].moveTable = [[0, 0, 0], [0, 2, 0], [0, 0, 0]];
-    pointsArray[side + 1][squaresX].ghostTable = [[0, 0, 0], [0, 2, 0], [0, 0, 0]];
-    pointsArray[side + 1][squaresX].wall = false;
-    pointsArray[side + 2][squaresX].moveTable = [[0, 0, 0], [0, 2, 1], [0, 1, 2]];
-    pointsArray[side + 2][squaresX].ghostTable = [[0, 0, 0], [0, 2, 1], [0, 1, 2]];
-    pointsArray[side + 2][squaresX].wall = true;
-
-    for (let i = 0; i <= squaresY; i++) {
-        for (let j = 0; j <= squaresX; j++) {
-            pointsArray[i][j].ghostWall = pointsArray[i][j].wall;
-        }
-    }
-
-    ///PUNKTY BRAMEK///
-    gatewayArray[0][0] = new Point(0, side);
-    gatewayArray[0][1] = new Point(0, (side) + 1);
-    gatewayArray[0][2] = new Point(0, (side) + 2);
-    gatewayArray[1][0] = new Point(squaresX + 2, side);
-    gatewayArray[1][1] = new Point(squaresX + 2, (side) + 1);
-    gatewayArray[1][2] = new Point(squaresX + 2, (side) + 2);
-}
-
-function setup() {
-    var myboard = new Board("board");
-    myboard.draw();
-
-    bestGhost = new ghostMoves();
-    enemyGatePoint = new Point(squaresX + 1, squaresY / 2);
-
-    ///NAKŁADANIE PUNKTÓW///
-    pointsApply();
-    ///RYSOWANIE PLANSZY///
-    drawField();
-    ///RYSOWANIE BRAMEK///
-    drawGateway();
-
-    drawBall();
-
-    myImgData = ctx.getImageData(0, 0, canvasWidthResolution, canvasHeightResolution);
-    
-    pointsArray[middleHeight][middleWidth].wall = true;
-    pointsArray[middleHeight][middleWidth].ghostWall = true;
-    curPoint = pointsArray[middleHeight][middleWidth];
-    posX = curPoint.x * scale + scale + wallWidth / 2 + marginXY / 3;
-    posY = curPoint.y * scale + wallWidth / 2 + marginXY / 3;
-}
-setup();
-
-//-------------------------------------------------------------
-function getMousePos(canvas, evt) {
-    var rect = canvas.getBoundingClientRect();
-    return {
-        x: evt.clientX - rect.left,
-        y: evt.clientY - rect.top
-    };
-}
-
-function loadBoardState() {
-    ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
-    ctx.putImageData(myImgData, 0, 0);
-    //ctx.fillStyle = "black";
-    drawBall();
-    //ctx.arc(posX, posY, 15, 0, Math.PI * 2, false);
-
-}
-
-function saveBoardState(i, j, bol) {
-    if (bol) {
-        myImgData = ctx.getImageData(0, 0, canvasWidthResolution, canvasHeightResolution);
-        curPoint.moveTable[i - middleHeight + 1][j - middleWidth + 1] = 1;
-        curPoint.ghostTable[i - middleHeight + 1][j - middleWidth + 1] = 1;
-        pointsArray[i][j].moveTable[2 - (i - middleHeight + 1)][2 - (j - middleWidth + 1)] = 1;
-        pointsArray[i][j].ghostTable[2 - (i - middleHeight + 1)][2 - (j - middleWidth + 1)] = 1;
-        curPoint = pointsArray[i][j];
-        posX = curPoint.x * scale + scale + wallWidth / 2 + marginXY / 3;
-        posY = curPoint.y * scale + wallWidth / 2 + marginXY / 3;
-        middleHeight = i;
-        middleWidth = j;
-    }
-    else {
-        myImgData = ctx.getImageData(0, 0, canvasWidthResolution, canvasHeightResolution);
-        curPoint = gatewayArray[i][j];
-        posX = (curPoint.x - 1) * scale + scale + wallWidth / 2 + marginXY / 3;
-        posY = curPoint.y * scale + wallWidth / 2 + marginXY / 3;
-    }
-}
-
-function changePlayer() {
-    playerTurn = !playerTurn;
-    if(playerTurn){
-        CurrentColor = PlayerColor;
     } else {
-        CurrentColor = BotColor;
+        game.boardWidth = 600;
+        game.boardHeight = 400;
+        console.log('def');
     }
 }
 
-function endGame(i) {
-    log("Player " + i + " WIN");
-    canvas.removeEventListener('mousemove', mouseMoveEvent);
-    canvas.removeEventListener('click', clickEvent);
-}
+$( window ).resize(function() {
+    checkPosition();
+});
 
-function ghostDraw(i) {
-    ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
-    ctx.putImageData(myImgData, 0, 0);
-    
-    ctx.strokeStyle = CurrentColor;
-    ctx.beginPath();
-        ctx.moveTo(posX, posY);
-        ctx.lineTo(bestGhost.pointsTab[counter].x * scale + scale + wallWidth / 2 + marginXY / 3, bestGhost.pointsTab[counter].y * scale + wallWidth / 2 + marginXY / 3)
-        ctx.stroke();
-    ctx.closePath();
-    
-    saveBoardState(bestGhost.pointsTab[counter].y, bestGhost.pointsTab[counter].x, true);
-    loadBoardState();
-    pointsArray[bestGhost.pointsTab[counter].y][bestGhost.pointsTab[counter].x].wall = true;
-    pointsArray[bestGhost.pointsTab[counter].y][bestGhost.pointsTab[counter].x].ghostWall = true;
-    counter++;
-    if (counter == bestGhost.pointsTab.length) {
-        counter = 0;
-        changePlayer();
-        clearInterval(startDrawGhost);
-    }
-
-}
-
-function botTry(nowGhost, tmpPoint) {
-    for (let i = tmpPoint.y - 1; i <= tmpPoint.y + 1; i++)
-        for (let j = tmpPoint.x - 1; j <= tmpPoint.x + 1; j++)
-            if (tmpPoint.ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] == 0) {
-                if (j == - 1)
-                    break;
-                if (j == pointsArray[i].length) {
-                    nowGhost.pointsTab.push(new Point(gatewayArray[1][1].x - 1, gatewayArray[1][1].y))
-                    nowGhost.enemyGateX = 0;
-                    bestGhost = JSON.parse(JSON.stringify(nowGhost));
-                    return;
-                }
-                nowGhost.pointsTab.push(new Point(pointsArray[i][j].x, pointsArray[i][j].y))
-                nowGhost.enemyGateX = (enemyGatePoint.x - pointsArray[i][j].x);
-                nowGhost.enemyGateY = Math.abs(enemyGatePoint.y - pointsArray[i][j].y);
-                pointsArray[i][j].ghostWall = true;
-                pointsArray[tmpPoint.y][tmpPoint.x].ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 1;
-                pointsArray[i][j].ghostTable[2 - (i - tmpPoint.y + 1)][2 - (j - tmpPoint.x + 1)] = 1;
-                if (pointsArray[i][j].wall) {
-                    let newPoint = JSON.parse(JSON.stringify(pointsArray[i][j]));
-                    let newGhost = JSON.parse(JSON.stringify(nowGhost));
-                    botTry(newGhost, newPoint)
-                }
-                else
-                    if (nowGhost.enemyGateX < bestGhost.enemyGateX) //nowGhost.enemyGateDistance < bestGhost.enemyGateDistance
-                    {
-                        bestGhost = JSON.parse(JSON.stringify(nowGhost));
-                    }
-                    else
-                    {
-                        if(nowGhost.enemyGateX == bestGhost.enemyGateX)
-                            if(nowGhost.enemyGateY < bestGhost.enemyGateY)
-                                bestGhost = JSON.parse(JSON.stringify(nowGhost));
-                    }
-                pointsArray[i][j].ghostWall = false;
-                pointsArray[tmpPoint.y][tmpPoint.x].ghostTable[i - tmpPoint.y + 1][j - tmpPoint.x + 1] = 0;
-                pointsArray[i][j].ghostTable[2 - (i - tmpPoint.y + 1)][2 - (j - tmpPoint.x + 1)] = 0;
-                nowGhost.pointsTab.pop();
-            }
-}
-
-function mouseMoveEvent(evt) {
-    var mousePos = getMousePos(canvas, evt);
-    var przelicznik_na_x = canvasWidthResolution / boardWidth;
-    var przelicznik_na_y = canvasHeightResolution / boardHeight;
-    var cord_X = mousePos.x * przelicznik_na_x;
-    var cord_Y = mousePos.y * przelicznik_na_y;
-
-    if(playerTurn){
-            ///PUNKTY MAPY///
-        for (let i = 0; i < pointsArray.length; i++){
-            for (let j = 0; j < pointsArray[i].length; j++){
-                if ((pointsArray[i][j].x * scale + scale + wallWidth / 2 <= cord_X + scale / 2 && pointsArray[i][j].y * scale + wallWidth / 2 <= cord_Y + scale / 2)
-                && (pointsArray[i][j].x * scale + scale + wallWidth / 2 >= cord_X - scale / 2 && pointsArray[i][j].y * scale + wallWidth / 2 >= cord_Y - scale / 2)){
-                    if ((i >= middleHeight - 1 && i <= middleHeight + 1) && (j >= middleWidth - 1 && j <= middleWidth + 1)){
-                        if (curPoint.moveTable[i - middleHeight + 1][j - middleWidth + 1] == 0) {
-                            loadBoardState();
-                            ctx.beginPath();
-                                ctx.fillStyle = CurrentColor;
-                                ctx.arc(pointsArray[i][j].x * scale + scale + wallWidth / 2 + marginXY / 3, pointsArray[i][j].y * scale + wallWidth / 2 + marginXY / 3, 15, 0, Math.PI * 2, false);
-                                ctx.fill();
-                            ctx.closePath();
-                        }
-                    }   
-                }       
-            }
-        }
-
-        ///PUNKTY BRAMEK///
-        for (let i = 0; i < gatewayArray.length; i++){
-            for (let j = 0; j < gatewayArray[i].length; j++){
-                if ((gatewayArray[i][j].x * scale + wallWidth / 2 <= cord_X + scale / 2 && gatewayArray[i][j].y * scale + wallWidth / 2 <= cord_Y + scale / 2)
-                && (gatewayArray[i][j].x * scale + wallWidth / 2 >= cord_X - scale / 2 && gatewayArray[i][j].y * scale + wallWidth / 2 >= cord_Y - scale / 2)){
-                    if (((posX + scale == gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3) || (posX - scale == gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3))
-                    && ((posY - scale * 2 < gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3) && (posY + scale * 2 > gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3))) {
-                        let value;
-                        if (middleWidth == 10) value = 2;
-                        else value = 0;
-                        if ((curPoint.moveTable[j + 1 - (middleHeight - 3)][value] == 0)) {
-                            loadBoardState();
-                            ctx.beginPath();
-                                ctx.fillStyle = CurrentColor;
-                                ctx.arc(gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3, gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3, 15, 0, Math.PI * 2, false);
-                                ctx.fill();
-                            ctx.closePath();
-                        }
-                    }
-                }
-                    
-            }
-                
-        }
-    }
-
-    
-        
-}
-
-function clickEvent(evt) {
-    var mousePos = getMousePos(canvas, evt);
-    var przelicznik_na_x = canvasWidthResolution / boardWidth;
-    var przelicznik_na_y = canvasHeightResolution / boardHeight;
-    var cord_X = mousePos.x * przelicznik_na_x;
-    var cord_Y = mousePos.y * przelicznik_na_y;
-    let wallmove = false;
-
-    ///PUNKTY MAPY///
-    if(playerTurn)
-    {
-        for (let i = 0; i < pointsArray.length; i++){
-            for (let j = 0; j < pointsArray[i].length; j++){
-                if ((pointsArray[i][j].x * scale + scale + wallWidth / 2 <= cord_X + scale / 2 && pointsArray[i][j].y * scale + wallWidth / 2 <= cord_Y + scale / 2)
-                && (pointsArray[i][j].x * scale + scale + wallWidth / 2 >= cord_X - scale / 2 && pointsArray[i][j].y * scale + wallWidth / 2 >= cord_Y - scale / 2)){
-                    if ((i >= middleHeight - 1 && i <= middleHeight + 1) && (j >= middleWidth - 1 && j <= middleWidth + 1)){
-                        if (curPoint.moveTable[i - middleHeight + 1][j - middleWidth + 1] == 0) {
-                            ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
-                            ctx.putImageData(myImgData, 0, 0);
-                            ctx.strokeStyle = CurrentColor;
-                            ctx.beginPath();
-                                ctx.moveTo(posX, posY);
-                                ctx.lineTo(pointsArray[i][j].x * scale + scale + wallWidth / 2 + marginXY / 3, pointsArray[i][j].y * scale + wallWidth / 2 + marginXY / 3)
-                                ctx.stroke();
-                            ctx.closePath();
-                            saveBoardState(i, j, true);
-                            loadBoardState();
-                            if (pointsArray[i][j].wall)
-                                wallmove = true;
-                            pointsArray[i][j].wall = true;
-                            pointsArray[i][j].ghostWall = true;
-
-                            if (!wallmove) {
-                                changePlayer();
-                                let newGhost = new ghostMoves();
-                                tmpPoint = JSON.parse(JSON.stringify(curPoint));
-                                botTry(newGhost, tmpPoint)
-                                log(bestGhost);
-                                startDrawGhost = setInterval(function () { ghostDraw(); }, 400);
-                                bestGhost.enemyGateX = 100;
-                                bestGhost.enemyGateY = 100;
-                            }
-                        }
-                    }
-                } 
-            }
-            
-        }
-
-
-        ///PUNKTY BRAMEK///
-        for (let i = 0; i < gatewayArray.length; i++){
-            for (let j = 0; j < gatewayArray[i].length; j++){
-                if ((gatewayArray[i][j].x * scale + wallWidth / 2 <= cord_X + scale / 2 && gatewayArray[i][j].y * scale + wallWidth / 2 <= cord_Y + scale / 2)
-                && (gatewayArray[i][j].x * scale + wallWidth / 2 >= cord_X - scale / 2 && gatewayArray[i][j].y * scale + wallWidth / 2 >= cord_Y - scale / 2)){
-                        if (((posX + scale == gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3) || (posX - scale == gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3))
-                        && ((posY - scale * 2 < gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3) && (posY + scale * 2 > gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3))) {
-                            let value;
-                            if (middleWidth == 10) value = 2;
-                            else value = 0;
-                            if ((curPoint.moveTable[j + 1 - (middleHeight - 3)][value] == 0)) {
-                                ctx.clearRect(0, 0, canvasWidthResolution, canvasHeightResolution);
-                                ctx.putImageData(myImgData, 0, 0);
-                                ctx.strokeStyle = CurrentColor;
-                                ctx.beginPath();
-                                    ctx.moveTo(posX, posY);
-                                    ctx.lineTo(gatewayArray[i][j].x * scale + wallWidth / 2 + marginXY / 3, gatewayArray[i][j].y * scale + wallWidth / 2 + marginXY / 3);
-                                    ctx.stroke();
-                                ctx.closePath();
-                                saveBoardState(i, j, false);
-                                loadBoardState();
-                                endGame(i + 1);
-                                return;
-                            }
-                        }
-                }
-
-            }
-
-        }
-
-    }
-}
-
-function drawBall(){
-    ballImage.addEventListener('load', function(){
-        ctx.drawImage(ballImage,posX-32,posY-32);
-    });
-    ballImage.src = 'graphic/ball.png';
-}
-
-canvas.addEventListener('mousemove', mouseMoveEvent, false);
-
-canvas.addEventListener('click', clickEvent, false);
+// let btn = document.querySelector(".btn");
+// btn.addEventListener("click", game.debug);

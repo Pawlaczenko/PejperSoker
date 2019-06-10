@@ -1,0 +1,581 @@
+body {
+    overflow: hidden;
+    background-image: url("../img/pattern.png");
+    font-family: 'Nunito', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+a {
+    text-decoration: none !important;
+}
+
+canvas {
+    width: 100%;
+    height: 100%;
+}
+
+.canvasSwap90 {
+    transform: rotate(90deg);
+}
+
+.canvasSwap270 {
+    transform: rotate(270deg);
+}
+
+.header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    width:100%;
+    position: absolute;
+    top: 15px;
+    left: 0;
+}
+
+.header_no {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.img--box, .img--box * {
+    height: 200px;
+}
+
+.header_no .img--box, .header_no .img--box * {
+    height: 150px;
+}
+
+.inGame--img, .inGame--img * {
+    display: none !important;
+}
+
+.name {
+    background-color: #84b369;
+    font-size: 35px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    padding: 15px;
+    min-width: 200px;
+    text-align: center;
+    border: 5px solid transparent;
+    color: white;
+    box-shadow: inset 0px 0px 50px -7px rgba(0, 0, 0, 0.75);
+    position: relative;
+}
+
+.active {
+    border: 5px solid white;
+    box-shadow: 0px 0px 29px 0px rgba(0, 0, 0, 0.73);
+}
+
+.active::after {
+    content: "TWOJA TURA";
+    display: block;
+    width: 100%;
+    background-color: black;
+    color: white;
+    text-align: center;
+    font-size: 10px;
+}
+
+.active.opponent::after {
+    content: "TURA PRZECIWNIKA";
+}
+
+.board--container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#board {
+    flex-shrink: 0 !important;
+    width: 600px;
+    height: 400px;
+}
+
+.alert {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.creator--box {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.creator {
+    width: 400px;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    z-index: 1000;
+    border: 1px dotted black;
+    box-shadow: 10px 10px 0px 0px rgba(0, 0, 0, 0.75);
+}
+
+.creator h3 {
+    text-align: center;
+}
+
+.colors {
+    display: flex;
+    flex-direction: row;
+}
+
+.color {
+    padding: 5px;
+}
+
+.color input[type=radio] {
+    position: absolute;
+    top: auto;
+    overflow: hidden;
+    clip: rect(1px, 1px, 1px, 1px);
+    width: 1px;
+    height: 1px;
+    white-space: nowrap;
+}
+
+.color input[type=radio]+label:before {
+    content: '';
+    display: block;
+    width: 25px;
+    height: 25px;
+    border: 2px solid black;
+    cursor: pointer;
+    background-color: inherit;
+}
+
+.color input[type=radio]:checked+label:before {
+    box-shadow: inset 0 0 0 .25em rgba(255, 255, 255, .95);
+}
+
+.color input[type=radio]:disabled+label:before {
+    cursor: not-allowed;
+    opacity: .2;
+}
+
+#play {
+    padding: 10px 20px;
+    font-size: 15px;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin: 15px auto;
+    display: block;
+}
+
+.hide {
+    display: none;
+}
+
+.endgame {
+    display: none;
+    z-index: 10000;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 50px;
+    font-size: 50px;
+    background-size: cover;
+    color: white;
+    box-shadow: 0px 0px 18px 0px rgba(0, 0, 0, 0.75);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    background-repeat: no-repeat;
+}
+
+.endgame .endgame--button {
+    display: block;
+    width: auto;
+    margin: auto;
+    font-size: 25px;
+    padding: 15px 45px;
+    letter-spacing: 5px;
+    cursor: pointer;
+}
+
+.message {
+    text-align: center;
+}
+
+.subHead {
+    display: block;
+    font-size: 23px;
+    font-weight: lighter;
+    text-align: center;
+    text-transform: none !important;
+}
+
+.loader {
+    display: none;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 199999999;
+    background-color: white;
+}
+
+.gameid_box {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    border: 1px dotted black;
+    padding: 15px;
+}
+
+.gameid_box h2 {
+    font-weight: bold;
+    margin-right: 20px;
+}
+
+.game_id {
+    font-weight: 300;
+}
+
+.copy {
+    -webkit-border-before-width: 25px;
+    height: 25px;
+    background-color: #84b369;
+    border: 0;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-left: 7px;
+}
+
+.copy svg {
+    width: 15px;
+}
+
+.button {
+    background-color: #84b369;
+    color: white;
+    border: 2px solid #84b369;
+    font-weight: bold;
+    transition: all .2s ease;
+}
+
+.button:hover {
+    border-color: #84b369;
+    color: #84b369;
+    background-color: white;
+    clip-path: none;
+}
+
+.buttons--box {
+    display: flex;
+    width: auto;
+    margin: auto;
+    justify-content: center;
+    flex-direction: row;
+    align-items: center;
+}
+
+.type {
+    display: block;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    font-size: 25px;
+    padding: 10px;
+    text-align: center;
+    margin: 10px;
+    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+}
+
+.paper_h1 {
+    text-align: center;
+    letter-spacing: 4px;
+    font-size: 42px;
+    font-weight: bold;
+    border-bottom: 5px solid #84b369;
+}
+
+.type:hover {
+    transform: translate(4px, 4px);
+    box-shadow: none;
+}
+
+.menu {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.info {
+    font-weight: lighter;
+    text-align: center;
+}
+
+.login_form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+    padding: 20px;
+    box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+    border: 1px dotted black;
+}
+
+.login_form input {
+    margin: 5px;
+}
+
+.login_form label {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.login_form input[type=text], .login_form input[type=password] {
+    border: none;
+    border-bottom: 1px solid #84b369;
+    font-size: 24px;
+}
+
+.login_button, .join_button {
+    cursor: pointer;
+    display: block;
+}
+
+.join_button:disabled {
+    opacity: .4;
+    cursor: initial;
+}
+
+.join_button:disabled:hover {
+    background-color: #84b369 !important;
+    color: white !important;
+}
+
+.join_game {
+    flex-direction: column !important;
+}
+
+.logged_user {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    background-color: white;
+    padding: 10px;
+    box-shadow: 0px 0px 11px 0px rgba(0, 0, 0, 0.67);
+}
+
+.logged_user .user_login {
+    font-size: 20px;
+}
+
+.logged_user .logout {
+    color: #84b369 !important;
+}
+
+#id_input {
+    font-size: 16px !important;
+    width: 80%;
+}
+
+#rooms {
+    width: 100%;
+    background-color: white;
+    margin: 0 auto;
+}
+
+#rooms tr {
+    position: relative;
+}
+
+#rooms tr:first-child td {
+    background-color: #84b369;
+    color: white;
+}
+
+#rooms tr td:last-child input {
+    margin: 0 auto;
+}
+
+#rooms tr td {
+    border-bottom: 1px solid #84b369;
+    border-right: 2px solid #84b369;
+    text-align: center;
+}
+
+#rooms tr .private {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 25px;
+    height: 25px;
+}
+
+.pass_label {
+    display: none;
+}
+
+.private_label {
+    width: auto;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+@media (max-width: 840px) {
+    .inGame--img, .inGame--img * {
+        height: 100px;
+    }
+}
+
+@media (max-width: 640px) {
+
+    .paper_h1 {
+        font-size: 28px;
+    }
+
+    .buttons--box {
+        flex-direction: column;
+    }
+
+    .creator--box {
+        overflow: hidden;
+    }
+    
+    .creator {
+        width: 300px;
+        box-shadow: 7px 7px 0px 0px rgba(0, 0, 0, 0.75);
+    }
+    
+    .creator h3 {
+        font-size: 32px;
+    }
+            
+    #play {
+        padding: 10px 40px;
+    }
+
+    .header {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        position: static;
+        top: unset;
+        left: unset;
+    }
+    
+    .inGame--img, .inGame--img * {
+        display: none !important;
+    }
+
+    .name{
+        font-size: 20px;
+        padding: 10px;
+        min-width: 150px;
+    }
+
+    .endgame {
+        background-position: center;
+    }
+
+    .endgame h1 {
+        font-size: 1em;
+        margin: 0;
+    }
+
+    .subHead {
+        font-size: 14px;
+    }
+
+    .single_board {
+        display: none;
+    }
+
+    .menu {
+        width: 95%;
+    }
+
+    .login_form {
+        width: 95%;
+        margin: 0 auto;
+    }
+    
+    .login_form input {
+        width: 100%;
+    }
+    
+    .login_form label {
+        font-size: 10px;
+    }
+    
+    .login_form input[type=text], .login_form input[type=password] {
+        font-size: 16px;
+    }
+
+    .login_form input[type=submit] {
+        margin-top: 15px;
+    }
+
+    .logged_user {
+        opacity: .6;
+    }
+
+    .spiderman-h{
+        font-size: 18px;
+        margin: 4px;
+    }
+
+    .spiderman-img{
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    .spiderman-alert{
+        width: 100%;
+    }
+    
+    .spiderman-a{
+        position: static !important;
+        margin-left:50%;
+        transform: translateX(-50%);
+    }
+}
+
+@media (max-width: 420px) {
+    #board {
+        width: 480px !important;
+        height: 320px !important;
+    }
+}
+
+@media (max-width: 360px) {
+    #board {
+        width: 450px !important;
+        height: 300px !important;
+    }
+}
