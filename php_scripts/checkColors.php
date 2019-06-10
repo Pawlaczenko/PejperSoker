@@ -4,7 +4,7 @@
     require_once "./utilities_php/usefull_function.php";
     if((isset($_SESSION['is__logged']))&&($_SESSION['is__logged']==true))
     {
-        $connect = new mysqli($host, $db_user , $db_password,$db_name);
+        $connect = @new mysqli($host, $db_user , $db_password,$db_name);
 
             $logged_user_id = $_SESSION['id'];
             if(!(isset($_SESSION['wantedSession'])))
@@ -28,7 +28,9 @@
     }
     else
     {
+        $connect->close();
         header("Location:../multi.php");
     }
     $connect->close();
+   
 ?>

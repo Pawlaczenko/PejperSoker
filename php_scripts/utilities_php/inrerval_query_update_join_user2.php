@@ -4,13 +4,11 @@ session_start();
 require_once "./connect.php";
 require_once "./usefull_function.php";
 
- $connect = new mysqli($host, $db_user , $db_password,$db_name);
+ $connect = @new mysqli($host, $db_user , $db_password,$db_name);
  if ($connect->errno) {
-    //  echo "blad";
  }
  else
  {
-    // echo "connect";
     $current_user_id = $_SESSION['id'];
     $query_check = "SELECT * FROM session WHERE user1=$current_user_id";
     $check_color = "SELECT * FROM session WHERE player2_color=-1 AND user1=$current_user_id";
@@ -26,5 +24,6 @@ require_once "./usefull_function.php";
     else{
         echo FALSE;
     }
+    $connect->close();
  }
 ?>

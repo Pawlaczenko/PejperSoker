@@ -26,7 +26,6 @@ function check_is_logged($connect,$login)
     $result = $connect->query($query_check_ping);
     $row = $result->fetch_assoc();
     $unix_time_from_base = $row['date_last_login'];
-    // echo $unix_time_from_base,"<-- czas z bazy";
     if(strtotime("now")-$unix_time_from_base>$max_ping_time_answer)
     {
         update_logged_flag($connect,$login,0);
@@ -62,7 +61,6 @@ function delete_old_session($connect )
     $query_sesja = "SELECT * FROM session";
     echo $query_sesja;
     $result = $connect->query($query_sesja);
-    // $row = $result->fetch_assoc();
     
     while($row = $result->fetch_assoc())
     {
@@ -92,12 +90,7 @@ function delete_old_session($connect )
         echo $curr_unix_time-$unix_time_from_db;
     }
 
-    // if($result->num_rows)
-    // {
-    //     unset($_SESSION["session_id"]);
-    //     $query1 ="DELETE FROM session WHERE id_session = $session_id";
-    //     $connect->query($query1);
-    // }
+
 }
 
 ?>

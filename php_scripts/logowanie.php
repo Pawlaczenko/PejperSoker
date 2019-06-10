@@ -4,9 +4,8 @@ session_start();
 require_once "./utilities_php/connect.php";
 require_once "./utilities_php/usefull_function.php";
 
- $connect = new mysqli($host, $db_user , $db_password,$db_name);
+ $connect = @new mysqli($host, $db_user , $db_password,$db_name);
  if ($connect->errno) {
-     //echo "wystapil blad" . $connect->errno . "----" . $connect->error;
  }
  else
  {
@@ -31,20 +30,15 @@ require_once "./utilities_php/usefull_function.php";
                    if (password_verify($haslo,$row['password']))
                    {
                        
-                            //echo "logowanie ... ";
                             $_SESSION['is__logged'] = true;
                             $_SESSION['login'] = $login;
                             $_SESSION['id'] = $user_id;
-                            // echo delete_session_with_me($connect,$user_id);
                             $result->free_result();
 
                             delete_old_session($connect);
 
-                            // ping($connect,$_SESSION['login']); //! chyba nie potrzebne ~dawid
 
-                            // update_logged_flag($connect,$_SESSION['login'],0);//! is logged is uncorrect
                             header('Location:../lobby.php'); //! pamietaj zeby to przywrucic 
-                            // echo "logged";
                        
                        
                    }
@@ -61,6 +55,7 @@ require_once "./utilities_php/usefull_function.php";
                }
            }
    }
+   $connect->close();
      }
 
 $connect->close();

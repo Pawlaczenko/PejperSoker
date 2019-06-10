@@ -15,7 +15,7 @@
         require_once "./php_scripts/utilities_php/usefull_function.php";
         session_start();
 
-        $connect = new mysqli($host, $db_user , $db_password,$db_name);
+        $connect = @new mysqli($host, $db_user , $db_password,$db_name);
 
         if ($connect->errno) {
             echo "wystapil blad" . $connect->errno . "----" . $connect->error;
@@ -26,11 +26,6 @@
 
                 $_SESSION['protection_f5'] = false;
 
-                // if(check_is_session($connect,$_SESSION['id']))
-                // {
-                //     echo "ten user jest juz zalogowany i prowadzi gre";
-                //     exit;
-                // }
 
                 $name = $_SESSION['login'];
                 echo <<< EOT
@@ -46,8 +41,9 @@ EOT;
             } else {
                 header("Location:../multi.php");
             }
+            $connect->close();
         }
-        $connect->close();
+        
     ?>
 
     <header class="header_no">

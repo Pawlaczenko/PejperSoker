@@ -11,14 +11,13 @@
     <?php
      session_start();
     require_once "./utilities_php/connect.php";
-    $connect = new mysqli($host, $db_user , $db_password,$db_name);
+    $connect = @new mysqli($host, $db_user , $db_password,$db_name);
     if ($connect->errno) {
         echo "wystapil blad" . $connect->errno . "----" . $connect->error;
     }
     else
     {
         $login = $_POST['login'];
-        // $login = htmlentities($login, ENT_QUOTES, "UTF-8");
         $haslo1 = $_POST['haslo1'];
         $haslo2 = $_POST['haslo2'];
 
@@ -71,7 +70,7 @@
             header("Location:../rejstracja.php");
 
         }
-
+        $connect->close();
     }
 
 

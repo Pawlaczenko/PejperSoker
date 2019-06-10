@@ -3,8 +3,7 @@ function simple_ping() {
         url:'./ping_to_active/ping.php',
         type:'POST',
         success:function(results) {
-            // console.log('ping to active');
-            console.log(results);
+
         }
     });
 }

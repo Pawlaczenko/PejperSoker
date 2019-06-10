@@ -1,19 +1,19 @@
 $( document ).ready(function() {
   $.ajax({
-      url: 'php_scripts/showRooms.php', //! TUTAJ BYŁA LITERÓWKA 'php_sripts' nie było 'c'
+      url: 'php_scripts/showRooms.php', 
       method: 'POST',
       success: function(msg) {
           let rooms = JSON.parse(msg);
           showRooms(rooms);
       },
       error: function(err) {
-          console.log(err);
+
       }
   })
 });
 
 function showRooms(obj) {
-    console.log(obj);
+
     obj.forEach(function(room,i){
         $("#rooms").append(`<tr>
         <td class='private private${i}'>

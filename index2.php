@@ -14,7 +14,7 @@
 
     require_once "./php_scripts/utilities_php/connect.php";
     require_once "./php_scripts/utilities_php/usefull_function.php";
-    $connect = new mysqli($host, $db_user , $db_password,$db_name);
+    $connect = @new mysqli($host, $db_user , $db_password,$db_name);
 
     session_start();
 
@@ -99,6 +99,7 @@
         } else {
             header("Location:./multi.php");
         }
+        $connect->close();
     ?>
 <script>
     $('input[name=private_session]').change(function() {

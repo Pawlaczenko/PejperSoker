@@ -3,9 +3,9 @@ session_start();
 require_once "./utilities_php/connect.php";
 require_once "./utilities_php/usefull_function.php";
 
-$connect = new mysqli($host, $db_user , $db_password,$db_name);
+$connect = @new mysqli($host, $db_user , $db_password,$db_name);
 if ($connect->errno) {
-    // echo "wystapil blad" . $connect->errno . "----" . $connect->error;
+
     echo false;
 } 
 else
@@ -27,6 +27,7 @@ else
 
     $dump_players = array('login1' => $login1, 'color1' => $color1, 'login2' => $login2, 'color2' => $color2, 'role' => $_SESSION['player']);
     echo json_encode($dump_players);
+    $connect->close();
 }
 
 ?>

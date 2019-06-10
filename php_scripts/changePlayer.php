@@ -4,9 +4,9 @@ session_start();
 require_once "./utilities_php/connect.php";
 require_once "./utilities_php/usefull_function.php";
 
-$connect = new mysqli($host, $db_user, $db_password, $db_name);
+$connect = @new mysqli($host, $db_user, $db_password, $db_name);
 if ($connect->errno) {
-    // echo "wystapil blad" . $connect->errno . "----" . $connect->error;
+
     echo false;
 } else {
     $session = $_SESSION['session_id'];
@@ -24,4 +24,6 @@ if ($connect->errno) {
 
     $connect->query("UPDATE session SET whose_move=$whose_move WHERE id_session = $session");
     echo "UPDATE session SET whose_move=$whose_move WHERE id_session = $session";
+
+    $connect->close();
 }

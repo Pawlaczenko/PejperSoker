@@ -4,9 +4,8 @@ session_start();
 require_once "./utilities_php/connect.php";
 require_once "./utilities_php/usefull_function.php";
 
-$connect = new mysqli($host, $db_user, $db_password, $db_name);
+$connect = @new mysqli($host, $db_user, $db_password, $db_name);
 if ($connect->errno) {
-    // echo "wystapil blad" . $connect->errno . "----" . $connect->error;
     echo false;
 } else {
     $session = $_SESSION['session_id'];
@@ -22,9 +21,9 @@ if ($connect->errno) {
         $whose_move = 1;
     }
 
-    // $whose_move = !(boolval($row['whose_move']));
 
     $connect->query("UPDATE session SET game_data='$game_data' WHERE id_session = $session");
     $connect->query("UPDATE session SET whose_move=$whose_move WHERE id_session = $session"); //!ZMIENIĆ ŻEBY DOPIERO PO WYSŁANIU DANYCH ZMIENIAŁ SIĘ GRACZ
     echo "UPDATE session SET game_data='$game_data' WHERE id_session = $session";
+    $connect->close();
 }

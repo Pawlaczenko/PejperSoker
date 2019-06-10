@@ -6,7 +6,7 @@ function getMousePos(canvas, evt) {
     };
 }
 
-//?Graph
+
 const addNode = (graph, node) => {
     graph.set(node, { out: new Set() });
 };
@@ -165,7 +165,7 @@ const getDistance = (startNodeName, endNodeName, graph) => {
     costs = Object.assign(costs, makeCostObject);
     costs[endNodeName] = "Infinity";
 
-    // track paths
+
     const parents = { endNodeName: null };
     for (let child of graph.get(startNodeName).out) {
         parents[child] = startNodeName;
@@ -252,11 +252,11 @@ const checkAllPaths = (source, target, ownGate, graph) => {
 
             if (ownDistance == -1) {
                 return false;
-                //!PROBLEM
+             
             }
-            // if (ownDistance == -1) {
+            
             let sumDistance = ownDistance - enemyDistance;
-            // }
+            
             if (bestPath.sumDistance > sumDistance) {
                 if (enemyDistance > 0) {
                     bestPath.sumDistance = sumDistance;
@@ -279,7 +279,7 @@ const checkAllPaths = (source, target, ownGate, graph) => {
             }
 
             if (!queue.includes(next)) {
-                // path.set(next, start);
+             
                 queue.push(next);
             }
         }
@@ -426,7 +426,7 @@ function genereteCreator(lock) {
         url:'php_scripts/checkColors.php',
         type:'POST',
         success: function(results) {
-            console.log("jestem w kolorkach" + results);
+          
             colors.forEach(function(color,i){
                 $(".creator .colors").append(`
                     <div class="color">
@@ -435,14 +435,14 @@ function genereteCreator(lock) {
                     </div>
                 `);
                 if(results==i){
-                    console.log('aaaaa');
+                
                     $('.color #id'+i).prop('disabled', true);
                 }
                 $('.color #id'+i+' + label').css("background-color", colors[i]);
             });
         },
         error: function(err) {
-            console.log(err);
+
         }
     })
 };

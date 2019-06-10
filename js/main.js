@@ -4,8 +4,7 @@ var move_interval;
 var player;
 let counterShrek = 0;
 let messanges = ['<span class="subHead"><i>"To inteligencja wygrywa wojny, a nie brutalna siła."</i></span>', '<span class="subHead"><i>"All we had to do was follow the damn train CJ!"</i></span>'];
-console.log(messanges[0]);
-console.log(messanges[1]);
+
 
 let dataForSend = { moveArray: [], gameStatus: -1 };
 
@@ -121,7 +120,7 @@ function Game() {
 
     this.draw = function (stopper, path, state) {
         this.loadBoardState();
-        console.log(path);
+   
         const element = path[counterShrek];
 
         this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
@@ -187,7 +186,7 @@ function Game() {
             this.ownGate = 0;
         }
         else {
-            console.log('jestem klientem');
+          
             player = false;
             this.enemyGate = 0;
             this.ownGate = this.columns;
@@ -373,7 +372,7 @@ function changeRound() {
 
         },
         error: function (er) {
-            console.log(er);
+
         }
     })
 }

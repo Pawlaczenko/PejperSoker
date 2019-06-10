@@ -185,8 +185,8 @@ function Game() {
 
         let mousePos = getMousePos(this.canvas, event);
         mousePos.y = this.boardWidth - mousePos.y;
-        let cord_X = mousePos.x * this.canvasWidth / this.boardWidth; //*Tak ma być
-        let cord_Y = mousePos.y * this.canvasHeight / this.boardHeight; //*Tak ma być
+        let cord_X = mousePos.x * this.canvasWidth / this.boardWidth; 
+        let cord_Y = mousePos.y * this.canvasHeight / this.boardHeight; 
         let wallHit = false;
 
         for (let x = 0; x <= this.rows; x++) {
@@ -208,18 +208,17 @@ function Game() {
                                 this.loadBoardState();
 
                                 if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == this.columns) {
-                                    console.log("Wygrywa gracz niebieski");
+                                   
                                     this.gameEnd(true);
                                     return;
                                 }
 
                                 if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == 0) {
-                                    console.log("Wygrywa gracz czerwony");
+                                   
                                     this.gameEnd(false);
                                     return;
                                 }
-                                // if (!wallHit)
-                                //     this.player = !this.player;
+                              
 
                                 if (graph.get(`${x}_${y}`).out.size > 0) {
                                     if (!wallHit) {
@@ -324,13 +323,13 @@ function Game() {
 
             clearInterval(stopper);
             if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == this.columns) {
-                console.log("Wygrywa gracz niebieski");
+               
                 this.gameEnd(true);
                 return;
             }
 
             if ((this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1) && this.curPoint.y == 0) {
-                console.log("Wygrywa gracz czerwony");
+              
                 this.gameEnd(false);
                 return;
             }
