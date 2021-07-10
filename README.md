@@ -1,2 +1,1 @@
 # PejperSoker
-Ten projekt prawdopodobnie będzie NAJGORSZYM projektem w historii. God Save the Queen ~ Freddie Mercury

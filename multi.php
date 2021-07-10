@@ -12,7 +12,9 @@ session_start();
     <link href="https://fonts.googleapis.com/css?family=Nunito:300,400,700&display=swap&subset=latin-ext" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <link rel="stylesheet" href="assets/styles/style.css">
-    <title>Document</title>
+    <link rel="icon" href="./assets/img/favicon.ico" />
+
+    <title>PejperSoker</title>
 </head>
 <body>
     <header class="header_no">
