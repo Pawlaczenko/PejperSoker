@@ -4,8 +4,6 @@ var move_interval;
 var player;
 let counterShrek = 0;
 let messanges = ['<span class="subHead"><i>"To inteligencja wygrywa wojny, a nie brutalna siła."</i></span>', '<span class="subHead"><i>"All we had to do was follow the damn train CJ!"</i></span>'];
-console.log(messanges[0]);
-console.log(messanges[1]);
 
 let dataForSend = { moveArray: [], gameStatus: -1 };
 
@@ -42,7 +40,13 @@ function Game() {
         this.boardContener.style.height = this.boardHeight;
         this.canvas.width = 1800;
         this.canvas.height = 1210;
-        this.boardContener.appendChild(this.canvas);
+        if (personalBool == 0) {
+            $('#board').addClass('canvasSwap270');
+        }
+        else {
+            $('#board').addClass('canvasSwap90');
+        }
+        $('#board').html(this.canvas);
         this.ctx = this.canvas.getContext("2d");
     }
 
@@ -74,12 +78,12 @@ function Game() {
                         }
                     }
                     if (!(graph.get(`${x}_${y}`).out.has(`${x + 1}_${y}`)) && graph.has(`${x + 1}_${y}`)) {
-                        if((x==3 || x==4)){
-                            if(y==0){
+                        if ((x == 3 || x == 4)) {
+                            if (y == 0) {
                                 this.ctx.strokeStyle = players[0].color;
                             }
-                            
-                            if(y == 12) {
+
+                            if (y == 12) {
                                 this.ctx.strokeStyle = players[1].color;
                             }
                         } else {
@@ -115,7 +119,7 @@ function Game() {
 
     this.draw = function (stopper, path, state) {
         this.loadBoardState();
-        console.log(path);
+
         const element = path[counterShrek];
 
         this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
@@ -126,7 +130,7 @@ function Game() {
         this.drawLine(this.curPoint.x, this.curPoint.y, Number(element.substring(0, 1)), Number(element.substring(2, element.length)));
         this.saveBoardState(Number(element.substring(0, 1)), Number(element.substring(2, element.length)));
         this.loadBoardState();
-        
+
 
         if (counterShrek >= (path.length - 1)) {
             player = true;
@@ -137,8 +141,6 @@ function Game() {
             }
             $(`.name[data-id="${+personalBool}"]`).toggleClass('active');
             $(`.name[data-id="${+(!personalBool)}"]`).toggleClass('active');
-            // this.canvas.addEventListener('mousemove', this.mouseMoveEvent);
-            // this.canvas.addEventListener('click', this.clickEvent);
             return;
         }
         counterShrek++;
@@ -181,7 +183,7 @@ function Game() {
             this.ownGate = 0;
         }
         else {
-            console.log('jestem klientem');
+
             player = false;
             this.enemyGate = 0;
             this.ownGate = this.columns;
@@ -219,10 +221,16 @@ function Game() {
         this.color = players[+personalBool].color;
 
         let mousePos = getMousePos(this.canvas, event);
+        if (personalBool == 0) {
+            mousePos.y = this.boardWidth - mousePos.y;
+        }
+        else {
+            mousePos.x = this.boardHeight - mousePos.x;
+        }
         let przelicznik_na_x = this.canvasWidth / this.boardWidth;
         let przelicznik_na_y = this.canvasHeight / this.boardHeight;
-        let cord_X = mousePos.x * przelicznik_na_x;
-        let cord_Y = mousePos.y * przelicznik_na_y;
+        let cord_X = mousePos.y * przelicznik_na_x;
+        let cord_Y = mousePos.x * przelicznik_na_y;
 
         ///PUNKTY MAPY///
         for (let x = 0; x <= this.rows; x++)
@@ -246,8 +254,14 @@ function Game() {
         }
         this.color = players[+personalBool].color;
         let mousePos = getMousePos(this.canvas, event);
-        let cord_X = mousePos.y * this.canvasWidth / this.boardWidth; //*Tak ma być
-        let cord_Y = mousePos.x * this.canvasHeight / this.boardHeight; //*Tak ma być
+        if (personalBool == 0) {
+            mousePos.y = this.boardWidth - mousePos.y;
+        }
+        else {
+            mousePos.x = this.boardHeight - mousePos.x;
+        }
+        let cord_X = mousePos.x * this.canvasWidth / this.boardWidth; //*Tak ma być
+        let cord_Y = mousePos.y * this.canvasHeight / this.boardHeight; //*Tak ma być
         let wallHit = false;
 
         for (let x = 0; x <= this.rows; x++) {
@@ -352,14 +366,33 @@ function changeRound() {
             if (dataForSend.gameStatus == -1) {
                 move_interval = setInterval(start_check_for_round, 2000);
             }
-            
+
         },
         error: function (er) {
-            console.log(er);
+
         }
     })
 }
 let game = new Game();
+checkPosition();
 
-// let btn = document.querySelector(".btn");
-// btn.addEventListener("click", game.debug);
+function checkPosition() {
+    if (window.matchMedia('(max-width: 420px)').matches) {
+        game.boardWidth = 480;
+        game.boardHeight = 320;
+
+        if (window.matchMedia('(max-width: 360px)').matches) {
+            game.boardWidth = 450;
+            game.boardHeight = 300;
+
+        }
+    } else {
+        game.boardWidth = 600;
+        game.boardHeight = 400;
+
+    }
+}
+
+$(window).resize(function () {
+    checkPosition();
+});
