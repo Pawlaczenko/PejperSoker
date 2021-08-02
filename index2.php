@@ -47,7 +47,7 @@
     </div>
     <div class="endgame alert">
         <h1 class="message">
-            FUCKING WINNER <!-- wiadomość z ajaxa -->
+            win
         </h1>
         <a href="join_to_game.php" class="endgame--button button">GO BACK</a>
     </div>
