@@ -418,34 +418,29 @@ function createGraph(rows, columns) {
 }
 
 var colors = [
-    "blue","yellow","cyan","pink","red","orange"
+    "blue", "yellow", "cyan", "pink", "red", "orange"
 ];
 
 function genereteCreator(lock) {
     $.ajax({
-        url:'php_scripts/checkColors.php',
-        type:'POST',
-        success: function(results) {
-            console.log("jestem w kolorkach" + results);
-            colors.forEach(function(color,i){
+        url: 'php_scripts/checkColors.php',
+        type: 'POST',
+        success: function (results) {
+            colors.forEach(function (color, i) {
                 $(".creator .colors").append(`
                     <div class="color">
                         <input type="radio" name="color" value=${i} class="colorInput" id="id${i}" required>
                         <label for="id${i}"></label>
                     </div>
                 `);
-                if(results==i){
-                    console.log('aaaaa');
-                    $('.color #id'+i).prop('disabled', true);
+                if (results == i) {
+                    $('.color #id' + i).prop('disabled', true);
                 }
-                $('.color #id'+i+' + label').css("background-color", colors[i]);
+                $('.color #id' + i + ' + label').css("background-color", colors[i]);
             });
         },
-        error: function(err) {
-            console.log(err);
+        error: function (err) {
         }
     })
 };
-
-
-genereteCreator();
+//genereteCreator();

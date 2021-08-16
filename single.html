@@ -23,7 +23,7 @@
       <img src="assets/img/ball.png" alt="ball" id="ball" />
     </div>
     <div class="endgame alert">
-      <h1 class="message">Looser</h1>
+      <h1 class="message">LOOSER</h1>
       <a href="index.html" class="endgame--button button">GO BACK</a>
     </div>
     <div class="creator--box alert">
@@ -31,8 +31,10 @@
         <h1>Stwórz postać</h1>
         <form method="POST" id="creator">
           <label>Imię: <input id="name" type="text" name="name" required /></label>
-          <!-- <h3>Wybierz kolor</h3> -->
-          <!-- <div class="colors"></div> -->
+          <!-- <h3>Wybierz kolor</h3>
+                <div class="colors">
+
+                </div> -->
           <input class="button" type="submit" id="play" value="graj" name="graj" />
         </form>
       </div>
@@ -41,13 +43,15 @@
 
     <header class="header">
       <div class="name active" data-id="0">Gracz</div>
-      <div class="img--box">
+      <div class="img--box inGame--img">
         <a href="index.html"><img src="assets/img/Logo.png" alt="Logo" /></a>
       </div>
       <div class="name" data-id="1">BOT</div>
     </header>
 
-    <div id="board"></div>
+    <div class="board--container">
+      <div id="board" class="single_board"></div>
+    </div>
     <script src="js/global.js"></script>
     <script src="js/bot.js"></script>
   </body>

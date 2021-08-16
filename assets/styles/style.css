@@ -1,6 +1,4 @@
 body {
-    width: 100%;
-    height: 100vh;
     overflow: hidden;
     background-image: url("../img/pattern.png");
     font-family: 'Nunito', sans-serif;
@@ -19,11 +17,23 @@ canvas {
     height: 100%;
 }
 
+.canvasSwap90 {
+    transform: rotate(90deg);
+}
+
+.canvasSwap270 {
+    transform: rotate(270deg);
+}
+
 .header {
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: center;
+    justify-content: space-around;
+    width:100%;
+    position: absolute;
+    top: 15px;
+    left: 0;
 }
 
 .header_no {
@@ -39,6 +49,10 @@ canvas {
 
 .header_no .img--box, .header_no .img--box * {
     height: 150px;
+}
+
+.inGame--img, .inGame--img * {
+    display: none !important;
 }
 
 .name {
@@ -74,11 +88,18 @@ canvas {
     content: "TURA PRZECIWNIKA";
 }
 
+.board--container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 #board {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -30%);
+    flex-shrink: 0 !important;
+    width: 600px;
+    height: 400px;
 }
 
 .alert {
@@ -175,8 +196,6 @@ canvas {
     height: 100%;
     padding: 50px;
     font-size: 50px;
-    /* background-image: url("../img/win.gif"); */
-    /* Tutaj leci bckimg z ajaxa */
     background-size: cover;
     color: white;
     box-shadow: 0px 0px 18px 0px rgba(0, 0, 0, 0.75);
@@ -256,7 +275,6 @@ canvas {
     border: 2px solid #84b369;
     font-weight: bold;
     transition: all .2s ease;
-    /* clip-path: polygon(30% 0%, 70% 0%, 100% 29%, 100% 70%, 85% 100%, 7% 100%, 0 85%, 0 53%); */
 }
 
 .button:hover {
@@ -408,12 +426,12 @@ canvas {
     text-align: center;
 }
 
-#rooms tr .private{
+#rooms tr .private {
     display: flex;
     justify-content: center;
     align-items: center;
     min-width: 25px;
-    height: 25px !important;
+    height: 25px;
 }
 
 .pass_label {
@@ -427,4 +445,137 @@ canvas {
     align-items: center;
     justify-content: center;
     cursor: pointer;
+}
+
+@media (max-width: 840px) {
+    .inGame--img, .inGame--img * {
+        height: 100px;
+    }
+}
+
+@media (max-width: 640px) {
+
+    .paper_h1 {
+        font-size: 28px;
+    }
+
+    .buttons--box {
+        flex-direction: column;
+    }
+
+    .creator--box {
+        overflow: hidden;
+    }
+    
+    .creator {
+        width: 300px;
+        box-shadow: 7px 7px 0px 0px rgba(0, 0, 0, 0.75);
+    }
+    
+    .creator h3 {
+        font-size: 32px;
+    }
+            
+    #play {
+        padding: 10px 40px;
+    }
+
+    .header {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        position: static;
+        top: unset;
+        left: unset;
+    }
+    
+    .inGame--img, .inGame--img * {
+        display: none !important;
+    }
+
+    .name{
+        font-size: 20px;
+        padding: 10px;
+        min-width: 150px;
+    }
+
+    .endgame {
+        background-position: center;
+    }
+
+    .endgame h1 {
+        font-size: 1em;
+        margin: 0;
+    }
+
+    .subHead {
+        font-size: 14px;
+    }
+
+    .single_board {
+        display: none;
+    }
+
+    .menu {
+        width: 95%;
+    }
+
+    .login_form {
+        width: 95%;
+        margin: 0 auto;
+    }
+    
+    .login_form input {
+        width: 100%;
+    }
+    
+    .login_form label {
+        font-size: 10px;
+    }
+    
+    .login_form input[type=text], .login_form input[type=password] {
+        font-size: 16px;
+    }
+
+    .login_form input[type=submit] {
+        margin-top: 15px;
+    }
+
+    .logged_user {
+        opacity: .6;
+    }
+
+    .spiderman-h{
+        font-size: 18px;
+        margin: 4px;
+    }
+
+    .spiderman-img{
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    .spiderman-alert{
+        width: 100%;
+    }
+    
+    .spiderman-a{
+        position: static !important;
+        margin-left:50%;
+        transform: translateX(-50%);
+    }
+}
+
+@media (max-width: 420px) {
+    #board {
+        width: 480px !important;
+        height: 320px !important;
+    }
+}
+
+@media (max-width: 360px) {
+    #board {
+        width: 450px !important;
+        height: 300px !important;
+    }
 }

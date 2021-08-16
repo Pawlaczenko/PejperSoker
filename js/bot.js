@@ -1,7 +1,8 @@
 var currPlayer = false;
 var players = [];
 const graph = createGraph(8, 12);
-let ball = document.getElementById("ball");
+let ball = document.getElementById('ball');
+let game;
 
 var Player = function (name, color, role) {
   this.name = name;
@@ -21,15 +22,15 @@ function Game() {
   this.createBoard = function (rows, columns) {
     this.rows = rows;
     this.columns = columns;
-
-    this.boardContener = document.getElementById("board");
-    this.canvas = document.createElement("canvas");
+    this.boardContener = document.getElementById('board');
+    this.canvas = document.createElement('canvas');
     this.boardContener.style.width = this.boardWidth;
     this.boardContener.style.height = this.boardHeight;
     this.canvas.width = 1800;
     this.canvas.height = 1210;
+    $('#board').addClass('canvasSwap270');
     this.boardContener.appendChild(this.canvas);
-    this.ctx = this.canvas.getContext("2d");
+    this.ctx = this.canvas.getContext('2d');
   };
 
   this.createField = function () {
@@ -42,7 +43,7 @@ function Game() {
 
     this.scale = 147;
 
-    this.ctx.fillStyle = "#84b369";
+    this.ctx.fillStyle = '#84b369';
     this.fillWidth = this.canvasWidth / this.columnsNumber + this.marginXY;
     this.ctx.fillRect(
       this.fillWidth,
@@ -69,7 +70,7 @@ function Game() {
           for (const next of graph.get(`${x}_${y}`).out) {
             if (next == `${x + 1}_${y}` || next == `${x}_${y + 1}`) {
               this.ctx.lineWidth = this.noLineWidth;
-              this.ctx.strokeStyle = "black";
+              this.ctx.strokeStyle = 'black';
               this.drawLine(x, y, Number(next.substring(0, 1)), Number(next.substring(2, next.length)));
             }
           }
@@ -83,13 +84,13 @@ function Game() {
                 this.ctx.strokeStyle = players[1].color;
               }
             } else {
-              this.ctx.strokeStyle = "black";
+              this.ctx.strokeStyle = 'black';
             }
             this.ctx.lineWidth = this.wallLineWidth;
             this.drawLine(x, y, x + 1, y);
           }
           if (!graph.get(`${x}_${y}`).out.has(`${x}_${y + 1}`) && graph.has(`${x}_${y + 1}`)) {
-            this.ctx.strokeStyle = "black";
+            this.ctx.strokeStyle = 'black';
             this.ctx.lineWidth = this.wallLineWidth;
             this.drawLine(x, y, x, y + 1);
           }
@@ -123,7 +124,7 @@ function Game() {
   this.loadBoardState = function () {
     this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
     this.ctx.putImageData(this.myImgData, 0, 0);
-    this.ctx.fillStyle = "black";
+    this.ctx.fillStyle = 'black';
     this.drawPoint(this.curPoint.x, this.curPoint.y, 1);
   };
 
@@ -134,14 +135,14 @@ function Game() {
   };
 
   this.gameStart = function () {
-    this.canvas.addEventListener("mousemove", this.mouseMoveEvent);
-    this.canvas.addEventListener("click", this.clickEvent);
+    this.canvas.addEventListener('mousemove', this.mouseMoveEvent);
+    this.canvas.addEventListener('click', this.clickEvent);
 
-    $('.name[data-id="0"]').html(`${players[0].name}`).css("background-color", `${players[0].color}`);
+    $('.name[data-id="0"]').html(`${players[0].name}`).css('background-color', `${players[0].color}`);
     $('.name[data-id="1"]')
       .html(`${players[1].name}`)
-      .css("background-color", `${players[1].color}`)
-      .addClass("opponent");
+      .css('background-color', `${players[1].color}`)
+      .addClass('opponent');
 
     this.botGame = false;
     this.gameOn = true;
@@ -152,21 +153,21 @@ function Game() {
   this.gameEnd = function (bool) {
     this.gameOn = false;
     if (bool) {
-      $(".endgame")
+      $('.endgame')
         .css({
-          display: "flex",
-          "background-image": 'url("assets/img/win.gif")',
+          display: 'flex',
+          'background-image': 'url("assets/img/win.gif")',
         })
-        .find("h1")
-        .html("Wygrana");
+        .find('h1')
+        .html('Wygrana');
     } else {
-      $(".endgame")
+      $('.endgame')
         .css({
-          display: "flex",
-          "background-image": 'url("assets/img/loose.gif")',
+          display: 'flex',
+          'background-image': 'url("assets/img/loose.gif")',
         })
-        .find("h1")
-        .html("Przegrana");
+        .find('h1')
+        .html('Przegrana');
     }
   };
 
@@ -177,10 +178,11 @@ function Game() {
     this.color = players[+!currPlayer].color;
 
     let mousePos = getMousePos(this.canvas, event);
+    mousePos.y = this.boardWidth - mousePos.y;
     let przelicznik_na_x = this.canvasWidth / this.boardWidth;
     let przelicznik_na_y = this.canvasHeight / this.boardHeight;
-    let cord_X = mousePos.x * przelicznik_na_x;
-    let cord_Y = mousePos.y * przelicznik_na_y;
+    let cord_X = mousePos.y * przelicznik_na_x;
+    let cord_Y = mousePos.x * przelicznik_na_y;
 
     ///PUNKTY MAPY///
     for (let x = 0; x <= this.rows; x++)
@@ -211,8 +213,9 @@ function Game() {
     if (!this.gameOn) return;
 
     let mousePos = getMousePos(this.canvas, event);
-    let cord_X = (mousePos.y * this.canvasWidth) / this.boardWidth; //*Tak ma być
-    let cord_Y = (mousePos.x * this.canvasHeight) / this.boardHeight; //*Tak ma być
+    mousePos.y = this.boardWidth - mousePos.y;
+    let cord_X = (mousePos.x * this.canvasWidth) / this.boardWidth; //*Tak ma być
+    let cord_Y = (mousePos.y * this.canvasHeight) / this.boardHeight; //*Tak ma być
     let wallHit = false;
 
     for (let x = 0; x <= this.rows; x++) {
@@ -232,7 +235,7 @@ function Game() {
             ) {
               if (graph.get(`${this.curPoint.x}_${this.curPoint.y}`).out.has(`${x}_${y}`)) {
                 if (graph.get(`${x}_${y}`).wallValue == 0) wallHit = true;
-                this.ctx.fillStyle = "blue";
+                this.ctx.fillStyle = 'blue';
                 this.drawPoint(x, y, 1);
                 this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
                 this.ctx.putImageData(this.myImgData, 0, 0);
@@ -245,8 +248,7 @@ function Game() {
                   this.curPoint.x >= this.halfRows - 1 &&
                   this.curPoint.x <= this.halfRows + 1 &&
                   this.curPoint.y == this.columns
-                ) {
-                  console.log("Wygrywa gracz niebieski");
+){
                   this.gameEnd(true);
                   return;
                 }
@@ -255,8 +257,7 @@ function Game() {
                   this.curPoint.x >= this.halfRows - 1 &&
                   this.curPoint.x <= this.halfRows + 1 &&
                   this.curPoint.y == 0
-                ) {
-                  console.log("Wygrywa gracz czerwony");
+){
                   this.gameEnd(false);
                   return;
                 }
@@ -274,8 +275,8 @@ function Game() {
                     } else {
                       ownGatePoint = this.columns;
                     }
-                    this.canvas.removeEventListener("mousemove", this.mouseMoveEvent);
-                    this.canvas.removeEventListener("click", this.clickEvent);
+                    this.canvas.removeEventListener('mousemove', this.mouseMoveEvent);
+                    this.canvas.removeEventListener('click', this.clickEvent);
 
                     let selectedPoint = checkAllPaths(
                       `${this.curPoint.x}_${this.curPoint.y}`,
@@ -364,7 +365,7 @@ function Game() {
   };
 
   this.drawLine = function (x1, y1, x2, y2) {
-    this.ctx.lineCap = "round";
+    this.ctx.lineCap = 'round';
     this.ctx.beginPath();
     this.ctx.moveTo(y1 * this.scale + this.marginXY, x1 * this.scale + this.marginXY);
     this.ctx.lineTo(y2 * this.scale + this.marginXY, x2 * this.scale + this.marginXY);
@@ -373,7 +374,7 @@ function Game() {
   };
 
   this.drawGameLine = function (x1, y1, x2, y2) {
-    this.ctx.lineCap = "round";
+    this.ctx.lineCap = 'round';
     this.ctx.beginPath();
     this.ctx.moveTo(y1 * this.scale + this.marginXY, x1 * this.scale + this.marginXY);
     this.ctx.lineTo(
@@ -409,20 +410,18 @@ function Game() {
         this.curPoint.x >= this.halfRows - 1 &&
         this.curPoint.x <= this.halfRows + 1 &&
         this.curPoint.y == this.columns
-      ) {
-        console.log("Wygrywa gracz niebieski");
+){
         this.gameEnd(true);
         return;
       }
 
       if (this.curPoint.x >= this.halfRows - 1 && this.curPoint.x <= this.halfRows + 1 && this.curPoint.y == 0) {
-        console.log("Wygrywa gracz czerwony");
         this.gameEnd(false);
         return;
       }
       this.player = changeRound(this.player);
-      this.canvas.addEventListener("mousemove", this.mouseMoveEvent);
-      this.canvas.addEventListener("click", this.clickEvent);
+      this.canvas.addEventListener('mousemove', this.mouseMoveEvent);
+      this.canvas.addEventListener('click', this.clickEvent);
       return;
     }
   };
@@ -433,25 +432,45 @@ function Point(x, y) {
   this.y = y;
 }
 
-$("#creator").submit(function (e) {
+$('#creator').submit(function (e) {
   e.preventDefault();
-  $(".creator--box").css("display", "none");
-  // let color = $(".colorInput[name=color]:checked").val();
-  let name = $("#name").val();
-  // players[0] = new Player(name, colors[color]);
-  players[0] = new Player(name, "orange");
-  players[1] = new Player("Shrek", "green");
+  $('.creator--box').css('display', 'none');
+  $('.single_board').css('display', 'block');
+  let color = $('.colorInput[name=color]:checked').val();
+  let name = $('#name').val();
+  players[0] = new Player(name, colors[color]);
+  players[1] = new Player('Shrek', 'green');
 
-  let game = new Game();
+  game = new Game();
+  checkPosition();
   game.gamePrepare();
   game.gameStart();
 });
 
 function changeRound(plr) {
-  $(".name").each(function (i) {
-    $(this).toggleClass("active");
+  $('.name').each(function (i) {
+    $(this).toggleClass('active');
   });
 
   currPlayer = !currPlayer;
   return !plr;
 }
+
+function checkPosition() {
+  if (window.matchMedia('(max-width: 420px)').matches) {
+    game.boardWidth = 480;
+    game.boardHeight = 320;
+
+    if (window.matchMedia('(max-width: 360px)').matches) {
+      game.boardWidth = 450;
+      game.boardHeight = 300;
+    }
+  } else {
+    game.boardWidth = 600;
+    game.boardHeight = 400;
+  }
+}
+
+$(window).resize(function () {
+  checkPosition();
+});
